@@ -1,0 +1,11 @@
+language: cpp
+compiler:
+  - gcc
+install:
+  - sudo apt-get install libgtest-dev
+  - "cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib"
+
+script:
+  - cmake CMakeLists.txt
+  - make
+  - ./runTests

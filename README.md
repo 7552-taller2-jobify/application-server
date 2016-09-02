@@ -5,26 +5,26 @@ Aplicación con el objetivo de brindar una interfaz para la comunicación de los
 ## Requerimientos
 
 1. Instalar CMAKE
-```
-sudo apt-get install cmake
-```
+  ```
+  sudo apt-get install cmake
+  ```
 
 ## Como correrlo
 
 1. Correr "cmake ." sobre la carpeta principal
-```
-cmake .
-```
+  ```
+  cmake .
+  ```
 
 2. Correr "make"
-```
-make
-```
+  ```
+  make
+  ```
 
 3. Correr "./Server"
-```
-./Server
-```
+  ```
+  ./Server
+  ```
 
-4. Desde el browser ir a localhost:8000/api/hola
+4. Desde el browser ir a <http://localhost:8000/api/hola>
 

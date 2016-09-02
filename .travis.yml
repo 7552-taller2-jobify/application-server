@@ -3,7 +3,7 @@ compiler:
   - gcc
 install:
   - sudo apt-get install libgtest-dev
-  - "cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib"
+  - "cd /usr/src/gtest && cmake CMakeLists.txt && make && cp *.a /usr/lib"
 
 script:
   - cmake CMakeLists.txt

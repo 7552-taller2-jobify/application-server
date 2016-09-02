@@ -1,0 +1,6 @@
+CMakeCache.txt
+Makefile
+CMakeFiles/
+runTests
+cmake_install.cmake
+Server

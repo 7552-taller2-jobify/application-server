@@ -6,10 +6,11 @@ Aplicación con el objetivo de brindar una interfaz para la comunicación de los
 
 ## Requerimientos
 
-1. Instalar CMAKE
+1. Instalar docker
   ```
-  sudo apt-get install cmake
+  docker run -it -v $PWD:/usr/src/app 7552taller2jobify/application-server /bin/bash
   ```
+  Esto genera un contenedor y podemos interactuarl con la consola que ya tiene todo para seguir a Como correrlo
 
 ## Como correrlo
 

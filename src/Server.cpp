@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "leveldb/db.h"
 static const char *s_http_port = "8000";
 
 Server::Server(){

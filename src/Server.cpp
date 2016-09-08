@@ -1,5 +1,8 @@
 #include "Server.h"
 #include "leveldb/db.h"
+
+using namespace std;
+
 static const char *s_http_port = "8000";
 
 Server::Server(){
@@ -27,6 +30,8 @@ void ev_handler(struct mg_connection *c,int ev, void *ev_data){
 	        memcpy(buf, hm->body.p,
 	               sizeof(buf) - 1 < hm->body.len ? sizeof(buf) - 1 : hm->body.len);
 	        printf("%s\n", buf);
+	        mg_printf(c, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
+			mg_send_http_chunk(c, "", 0); /* Send empty chunk, the end of response */
 	      }
 	      break;
 	    default:
@@ -35,6 +40,22 @@ void ev_handler(struct mg_connection *c,int ev, void *ev_data){
 }
 
 void Server::start(){
+///PRUEBA LEVELDB
+	 leveldb::DB* db;
+    leveldb::Options options;
+    options.create_if_missing = true;
+
+    leveldb::Status status = leveldb::DB::Open(options, "./db", &db);
+
+    if (false == status.ok())
+    {
+        cerr << "Unable to open/create test database './db'" << endl;
+        cerr << status.ToString() << endl;
+	
+	}
+	leveldb::WriteOptions writeOptions;
+	db->Put(writeOptions, "1", "HOLA");
+///
 	this->IsOnLine = true;
 	struct mg_mgr mgr;
 	struct mg_connection *nc;

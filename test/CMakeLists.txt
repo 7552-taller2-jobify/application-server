@@ -1,3 +1,3 @@
-add_executable (runTests TestSample.cpp)
+add_executable (runTests AllTests.cpp)
 
-target_link_libraries(runTests Sample ${GTEST_LIBRARIES} pthread)
+target_link_libraries(runTests DataBase ${GTEST_LIBRARIES} leveldb pthread)

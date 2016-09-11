@@ -1,7 +1,7 @@
-add_executable (Server main.cpp Server.cpp Sample.cpp)
+add_executable (Server main.cpp Server.cpp DataBase.cpp)
 
 target_link_libraries (Server LINK_PUBLIC Mongoose leveldb pthread)
 
-add_library (Sample Sample.cpp)
+add_library (DataBase DataBase.cpp)
 
-target_include_directories(Sample PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(DataBase PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

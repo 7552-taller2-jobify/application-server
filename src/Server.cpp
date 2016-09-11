@@ -7,6 +7,7 @@ static const char *s_http_port = "8000";
 
 Server::Server(){
 	this->IsOnLine = false;
+	this->db = new DataBase(PATH_DB);
 }
 static void handle_hola(struct mg_connection *nc){
 
@@ -41,7 +42,7 @@ void ev_handler(struct mg_connection *c,int ev, void *ev_data){
 
 void Server::start(){
 ///PRUEBA LEVELDB
-	 leveldb::DB* db;
+	 /*leveldb::DB* db;
     leveldb::Options options;
     options.create_if_missing = true;
 
@@ -54,7 +55,11 @@ void Server::start(){
 	
 	}
 	leveldb::WriteOptions writeOptions;
-	db->Put(writeOptions, "1", "HOLA");
+	db->Put(writeOptions, "1", "HOLA");*/
+
+	//this->db->put("2", "chau");
+
+
 ///
 	this->IsOnLine = true;
 	struct mg_mgr mgr;

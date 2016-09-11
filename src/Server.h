@@ -3,6 +3,7 @@
 #include <iostream>
 #include "mongoose.h"
 #include "DataBase.h"
+#include "RequestAdministrator.h"
 
 using namespace std;
 
@@ -12,9 +13,9 @@ private:
 	DataBase *db;
 
 public:
-	friend void ev_handler(struct mg_connection *c, int ev, void *p);
 	Server();
 	~Server();
+	friend void ev_handler(struct mg_connection *c, int ev, void *p);
 	void start();
 };
 

@@ -1,6 +1,7 @@
 #ifndef DATABASE_H_
 #define DATABASE_H_
 
+#include <iostream>
 #include "leveldb/db.h"
 
 using namespace std;

@@ -6,8 +6,8 @@ static const char *s_http_port = "8000";
 
 Server::Server(){
 	this->IsOnLine = false;
-	this->db = new DataBase(PATH_DB);
-	this->log = new Logger();
+	this->logger = new Logger();
+	this->db = new DataBase(PATH_DB, this->logger);
 }
 
 void ev_handler(struct mg_connection *c, int ev, void *p){
@@ -17,26 +17,7 @@ void ev_handler(struct mg_connection *c, int ev, void *p){
 }
 
 void Server::start(){
-///PRUEBA LEVELDB
-	 /*leveldb::DB* db;
-    leveldb::Options options;
-    options.create_if_missing = true;
 
-    leveldb::Status status = leveldb::DB::Open(options, "./db", &db);
-
-    if (false == status.ok())
-    {
-        cerr << "Unable to open/create test database './db'" << endl;
-        cerr << status.ToString() << endl;
-	
-	}
-	leveldb::WriteOptions writeOptions;
-	db->Put(writeOptions, "1", "HOLA");*/
-
-	//this->db->put("2", "chau");
-
-
-///
 	this->IsOnLine = true;
 	
 	struct mg_mgr mgr; //Mongoose event manager

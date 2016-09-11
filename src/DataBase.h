@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "leveldb/db.h"
+#include "Logger.h"
 
 using namespace std;
 
@@ -13,9 +14,10 @@ private:
 	leveldb::DB* db;
 	leveldb::Options options;
 	leveldb::Status status;
+	Logger *logger;
 
 public:
-	DataBase(string path);
+	DataBase(string path, Logger *logger);
 	~DataBase();
 	string get(string key);
 	void put(string key, string value);

@@ -4,7 +4,6 @@
 #include "mongoose.h"
 #include "DataBase.h"
 #include "RequestAdministrator.h"
-#include "Logger.h"
 
 using namespace std;
 
@@ -12,7 +11,7 @@ class Server{
 private:
 	bool IsOnLine;
 	DataBase *db;
-	Logger *log;
+	Logger *logger;
 
 public:
 	Server();

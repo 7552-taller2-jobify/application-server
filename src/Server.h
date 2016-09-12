@@ -11,6 +11,7 @@ class Server{
 private:
 	bool IsOnLine;
 	DataBase *db;
+	Logger *logger;
 
 public:
 	Server();

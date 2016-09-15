@@ -17,7 +17,6 @@ const string LOG_FILE_CREATED = "---LOG FILE CREATED---\n";
 class Logger {
 private:
 	fstream file;
-	void open();
 	const string getCurrentDateParsed();
 
 public:

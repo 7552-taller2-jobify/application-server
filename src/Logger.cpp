@@ -1,18 +1,18 @@
 #include "Logger.h"
 
 Logger::Logger() {
-	if(!ifstream(LOG_FILE_PATH.c_str())) {
+	if(!file.is_open()) {
 		file.open(LOG_FILE_PATH.c_str(), fstream::out | fstream::app);
+	}
+	file.seekg(0, ios::end);  
+	if(file.tellg() == 0) {    
 		file << LOG_FILE_CREATED;
-		file.close();
+		file.flush(); 
 	}
 }
 
 Logger::~Logger() {
-}
-
-void Logger::open() {
-	file.open(LOG_FILE_PATH.c_str(), fstream::out | fstream::app);
+	file.close();
 }
 
 const string Logger::getCurrentDateParsed() {
@@ -25,7 +25,6 @@ const string Logger::getCurrentDateParsed() {
 }
 
 void Logger::log(enum LogStatus status, const string message) {
-	this->open();
 	string status_aux;
 	switch(status) {
 		case error:
@@ -44,5 +43,5 @@ void Logger::log(enum LogStatus status, const string message) {
 			status_aux = "Error: ";			
 	}
 	file << getCurrentDateParsed() << status_aux << message << "\n";
-	file.close();
+	file.flush();
 }

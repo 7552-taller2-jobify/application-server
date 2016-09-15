@@ -8,38 +8,36 @@ public:
 
 	void SetUp() { 
 		log = new Logger();
+		file.open(LOG_FILE_PATH.c_str());
 	}
  
-	~TestLogger() {
+	void TearDown() {
 		delete log;
+		file.close();
 	}
 };
  
 TEST_F(TestLogger, testLoggerWellCreated) {
 	ASSERT_TRUE(ifstream(LOG_FILE_PATH.c_str()));
-	file.open(LOG_FILE_PATH.c_str());
 	string line;
 	getline(file, line);
 	ASSERT_EQ(line+"\n", LOG_FILE_CREATED);
-	file.close();
 }
 
 TEST_F(TestLogger, testLog) {
-	file.open(LOG_FILE_PATH.c_str());
 	string line;
-	int first_count = 0, second_count = 0;
-	while(getline(file, line)) {
-		first_count++;
+	const string MESSAGE = "Error message.";
+	char aux;
+	log->log(error, MESSAGE);
+	file.seekg(0, file.end);
+	while(true) {
+		file.seekg(-2, file.cur);
+		file.get(aux);
+		if(aux == ':') {
+			file.get(aux);
+			break;
+		}
 	}
-	log->log(error, "Error message.");
-	log->log(warn, "Warn message.");
-	log->log(info, "Info message.");
-	log->log(debug, "Debug message.");
-	file.close();
-	file.open(LOG_FILE_PATH.c_str());
-	while(getline(file, line)) {
-		second_count++;
-	}
-	ASSERT_EQ(second_count, first_count + 4);
-	file.close();
+	getline(file, line);
+	ASSERT_EQ(line, MESSAGE);
 }

@@ -3,8 +3,12 @@
 
 #include <string>
 #include <cstdio>
+#include <sstream>
+#include <algorithm>
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/writer.h"
 
 using namespace rapidjson;
 using namespace std;
@@ -15,8 +19,10 @@ private:
 	string summary;
 	string picture;
 	string skills;
-	double position[2];
+	string position[2];
 	string job_experience;
+	string parseSkills();
+	string createJsonFileFromProfile();
 
 public:
 	Profile(string json_file);
@@ -25,7 +31,7 @@ public:
 	string getSummary();
 	string getPicture();
 	string getSkills();
-	double* getPosition();
+	string* getPosition();
 	string getJobExperience();
 	void setName(string new_name);
 	void setSummary(string new_summary);
@@ -33,6 +39,7 @@ public:
 	void setSkills(string new_skills);
 	void setPosition(string new_lat, string new_lon);
 	void setJobExperience(string new_job_experience);
+	void updateJson(string json_file);
 };
 
 #endif

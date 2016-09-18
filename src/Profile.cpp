@@ -17,8 +17,8 @@ Profile::Profile(string json_file) {
 		}
         	this->skills += document["profile"]["skills"][i].GetString();
 	}
-	this->position[0] = document["profile"]["position"]["lat"].GetDouble();
-	this->position[1] = document["profile"]["position"]["lon"].GetDouble();
+	this->position[0] = document["profile"]["position"]["lat"].GetString();
+	this->position[1] = document["profile"]["position"]["lon"].GetString();
 	this->job_experience = document["profile"]["job_experience"].GetString();
 }
 
@@ -40,7 +40,7 @@ string Profile::getSkills() {
 	return this->skills;
 }
 
-double* Profile::getPosition() {
+string* Profile::getPosition() {
 	return this->position;
 }
 
@@ -65,10 +65,47 @@ void Profile::setSkills(string new_skills) {
 }
 
 void Profile::setPosition(string new_lat, string new_lon) {
-	this->position[0] = atof(new_lat.c_str());
-	this->position[1] = atof(new_lon.c_str());
+	this->position[0] = new_lat.c_str();
+	this->position[1] = new_lon.c_str();
 }
 
 void Profile::setJobExperience(string new_job_experience) {
 	this->job_experience = new_job_experience;
+}
+
+string Profile::parseSkills() {
+	string parsed_skills;
+	stringstream ss;
+	ss.str(this->skills);
+	string item, aux;
+	while(getline(ss, item, ',')) {
+		item.erase(remove(item.begin(), item.end(), ' '), item.end());
+		aux = "\"" + item + "\", ";
+        	parsed_skills += aux;
+    	}
+	parsed_skills = parsed_skills.substr(0, parsed_skills.length() - 2);
+	parsed_skills += "],\n";
+	return parsed_skills;
+}
+
+string Profile::createJsonFileFromProfile() {
+	string name = "{\n\t\"profile\": {\n\t\t\"name\": \"" + this->name + "\",\n",
+	summary = "\t\t\"summary\": \"" + this->summary + "\",\n",
+	picture = "\t\t\"picture\": \"" + this->picture + "\",\n",
+	skills = "\t\t\"skills\": [" + this->parseSkills(),
+	position_1 = "\t\t\"position\": {\n\t\t\t\"lat\": \"" + this->position[0] + "\",\n",
+	position_2 = "\t\t\t\"lon\": \"" + this->position[1] + "\"\n\t\t},\n",
+	job_experience = "\t\t\"job_experience\": \"" + this->job_experience + "\"\n\t}\n}";
+	return name + summary + picture + skills + position_1 + position_2 + job_experience;
+}
+
+void Profile::updateJson(string json_file) {
+	Document document;
+	document.Parse(this->createJsonFileFromProfile().c_str());
+	FILE* file = fopen(json_file.c_str(), "w");
+	char writeBuffer[65536];
+	FileWriteStream stream(file, writeBuffer, sizeof(writeBuffer));
+	Writer<FileWriteStream> writer(stream);
+	document.Accept(writer);
+	fclose(file);
 }

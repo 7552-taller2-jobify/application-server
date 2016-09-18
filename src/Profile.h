@@ -9,12 +9,14 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/writer.h"
+#include "Logger.h"
 
 using namespace rapidjson;
 using namespace std;
 
 class Profile {
 private:
+	Logger *logger;
 	string name;
 	string summary;
 	string picture;
@@ -25,7 +27,7 @@ private:
 	string createJsonFileFromProfile();
 
 public:
-	Profile(string json_file);
+	Profile(string json_file, Logger *logger);
 	~Profile();
 	string getName();
 	string getSummary();

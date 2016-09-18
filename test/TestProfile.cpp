@@ -7,13 +7,16 @@ const string json_file_output = "test/example_profile_output.json";
 class TestProfile : public ::testing::Test { 
 public:
 	Profile *profile;
+	Logger *logger;
 
-	void SetUp() { 
-		profile = new Profile(json_file_input);
+	void SetUp() {
+		logger = new Logger();
+		profile = new Profile(json_file_input, logger);
 	}
  
 	~TestProfile() {
 		delete profile;
+		delete logger;
 	}
 };
  
@@ -69,7 +72,7 @@ TEST_F(TestProfile, testUpdateJson) {
 	profile->setPosition(lat, lon);
 	profile->setJobExperience("2 años en Mercadolibre");
 	profile->updateJson(json_file_output);
-	Profile *profile_modified = new Profile(json_file_output);
+	Profile *profile_modified = new Profile(json_file_output, logger);
 
 	ASSERT_EQ(profile->getName(), "Juan");
 	ASSERT_EQ(profile->getSummary(), "Nueva descripción");

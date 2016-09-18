@@ -1,25 +1,29 @@
 #include "Profile.h"
 
-Profile::Profile(string json_file) {
+Profile::Profile(string json_file, Logger *logger) {
+	this->logger = logger;
 	FILE* file = fopen(json_file.c_str(), "r");
 	char readBuffer[65536];
 	FileReadStream stream(file, readBuffer, sizeof(readBuffer));
 	fclose(file);
 	Document document;
-	document.ParseStream(stream);
-
-	this->name = document["profile"]["name"].GetString();
-	this->summary = document["profile"]["summary"].GetString();
-	this->picture = document["profile"]["picture"].GetString();
-	for(SizeType i = 0; i < document["profile"]["skills"].Size(); i++) {
-		if(i != 0) {
-			this->skills += ", ";
+	if(document.ParseStream(stream).HasParseError()) {
+		this->logger->log(error, "Could not parse file " + json_file + ".");
+	} else {
+		this->name = document["profile"]["name"].GetString();
+		this->summary = document["profile"]["summary"].GetString();
+		this->picture = document["profile"]["picture"].GetString();
+		for(SizeType i = 0; i < document["profile"]["skills"].Size(); i++) {
+			if(i != 0) {
+				this->skills += ", ";
+			}
+			this->skills += document["profile"]["skills"][i].GetString();
 		}
-        	this->skills += document["profile"]["skills"][i].GetString();
+		this->position[0] = document["profile"]["position"]["lat"].GetString();
+		this->position[1] = document["profile"]["position"]["lon"].GetString();
+		this->job_experience = document["profile"]["job_experience"].GetString();
+		this->logger->log(info, "File " + json_file + " has been parsed successfully.");
 	}
-	this->position[0] = document["profile"]["position"]["lat"].GetString();
-	this->position[1] = document["profile"]["position"]["lon"].GetString();
-	this->job_experience = document["profile"]["job_experience"].GetString();
 }
 
 Profile::~Profile() {}
@@ -101,11 +105,15 @@ string Profile::createJsonFileFromProfile() {
 
 void Profile::updateJson(string json_file) {
 	Document document;
-	document.Parse(this->createJsonFileFromProfile().c_str());
-	FILE* file = fopen(json_file.c_str(), "w");
-	char writeBuffer[65536];
-	FileWriteStream stream(file, writeBuffer, sizeof(writeBuffer));
-	Writer<FileWriteStream> writer(stream);
-	document.Accept(writer);
-	fclose(file);
+	if(document.Parse(this->createJsonFileFromProfile().c_str()).HasParseError()) {
+		this->logger->log(error, "Could not create JSON file from profile.");
+	} else {	
+		FILE* file = fopen(json_file.c_str(), "w");
+		char writeBuffer[65536];
+		FileWriteStream stream(file, writeBuffer, sizeof(writeBuffer));
+		Writer<FileWriteStream> writer(stream);
+		document.Accept(writer);
+		fclose(file);
+		this->logger->log(info, "JSON file has been created successfully.");
+	}
 }

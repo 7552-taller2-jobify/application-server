@@ -15,6 +15,7 @@ before_install:
   - sudo apt-get install libgtest-dev
   - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
   - "cd leveldb-master && make && cd out-static && sudo cp --preserve=links libleveldb.* /usr/local/lib && cd .. && sudo cp -r include/leveldb /usr/local/include/ && sudo ldconfig && cd .."
+  - "cd libs/curl-master && ./buildconf && ./configure && make && sudo make install && cd .. && cd .."
 
 script:
   - cmake CMakeLists.txt

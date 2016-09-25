@@ -1,6 +1,6 @@
 add_executable (Server main.cpp Server.cpp DataBase.cpp RequestAdministrator.cpp Logger.cpp)
 
-target_link_libraries (Server LINK_PUBLIC Mongoose leveldb pthread)
+target_link_libraries (Server LINK_PUBLIC Mongoose leveldb pthread curl)
 
 add_library (DataBase DataBase.cpp)
 

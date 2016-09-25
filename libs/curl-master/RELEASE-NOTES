@@ -1,0 +1,45 @@
+Curl and libcurl 7.51.0
+
+ Public curl releases:         160
+ Command line options:         185
+ curl_easy_setopt() options:   224
+ Public functions in libcurl:  61
+ Contributors:                 1445
+
+This release includes the following changes:
+
+ o nss: additional cipher suites are now accepted by CURLOPT_SSL_CIPHER_LIST
+
+This release includes the following bugfixes:
+
+ o openssl: fix per-thread memory leak usiong 1.0.1 or 1.0.2 [1]
+ o http: accept "Transfer-Encoding: chunked" for HTTP/2 as well [2]
+ o LICENSE-MIXING.md: update with mbedTLS dual licensing [3]
+ o examples/imap-append: Set size of data to be uploaded [4]
+ o test2048: fix url
+ o darwinssl: disable RC4 cipher-suite support
+ o CURLOPT_PINNEDPUBLICKEY.3: fix the AVAILABILITY formatting
+ o openssl: don’t call CRYTPO_cleanup_all_ex_data [5]
+ o libressl: fix version output [6]
+
+This release includes the following known bugs:
+
+ o see docs/KNOWN_BUGS (https://curl.haxx.se/docs/knownbugs.html)
+
+This release would not have looked like this without help, code, reports and
+advice from friends like these:
+
+  Akshay Vernekar, Bernard Spil, Daniel Gustafsson, Daniel Stenberg,
+  lukaszgn on github, Nick Zitzmann, Ray Satiro, Todd Short, Tony Kelman,
+  (9 contributors)
+
+        Thanks! (and sorry if I forgot to mention someone)
+
+References to bug reports and discussions on issues:
+
+ [1] = https://curl.haxx.se/bug/?i=964
+ [2] = https://curl.haxx.se/bug/?i=1013
+ [3] = https://curl.haxx.se/bug/?i=1019
+ [4] = https://curl.haxx.se/bug/?i=1011
+ [5] = https://curl.haxx.se/mail/lib-2016-09/0045.html
+ [6] = https://curl.haxx.se/bug/?i=1029

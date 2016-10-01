@@ -14,6 +14,10 @@ link_directories(
 	${LEVELDB_PREFIX}/lib
 )
 
+include_directories(
+	includes
+)
+
 add_subdirectory(libs)
 add_subdirectory(src)
 add_subdirectory(test)

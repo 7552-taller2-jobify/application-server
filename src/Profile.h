@@ -16,18 +16,18 @@ using namespace std;
 
 class Profile {
 private:
-	Logger *logger;
 	string name;
 	string summary;
 	string picture;
 	string skills;
 	string position[2];
 	string job_experience;
+
 	string parseSkills();
 	string createJsonFileFromProfile();
 
 public:
-	Profile(string json_file, Logger *logger);
+	Profile(string json_file);
 	~Profile();
 	string getName();
 	string getSummary();

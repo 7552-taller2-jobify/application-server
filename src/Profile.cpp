@@ -1,14 +1,13 @@
 #include "Profile.h"
 
-Profile::Profile(string json_file, Logger *logger) {
-	this->logger = logger;
+Profile::Profile(string json_file) {
 	FILE* file = fopen(json_file.c_str(), "r");
 	char readBuffer[65536];
 	FileReadStream stream(file, readBuffer, sizeof(readBuffer));
 	fclose(file);
 	Document document;
 	if(document.ParseStream(stream).HasParseError()) {
-		this->logger->log(error, "Could not parse file " + json_file + ".");
+		Logger::getInstance().log(error, "Could not parse file " + json_file + ".");
 	} else {
 		this->name = document["profile"]["name"].GetString();
 		this->summary = document["profile"]["summary"].GetString();
@@ -22,7 +21,7 @@ Profile::Profile(string json_file, Logger *logger) {
 		this->position[0] = document["profile"]["position"]["lat"].GetString();
 		this->position[1] = document["profile"]["position"]["lon"].GetString();
 		this->job_experience = document["profile"]["job_experience"].GetString();
-		this->logger->log(info, "File " + json_file + " has been parsed successfully.");
+		Logger::getInstance().log(info, "File " + json_file + " has been parsed successfully.");
 	}
 }
 
@@ -106,7 +105,7 @@ string Profile::createJsonFileFromProfile() {
 void Profile::updateJson(string json_file) {
 	Document document;
 	if(document.Parse(this->createJsonFileFromProfile().c_str()).HasParseError()) {
-		this->logger->log(error, "Could not create JSON file from profile.");
+		Logger::getInstance().log(error, "Could not create JSON file from profile.");
 	} else {	
 		FILE* file = fopen(json_file.c_str(), "w");
 		char writeBuffer[65536];
@@ -114,6 +113,6 @@ void Profile::updateJson(string json_file) {
 		Writer<FileWriteStream> writer(stream);
 		document.Accept(writer);
 		fclose(file);
-		this->logger->log(info, "JSON file has been created successfully.");
+		Logger::getInstance().log(info, "JSON file has been created successfully.");
 	}
 }

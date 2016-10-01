@@ -1,22 +1,19 @@
 #include "Profile.cpp"
 #include <gtest/gtest.h>
 
-const string json_file_input = "test/example_profile_input.json";
-const string json_file_output = "test/example_profile_output.json";
+const string json_file_input = "files/example_profile_input.json";
+const string json_file_output = "files/example_profile_output.json";
 
 class TestProfile : public ::testing::Test { 
 public:
 	Profile *profile;
-	Logger *logger;
 
 	void SetUp() {
-		logger = new Logger();
-		profile = new Profile(json_file_input, logger);
+		profile = new Profile(json_file_input);
 	}
  
 	~TestProfile() {
 		delete profile;
-		delete logger;
 	}
 };
  
@@ -72,13 +69,13 @@ TEST_F(TestProfile, testUpdateJson) {
 	profile->setPosition(lat, lon);
 	profile->setJobExperience("2 años en Mercadolibre");
 	profile->updateJson(json_file_output);
-	Profile *profile_modified = new Profile(json_file_output, logger);
+	Profile *profile_modified = new Profile(json_file_output);
 
-	ASSERT_EQ(profile->getName(), "Juan");
-	ASSERT_EQ(profile->getSummary(), "Nueva descripción");
-	ASSERT_EQ(profile->getPicture(), "nuevo_link");
-	ASSERT_EQ(profile->getSkills(), "Java, PHP");
-	ASSERT_EQ(profile->getPosition()[0], lat);
-	ASSERT_EQ(profile->getPosition()[1], lon);
-	ASSERT_EQ(profile->getJobExperience(), "2 años en Mercadolibre");
+	ASSERT_EQ(profile_modified->getName(), "Juan");
+	ASSERT_EQ(profile_modified->getSummary(), "Nueva descripción");
+	ASSERT_EQ(profile_modified->getPicture(), "nuevo_link");
+	ASSERT_EQ(profile_modified->getSkills(), "Java, PHP");
+	ASSERT_EQ(profile_modified->getPosition()[0], lat);
+	ASSERT_EQ(profile_modified->getPosition()[1], lon);
+	ASSERT_EQ(profile_modified->getJobExperience(), "2 años en Mercadolibre");
 }

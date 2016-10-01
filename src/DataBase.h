@@ -14,10 +14,9 @@ private:
 	leveldb::DB* db;
 	leveldb::Options options;
 	leveldb::Status status;
-	Logger *logger;
 
 public:
-	DataBase(string path, Logger *logger);
+	DataBase(string path);
 	~DataBase();
 	string get(string key);
 	void put(string key, string value);

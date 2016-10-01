@@ -3,16 +3,13 @@
 
 class TestLogger : public ::testing::Test { 
 public:
-	Logger *log;
 	ifstream file;
 
 	void SetUp() { 
-		log = new Logger();
 		file.open(LOG_FILE_PATH.c_str());
 	}
  
 	void TearDown() {
-		delete log;
 		file.close();
 	}
 };
@@ -28,7 +25,7 @@ TEST_F(TestLogger, testLog) {
 	string line;
 	const string MESSAGE = "Error message.";
 	char aux;
-	log->log(error, MESSAGE);
+	Logger::getInstance().log(error, MESSAGE);
 	file.seekg(0, file.end);
 	while(true) {
 		file.seekg(-2, file.cur);

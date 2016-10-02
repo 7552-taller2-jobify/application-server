@@ -1,4 +1,5 @@
 #include "ProfileHandler.cpp"
+#include "RegexMatcher.cpp"
 #include <gtest/gtest.h>
 
 class TestProfileHandler : public ::testing::Test { 
@@ -15,7 +16,7 @@ public:
 };
  
 TEST_F(TestProfileHandler, testFindExistingKey) {
-	Profile *profile = profile_handler->find("^personal_(.*)");
+	Profile *profile = profile_handler->find("personal_juanperez@gmail.com");
 	ASSERT_TRUE(dynamic_cast<Personal*> (profile));
 }
 

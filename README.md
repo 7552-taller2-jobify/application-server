@@ -8,7 +8,7 @@ Aplicación con el objetivo de brindar una interfaz para la comunicación de los
 
 1. Instalar docker
   ```
-  docker run -it -v $PWD:/usr/src/app 7552taller2jobify/application-server /bin/bash
+  dev/run
   ```
   Esto genera un contenedor y podemos interactuarl con la consola que ya tiene todo para seguir a Como correrlo
 
@@ -16,18 +16,24 @@ Aplicación con el objetivo de brindar una interfaz para la comunicación de los
 
 1. Correr "cmake ." sobre la carpeta principal
   ```
-  cmake .
+  dev/run cmake .
   ```
 
 2. Correr "make"
   ```
-  make
+  dev/run make
   ```
 
 3. Correr "./Server"
   ```
-  ./Server
+  dev/run ./Server
   ```
 
 4. Desde el browser ir a <http://localhost:8000/api/hola>
+
+5. Apaga la maquina
+  ```
+  docker p
+  docker stop <CONTAINER>
+  ```
 

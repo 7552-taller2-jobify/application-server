@@ -139,22 +139,60 @@ TEST_F(TestProfile, testChangePicture) {
 	ASSERT_EQ(picture->getPicture(), "nuevo_link");
 }
 
-/*TEST_F(TestProfile, testUpdateJson) {
-	profile->setName("Juan");
-	profile->setSummary("Nueva descripción");
-	profile->setPicture("nuevo_link");
-	profile->setSkills("Java, PHP");
+TEST_F(TestProfile, testUpdateJsonPersonal) {
+	personal->setFirstName("Juan");
+	personal->setLastName("Pérez");
+	personal->setEmail("juanperez@gmail.com");
+	personal->setBirthday("10/10/1990");
 	string lat = "-12.34567890", lon = "-21.43658709";
-	profile->setPosition(lat, lon);
-	profile->setJobExperience("2 años en Mercadolibre");
-	profile->updateJson(json_file_output);
-	Profile *profile_modified = new Profile(json_file_output);
+	personal->setAddress(lat, lon);
+	personal->updateJson(json_personal_file_output);
+	Personal *personal_modified = new Personal();
+	personal_modified->getProfileInfo(json_personal_file_output);
+	ASSERT_EQ(personal_modified->getFirstName(), "Juan");
+	ASSERT_EQ(personal_modified->getLastName(), "Pérez");
+	ASSERT_EQ(personal_modified->getEmail(), "juanperez@gmail.com");
+	ASSERT_EQ(personal_modified->getBirthday(), "10/10/1990");
+	ASSERT_EQ(personal_modified->getAddress()[0], lat);
+	ASSERT_EQ(personal_modified->getAddress()[1], lon);
+}
 
-	ASSERT_EQ(profile_modified->getName(), "Juan");
-	ASSERT_EQ(profile_modified->getSummary(), "Nueva descripción");
-	ASSERT_EQ(profile_modified->getPicture(), "nuevo_link");
-	ASSERT_EQ(profile_modified->getSkills(), "Java, PHP");
-	ASSERT_EQ(profile_modified->getPosition()[0], lat);
-	ASSERT_EQ(profile_modified->getPosition()[1], lon);
-	ASSERT_EQ(profile_modified->getJobExperience(), "2 años en Mercadolibre");
-}*/
+TEST_F(TestProfile, testUpdateJsonSummary) {
+	summary->setSummary("Ingeniero en Informática semisenior");
+	summary->updateJson(json_summary_file_output);
+	Summary *summary_modified = new Summary();
+	summary_modified->getProfileInfo(json_summary_file_output);
+	ASSERT_EQ(summary_modified->getSummary(), "Ingeniero en Informática semisenior");
+}
+
+TEST_F(TestProfile, testUpdateJsonExpertise) {
+	expertise->setCompany("Mercadolibre");
+	expertise->setPosition("Desarrollador");
+	expertise->setFrom("12/12/1999");
+	expertise->setTo("03/07/2005");
+	expertise->setExpertise("Experiencia en desarrollo Java");
+	expertise->updateJson(json_expertise_file_output);
+	Expertise *expertise_modified = new Expertise();
+	expertise_modified->getProfileInfo(json_expertise_file_output);
+	ASSERT_EQ(expertise_modified->getCompany(), "Mercadolibre");
+	ASSERT_EQ(expertise_modified->getPosition(), "Desarrollador");
+	ASSERT_EQ(expertise_modified->getFrom(), "12/12/1999");
+	ASSERT_EQ(expertise_modified->getTo(), "03/07/2005");
+	ASSERT_EQ(expertise_modified->getExpertise(), "Experiencia en desarrollo Java");
+}
+
+TEST_F(TestProfile, testUpdateJsonSkills) {
+	skills->setSkills("Nueva_skill_1, Nueva_skill_2");
+	skills->updateJson(json_skills_file_output);
+	Skills *skills_modified = new Skills();
+	skills_modified->getProfileInfo(json_skills_file_output);
+	ASSERT_EQ(skills_modified->getSkills(), "Nueva_skill_1, Nueva_skill_2");
+}
+
+TEST_F(TestProfile, testUpdateJsonPicture) {
+	picture->setPicture("link_nueva_foto_de_perfil");
+	picture->updateJson(json_picture_file_output);
+	Picture *picture_modified = new Picture();
+	picture_modified->getProfileInfo(json_picture_file_output);
+	ASSERT_EQ(picture_modified->getPicture(), "link_nueva_foto_de_perfil");
+}

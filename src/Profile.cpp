@@ -4,15 +4,15 @@ Profile::Profile() {
 }
 
 void Profile::updateJson(string json_file) {
-	Document aux_document;
-	if(aux_document.Parse(this->createJsonFile().c_str()).HasParseError()) {
+	Document document;
+	if(document.Parse(this->createJsonFile().c_str()).HasParseError()) {
 		Logger::getInstance().log(error, "Could not create JSON file from profile.");
 	} else {	
 		FILE* file = fopen(json_file.c_str(), "w");
 		char writeBuffer[65536];
 		FileWriteStream stream(file, writeBuffer, sizeof(writeBuffer));
 		Writer<FileWriteStream> writer(stream);
-		aux_document.Accept(writer);
+		document.Accept(writer);
 		fclose(file);
 		Logger::getInstance().log(info, "JSON file has been created successfully.");
 	}
@@ -23,11 +23,11 @@ void Profile::getProfileInfo(string json_file) {
 	char readBuffer[65536];
 	FileReadStream stream(file, readBuffer, sizeof(readBuffer));
 	fclose(file);
-Document aux_document;
-	if(aux_document.ParseStream(stream).HasParseError()) {
+	Document document;
+	if(document.ParseStream(stream).HasParseError()) {
 		Logger::getInstance().log(error, "Could not parse file " + json_file + ".");
 	} else {
-		this->getOwnInfo(aux_document);
+		this->getOwnInfo(document);
 		Logger::getInstance().log(info, "File " + json_file + " has been parsed successfully.");
 	}
 }
@@ -85,12 +85,12 @@ void Personal::setAddress(string new_lat, string new_lon) {
 }
 
 string Personal::createJsonFile() {
-	string first_name = "{\n\t\"profile\": {\n\t\t\"first_name\": \"" + this->first_name + "\",\n",
-	last_name = "\t\t\"last_name\": \"" + this->last_name + "\",\n",
-	email = "\t\t\"email\": \"" + this->email + "\",\n",
-	birthday = "\t\t\"birthday\": \"" + this->birthday + "\",\n",
-	address_1 = "\t\t\"address\": {\n\t\t\t\"lat\": \"" + this->address[0] + "\",\n",
-	address_2 = "\t\t\t\"lon\": \"" + this->address[1] + "\"\n\t\t}\n}";
+	string first_name = "{\n\t\"first_name\": \"" + this->first_name + "\",\n",
+	last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
+	email = "\t\"email\": \"" + this->email + "\",\n",
+	birthday = "\t\"birthday\": \"" + this->birthday + "\",\n",
+	address_1 = "\t\"address\": {\n\t\t\"lat\": \"" + this->address[0] + "\",\n",
+	address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t}\n}";
 	return first_name + last_name + email + birthday + address_1 + address_2;
 }
 
@@ -109,7 +109,7 @@ void Summary::setSummary(string new_summary) {
 }
 
 string Summary::createJsonFile() {
-	return "{\n\t\"profile\": {\n\t\t\"summary\": \"" + this->summary + "\"\n}"; 
+	return "{\n\t\"summary\": \"" + this->summary + "\"\n}"; 
 }
 
 
@@ -163,11 +163,11 @@ void Expertise::setExpertise(string new_expertise) {
 }
 
 string Expertise::createJsonFile() {
-	string company = "{\n\t\"profile\": {\n\t\t\"company\": \"" + this->company + "\",\n",
-	position = "\t\t\"position\": \"" + this->position + "\",\n",
-	from = "\t\t\"from\": \"" + this->from + "\",\n",
-	to = "\t\t\"to\": \"" + this->to + "\",\n",
-	expertise = "\t\t\"expertise\": \"" + this->expertise + "\"\n\t\t}\n}";
+	string company = "{\n\t\"company\": \"" + this->company + "\",\n",
+	position = "\t\"position\": \"" + this->position + "\",\n",
+	from = "\t\"from\": \"" + this->from + "\",\n",
+	to = "\t\"to\": \"" + this->to + "\",\n",
+	expertise = "\t\"expertise\": \"" + this->expertise + "\"\n}";
 	return company + position + from + to + expertise;
 }
 
@@ -206,7 +206,7 @@ void Skills::setSkills(string new_skills) {
 }
 
 string Skills::createJsonFile() {
-	return "{\n\t\"profile\": {\n\t\t\"skills\": [" + this->parseSkills();
+	return "{\n\t\"skills\": [" + this->parseSkills();
 }
 
 
@@ -224,5 +224,5 @@ void Picture::setPicture(string new_picture) {
 }
 
 string Picture::createJsonFile() {
-	return "{\n\t\"profile\": {\n\t\t\"picture\": \"" + this->picture + "\"\n}"; 
+	return "{\n\t\"picture\": \"" + this->picture + "\"\n}"; 
 }

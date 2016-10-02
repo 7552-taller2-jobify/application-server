@@ -15,7 +15,7 @@ link_directories(
 )
 
 include_directories(
-	includes
+	libs
 )
 
 add_subdirectory(libs)

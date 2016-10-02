@@ -1,0 +1,15 @@
+#!/bin/bash
+#validacion
+if [ ! -e "$PWD/dev/run" ]; then echo "Tenes que correrlo desde la raiz del proyecto."; exit 2; fi;
+
+#borrando arhcivos de config
+echo -e "==> Limpio archivos [ 'CMakeCache.txt', 'cmake_install.cmake' ] y directorio [ 'CMakeFiles' ]"
+find $PWD \( -name CMakeCache.txt -or -name cmake_install.cmake \) -exec rm {} \;
+rm -rf $PWD/CMakeFiles;
+
+#borrando db generada
+echo -e "==> Limpio base de datos en caso de existir [ 'db/', 'log.txt' ]\n"
+rm -rf $PWD/db $PWD/log.txt;
+
+#levantando contenedor
+docker run -it -v "$PWD":"/usr/src/app" -p 8000:8000 7552taller2jobify/application-server $*

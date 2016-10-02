@@ -16,7 +16,7 @@ public:
 };
  
 TEST_F(TestURLMapper, testFindExistingKey) {
-	string id = url_mapper->find("^http://<applicationserver>/users/.*@.*/perfil/expertise$");
+	string id = url_mapper->find("http://<applicationserver>/users/.*@.*/perfil/expertise");
 	ASSERT_EQ(id, "ProfileExpertise");
 }
 

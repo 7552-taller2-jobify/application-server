@@ -3,6 +3,8 @@
 #include "TestURLMapper.cpp"
 #include "TestAttendantsHandler.cpp"
 #include "Attendant.cpp"
+#include "TestProfile.cpp"
+#include "TestProfileHandler.cpp"
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

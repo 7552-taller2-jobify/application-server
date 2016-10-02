@@ -4,8 +4,7 @@ static const char *s_http_port = "8000";
 
 Server::Server(){
 	this->IsOnLine = false;
-	this->logger = new Logger();
-	this->db = new DataBase(PATH_DB, this->logger);
+	this->db = new DataBase(PATH_DB);
 	this->url_mapper = new URLMapper();
 	this->attendants_handler = new AttendantsHandler();
 }

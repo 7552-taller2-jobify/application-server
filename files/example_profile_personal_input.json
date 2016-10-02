@@ -1,0 +1,10 @@
+{
+	"first_name": "Sergio Matías",
+	"last_name": "Piano",
+	"email": "smpiano@gmail.com",
+	"birthday": "24/07/1984",
+	"address": {
+		"lat": "-34.61543532",
+		"lon": "-58.37213459"
+	}
+}

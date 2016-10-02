@@ -33,7 +33,7 @@ Aplicación con el objetivo de brindar una interfaz para la comunicación de los
 
 5. Apaga la maquina
   ```
-  docker p
+  docker ps
   docker stop <CONTAINER>
   ```
 

@@ -6,8 +6,7 @@ static const char *s_http_port = "8000";
 
 Server::Server(){
 	this->IsOnLine = false;
-	this->logger = new Logger();
-	this->db = new DataBase(PATH_DB, this->logger);
+	this->db = new DataBase(PATH_DB);
 }
 
 void ev_handler(struct mg_connection *c, int ev, void *p){

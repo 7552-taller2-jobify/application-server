@@ -8,7 +8,7 @@ Logger::Logger() {
 	if(file.tellg() == 0) {    
 		file << LOG_FILE_CREATED;
 		file.flush(); 
-	}
+	}       
 }
 
 Logger::~Logger() {

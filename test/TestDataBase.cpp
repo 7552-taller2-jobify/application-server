@@ -6,7 +6,7 @@ public:
 	DataBase *db;
 
 	void SetUp() { 
-		db = new DataBase("./testdb", new Logger());
+		db = new DataBase("./testdb");
 		db->put("10", "Diez");
 		db->put("5", "Cinco");
 		db->put("7", "Siete");

@@ -5,7 +5,7 @@ if [ ! -e "$PWD/dev/run" ]; then echo "Tenes que correrlo desde la raiz del proy
 #borrando arhcivos de config
 echo -e "==> Limpio archivos [ 'CMakeCache.txt', 'cmake_install.cmake' ] y directorio [ 'CMakeFiles' ]"
 find $PWD \( -name CMakeCache.txt -or -name cmake_install.cmake \) -exec rm {} \;
-rm -rf $PWD/CMakeFiles;
+find $PWD -name CMakeFiles -exec rm -rf {} \+
 
 #borrando db generada
 echo -e "==> Limpio base de datos en caso de existir [ 'db/', 'log.txt' ]\n"

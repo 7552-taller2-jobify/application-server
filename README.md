@@ -16,22 +16,17 @@ Aplicación con el objetivo de brindar una interfaz para la comunicación de los
 
 1. Correr "cmake ." sobre la carpeta principal
   ```
-  dev/run cmake .
-  ```
-
-2. Correr "make"
-  ```
   dev/run make
   ```
 
-3. Correr "./Server"
+2. Correr "./Server"
   ```
   dev/run ./Server
   ```
 
-4. Desde el browser ir a <http://localhost:8000/api/hola>
+3. Desde el browser ir a <http://localhost:8000/api/hola>
 
-5. Apaga la maquina
+4. Apaga la maquina
   ```
   docker ps
   docker stop <CONTAINER>

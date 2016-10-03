@@ -1,0 +1,10 @@
+/users/login Login
+/users/.*@.*/recovery_pass RecoveryPass
+/users/.*@.*/contact Contact
+/users/.*@.*/accept Accept
+/users/.*@.*/reject Reject
+/users/.*@.*/perfil/personal ProfilePersonal
+/users/.*@.*/perfil/summary ProfileSummary
+/users/.*@.*/perfil/expertise ProfileExpertise
+/users/.*@.*/perfil/skills ProfileSkills
+/users/.*@.*/perfil/photo ProfilePhoto

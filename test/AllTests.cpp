@@ -1,5 +1,8 @@
 #include "TestDataBase.cpp"
 #include "TestLogger.cpp"
+#include "TestURLMapper.cpp"
+#include "TestAttendantsHandler.cpp"
+#include "Attendant.cpp"
 #include "TestProfile.cpp"
 #include "TestProfileHandler.cpp"
 

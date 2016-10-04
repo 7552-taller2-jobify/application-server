@@ -1,228 +1,227 @@
 #include "Profile.h"
 
-Profile::Profile() {
+Profile::Profile() {}
+
+void Profile::updateJson(std::string json_file) {
+    rapidjson::Document document;
+    if(document.Parse(this->createJsonFile().c_str()).HasParseError()) {
+        Logger::getInstance().log(error, "Could not create JSON file from profile.");
+    } else {	
+        FILE* file = fopen(json_file.c_str(), "w");
+        char writeBuffer[65536];
+        rapidjson::FileWriteStream stream(file, writeBuffer, sizeof(writeBuffer));
+        rapidjson::Writer<rapidjson::FileWriteStream> writer(stream);
+        document.Accept(writer);
+        fclose(file);
+        Logger::getInstance().log(info, "JSON file has been created successfully.");
+    }
 }
 
-void Profile::updateJson(string json_file) {
-	Document document;
-	if(document.Parse(this->createJsonFile().c_str()).HasParseError()) {
-		Logger::getInstance().log(error, "Could not create JSON file from profile.");
-	} else {	
-		FILE* file = fopen(json_file.c_str(), "w");
-		char writeBuffer[65536];
-		FileWriteStream stream(file, writeBuffer, sizeof(writeBuffer));
-		Writer<FileWriteStream> writer(stream);
-		document.Accept(writer);
-		fclose(file);
-		Logger::getInstance().log(info, "JSON file has been created successfully.");
-	}
-}
-
-void Profile::getProfileInfo(string json_file) {
-	FILE* file = fopen(json_file.c_str(), "r");
-	char readBuffer[65536];
-	FileReadStream stream(file, readBuffer, sizeof(readBuffer));
-	fclose(file);
-	Document document;
-	if(document.ParseStream(stream).HasParseError()) {
-		Logger::getInstance().log(error, "Could not parse file " + json_file + ".");
-	} else {
-		this->getOwnInfo(document);
-		Logger::getInstance().log(info, "File " + json_file + " has been parsed successfully.");
-	}
-}
-
-
-
-void Personal::getOwnInfo(Document &document) {
-	this->first_name = document["first_name"].GetString();
-	this->last_name = document["last_name"].GetString();
-	this->email = document["email"].GetString();
-	this->birthday = document["birthday"].GetString();
-	this->address[0] = document["address"]["lat"].GetString();
-	this->address[1] = document["address"]["lon"].GetString();
-}
-
-string Personal::getFirstName() {
-	return this->first_name;
-}
-
-string Personal::getLastName() {
-	return this->last_name;
-}
-
-string Personal::getEmail() {
-	return this->email;
-}
-
-string Personal::getBirthday() {
-	return this->birthday;
-}
-
-string* Personal::getAddress() {
-	return this->address;
-}
-
-void Personal::setFirstName(string new_name) {
-	this->first_name = new_name;
-}
-
-void Personal::setLastName(string new_last_name) {
-	this->last_name = new_last_name;
-}
-
-void Personal::setEmail(string new_email) {
-	this->email = new_email;
-}
-
-void Personal::setBirthday(string new_birthday) {
-	this->birthday = new_birthday;
-}
-
-void Personal::setAddress(string new_lat, string new_lon) {
-	this->address[0] = new_lat.c_str();
-	this->address[1] = new_lon.c_str();
-}
-
-string Personal::createJsonFile() {
-	string first_name = "{\n\t\"first_name\": \"" + this->first_name + "\",\n",
-	last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
-	email = "\t\"email\": \"" + this->email + "\",\n",
-	birthday = "\t\"birthday\": \"" + this->birthday + "\",\n",
-	address_1 = "\t\"address\": {\n\t\t\"lat\": \"" + this->address[0] + "\",\n",
-	address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t}\n}";
-	return first_name + last_name + email + birthday + address_1 + address_2;
+void Profile::getProfileInfo(std::string json_file) {
+    FILE* file = fopen(json_file.c_str(), "r");
+    char readBuffer[65536];
+    rapidjson::FileReadStream stream(file, readBuffer, sizeof(readBuffer));
+    fclose(file);
+    rapidjson::Document document;
+    if(document.ParseStream(stream).HasParseError()) {
+        Logger::getInstance().log(error, "Could not parse file " + json_file + ".");
+    } else {
+        this->getOwnInfo(document);
+        Logger::getInstance().log(info, "File " + json_file + " has been parsed successfully.");
+    }
 }
 
 
 
-void Summary::getOwnInfo(Document &document) {
-	this->summary = document["summary"].GetString();
+void Personal::getOwnInfo(rapidjson::Document &document) {
+    this->first_name = document["first_name"].GetString();
+    this->last_name = document["last_name"].GetString();
+    this->email = document["email"].GetString();
+    this->birthday = document["birthday"].GetString();
+    this->address[0] = document["address"]["lat"].GetString();
+    this->address[1] = document["address"]["lon"].GetString();
 }
 
-string Summary::getSummary() {
-	return this->summary;
+std::string Personal::getFirstName() {
+    return this->first_name;
 }
 
-void Summary::setSummary(string new_summary) {
-	this->summary = new_summary;
+std::string Personal::getLastName() {
+    return this->last_name;
 }
 
-string Summary::createJsonFile() {
-	return "{\n\t\"summary\": \"" + this->summary + "\"\n}"; 
+std::string Personal::getEmail() {
+    return this->email;
 }
 
-
-
-void Expertise::getOwnInfo(Document &document) {
-	this->company = document["company"].GetString();
-	this->position = document["position"].GetString();
-	this->from = document["from"].GetString();
-	this->to = document["to"].GetString();
-	this->expertise = document["expertise"].GetString();
+std::string Personal::getBirthday() {
+    return this->birthday;
 }
 
-string Expertise::getCompany() {
-	return this->company;
+std::string* Personal::getAddress() {
+    return this->address;
 }
 
-string Expertise::getPosition() {
-	return this->position;
+void Personal::setFirstName(std::string new_name) {
+    this->first_name = new_name;
 }
 
-string Expertise::getFrom() {
-	return this->from;
+void Personal::setLastName(std::string new_last_name) {
+    this->last_name = new_last_name;
 }
 
-string Expertise::getTo() {
-	return this->to;
+void Personal::setEmail(std::string new_email) {
+    this->email = new_email;
 }
 
-string Expertise::getExpertise() {
-	return this->expertise;
+void Personal::setBirthday(std::string new_birthday) {
+    this->birthday = new_birthday;
 }
 
-void Expertise::setCompany(string new_company) {
-	this->company = new_company;
+void Personal::setAddress(std::string new_lat, std::string new_lon) {
+    this->address[0] = new_lat.c_str();
+    this->address[1] = new_lon.c_str();
 }
 
-void Expertise::setPosition(string new_position) {
-	this->position = new_position;
-}
-
-void Expertise::setFrom(string new_from) {
-	this->from = new_from;
-}
-
-void Expertise::setTo(string new_to) {
-	this->to = new_to;
-}
-
-void Expertise::setExpertise(string new_expertise) {
-	this->expertise = new_expertise;
-}
-
-string Expertise::createJsonFile() {
-	string company = "{\n\t\"company\": \"" + this->company + "\",\n",
-	position = "\t\"position\": \"" + this->position + "\",\n",
-	from = "\t\"from\": \"" + this->from + "\",\n",
-	to = "\t\"to\": \"" + this->to + "\",\n",
-	expertise = "\t\"expertise\": \"" + this->expertise + "\"\n}";
-	return company + position + from + to + expertise;
+std::string Personal::createJsonFile() {
+    std::string first_name = "{\n\t\"first_name\": \"" + this->first_name + "\",\n",
+    last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
+    email = "\t\"email\": \"" + this->email + "\",\n",
+    birthday = "\t\"birthday\": \"" + this->birthday + "\",\n",
+    address_1 = "\t\"address\": {\n\t\t\"lat\": \"" + this->address[0] + "\",\n",
+    address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t}\n}";
+    return first_name + last_name + email + birthday + address_1 + address_2;
 }
 
 
 
-void Skills::getOwnInfo(Document &document) {
-	for(SizeType i = 0; i < document["skills"].Size(); i++) {
-		if(i != 0) {
-			this->skills += ", ";
-		}
-		this->skills += document["skills"][i].GetString();
-	}
+void Summary::getOwnInfo(rapidjson::Document &document) {
+    this->summary = document["summary"].GetString();
 }
 
-string Skills::parseSkills() {
-	string parsed_skills;
-	stringstream ss;
-	ss.str(this->skills);
-	string item, aux;
-	while(getline(ss, item, ',')) {
-		item.erase(remove(item.begin(), item.end(), ' '), item.end());
-		aux = "\"" + item + "\", ";
-        	parsed_skills += aux;
-    	}
-	parsed_skills = parsed_skills.substr(0, parsed_skills.length() - 2);
-	parsed_skills += "]\n}";
-	return parsed_skills;
+std::string Summary::getSummary() {
+    return this->summary;
 }
 
-string Skills::getSkills() {
-	return this->skills;
+void Summary::setSummary(std::string new_summary) {
+    this->summary = new_summary;
 }
 
-void Skills::setSkills(string new_skills) {
-	this->skills = new_skills;
-}
-
-string Skills::createJsonFile() {
-	return "{\n\t\"skills\": [" + this->parseSkills();
+std::string Summary::createJsonFile() {
+    return "{\n\t\"summary\": \"" + this->summary + "\"\n}"; 
 }
 
 
 
-void Picture::getOwnInfo(Document &document) {
-	this->picture = document["picture"].GetString();
+void Expertise::getOwnInfo(rapidjson::Document &document) {
+    this->company = document["company"].GetString();
+    this->position = document["position"].GetString();
+    this->from = document["from"].GetString();
+    this->to = document["to"].GetString();
+    this->expertise = document["expertise"].GetString();
 }
 
-string Picture::getPicture() {
-	return this->picture;
+std::string Expertise::getCompany() {
+    return this->company;
 }
 
-void Picture::setPicture(string new_picture) {
-	this->picture = new_picture;
+std::string Expertise::getPosition() {
+    return this->position;
 }
 
-string Picture::createJsonFile() {
-	return "{\n\t\"picture\": \"" + this->picture + "\"\n}"; 
+std::string Expertise::getFrom() {
+    return this->from;
+}
+
+std::string Expertise::getTo() {
+    return this->to;
+}
+
+std::string Expertise::getExpertise() {
+    return this->expertise;
+}
+
+void Expertise::setCompany(std::string new_company) {
+    this->company = new_company;
+}
+
+void Expertise::setPosition(std::string new_position) {
+    this->position = new_position;
+}
+
+void Expertise::setFrom(std::string new_from) {
+    this->from = new_from;
+}
+
+void Expertise::setTo(std::string new_to) {
+    this->to = new_to;
+}
+
+void Expertise::setExpertise(std::string new_expertise) {
+    this->expertise = new_expertise;
+}
+
+std::string Expertise::createJsonFile() {
+    std::string company = "{\n\t\"company\": \"" + this->company + "\",\n",
+    position = "\t\"position\": \"" + this->position + "\",\n",
+    from = "\t\"from\": \"" + this->from + "\",\n",
+    to = "\t\"to\": \"" + this->to + "\",\n",
+    expertise = "\t\"expertise\": \"" + this->expertise + "\"\n}";
+    return company + position + from + to + expertise;
+}
+
+
+
+void Skills::getOwnInfo(rapidjson::Document &document) {
+    for(rapidjson::SizeType i = 0; i < document["skills"].Size(); i++) {
+        if(i != 0) {
+            this->skills += ", ";
+        }
+        this->skills += document["skills"][i].GetString();
+    }
+}
+
+std::string Skills::parseSkills() {
+    std::string parsed_skills;
+    std::stringstream ss;
+    ss.str(this->skills);
+    std::string item, aux;
+    while(getline(ss, item, ',')) {
+        item.erase(remove(item.begin(), item.end(), ' '), item.end());
+        aux = "\"" + item + "\", ";
+        parsed_skills += aux;
+    }
+    parsed_skills = parsed_skills.substr(0, parsed_skills.length() - 2);
+    parsed_skills += "]\n}";
+    return parsed_skills;
+}
+
+std::string Skills::getSkills() {
+    return this->skills;
+}
+
+void Skills::setSkills(std::string new_skills) {
+    this->skills = new_skills;
+}
+
+std::string Skills::createJsonFile() {
+    return "{\n\t\"skills\": [" + this->parseSkills();
+}
+
+
+
+void Picture::getOwnInfo(rapidjson::Document &document) {
+    this->picture = document["picture"].GetString();
+}
+
+std::string Picture::getPicture() {
+    return this->picture;
+}
+
+void Picture::setPicture(std::string new_picture) {
+    this->picture = new_picture;
+}
+
+std::string Picture::createJsonFile() {
+    return "{\n\t\"picture\": \"" + this->picture + "\"\n}"; 
 }

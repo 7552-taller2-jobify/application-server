@@ -5,22 +5,20 @@
 #include "leveldb/db.h"
 #include "Logger.h"
 
-using namespace std;
-
-const string PATH_DB = "./db";
+const std::string PATH_DB = "./db";
 
 class DataBase {
 private:
-	leveldb::DB* db;
-	leveldb::Options options;
-	leveldb::Status status;
+    leveldb::DB* db;
+    leveldb::Options options;
+    leveldb::Status status;
 
 public:
-	DataBase(string path);
-	~DataBase();
-	string get(string key);
-	void put(string key, string value);
-	void erase(string key);
+    DataBase(std::string path);
+    ~DataBase();
+    std::string get(std::string key);
+    void put(std::string key, std::string value);
+    void erase(std::string key);
 };
 
 #endif

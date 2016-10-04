@@ -5,16 +5,14 @@
 #include <map>
 #include "Attendant.h"
 
-using namespace std;
-
 class AttendantsHandler {
-private:
-	map<string, Attendant*> attendants;
+ private:
+    std::map<std::string, Attendant*> attendants;
 
-public:
-	AttendantsHandler();
-	~AttendantsHandler();
-	Attendant* find(string key_to_match);
+ public:
+    AttendantsHandler();
+    ~AttendantsHandler();
+    Attendant* find(std::string key_to_match);
 };
 
 #endif

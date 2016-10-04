@@ -21,3 +21,13 @@ include_directories(
 add_subdirectory(libs)
 add_subdirectory(src)
 add_subdirectory(test)
+
+set(SOURCE_FILES ${CMAKE_BINARY_DIR}/src)
+
+set(TEST_FILES ${CMAKE_BINARY_DIR}/test)
+
+file(GLOB ALLFILES ${SOURCE_FILES}/*.h ${SOURCE_FILES}/*.cpp ${TEST_FILES}/*.cpp)
+
+set(CPPLINT_COMMAND ${CMAKE_BINARY_DIR}/cpplint.py --root=application-server/src ${ALLFILES})
+
+execute_process(COMMAND ${CPPLINT_COMMAND})

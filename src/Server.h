@@ -9,22 +9,19 @@
 #include "URLMapper.h"
 #include "AttendantsHandler.h"
 
-using namespace std;
-
 class Server{
-private:
-	bool IsOnLine;
-	DataBase *db;
-	Logger *logger;
-	URLMapper *url_mapper;
-	AttendantsHandler *attendants_handler;
+ private:
+    bool IsOnLine;
+    DataBase *db;
+    URLMapper *url_mapper;
+    AttendantsHandler *attendants_handler;
 
-public:
-	Server();
-	~Server();
-	friend void ev_handler(struct mg_connection *c, int ev, void *p);
-	void start();
-	void resolveRequest(string request);
+ public:
+    Server();
+    ~Server();
+    friend void ev_handler(struct mg_connection *c, int ev, void *p);
+    void start();
+    void resolveRequest(std::string request);
 };
 
 #endif

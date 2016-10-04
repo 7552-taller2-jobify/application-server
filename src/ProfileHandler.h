@@ -7,16 +7,14 @@
 #include "Profile.h"
 #include "RegexMatcher.h"
 
-using namespace std;
-
 class ProfileHandler {
-private:
-	map<string, Profile*> profiles;
+ private:
+    std::map<std::string, Profile*> profiles;
 
-public:
-	ProfileHandler();
-	~ProfileHandler();
-	Profile* find(string key_to_match);
+ public:
+    ProfileHandler();
+    ~ProfileHandler();
+    Profile* find(std::string key_to_match);
 };
 
 #endif

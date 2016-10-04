@@ -11,114 +11,106 @@
 #include "rapidjson/writer.h"
 #include "Logger.h"
 
-using namespace rapidjson;
-using namespace std;
-
 class Profile {
-protected:
-	virtual string createJsonFile() = 0;
-	virtual void getOwnInfo(Document &document) = 0;
+ protected:
+    virtual std::string createJsonFile() = 0;
+    virtual void getOwnInfo(rapidjson::Document &document) = 0;
 
-public:
-	Profile();
-	~Profile() {};
-	virtual void getProfileInfo(string json_file);
-	void updateJson(string json_file);
+ public:
+    Profile();
+    ~Profile() {}
+    virtual void getProfileInfo(std::string json_file);
+    void updateJson(std::string json_file);
 };
 
 class Personal: public Profile {
-private:
-	string first_name;
-	string last_name;
-	string email;
-	string birthday;
-	string address[2];
+ private:
+    std::string first_name;
+    std::string last_name;
+    std::string email;
+    std::string birthday;
+    std::string address[2];
+    void getOwnInfo(rapidjson::Document &document);
 
-	void getOwnInfo(Document &document);
-
-public:
-	Personal() : Profile() {};
-	~Personal() {};
-	string getFirstName();
-	string getLastName();
-	string getEmail();
-	string getBirthday();
-	string* getAddress();
-	void setFirstName(string new_first_name);
-	void setLastName(string new_last_name);
-	void setEmail(string new_email);
-	void setBirthday(string new_birthday);
-	void setAddress(string new_lat, string new_lon);
-	string createJsonFile();
+ public:
+    Personal() : Profile() {}
+    ~Personal() {}
+    std::string getFirstName();
+    std::string getLastName();
+    std::string getEmail();
+    std::string getBirthday();
+    std::string* getAddress();
+    void setFirstName(std::string new_first_name);
+    void setLastName(std::string new_last_name);
+    void setEmail(std::string new_email);
+    void setBirthday(std::string new_birthday);
+    void setAddress(std::string new_lat, std::string new_lon);
+    std::string createJsonFile();
 };
 
 class Summary: public Profile {
-private:
-	string summary;
+ private:
+    std::string summary;
+    void getOwnInfo(rapidjson::Document &document);
 
-	void getOwnInfo(Document &document);
-
-public:
-	Summary() : Profile() {};
-	~Summary() {};
-	string getSummary();
-	void setSummary(string new_summary);
-	string createJsonFile();
+ public:
+    Summary() : Profile() {}
+    ~Summary() {}
+    std::string getSummary();
+    void setSummary(std::string new_summary);
+    std::string createJsonFile();
 };
 
 class Expertise: public Profile {
-private:
-	string company;
-	string position;
-	string from;
-	string to;
-	string expertise;
+ private:
+    std::string company;
+    std::string position;
+    std::string from;
+    std::string to;
+    std::string expertise;
+    void getOwnInfo(rapidjson::Document &document);
 
-	void getOwnInfo(Document &document);
-
-public:
-	Expertise() : Profile() {};
-	~Expertise() {};
-	string getCompany();
-	string getPosition();
-	string getFrom();
-	string getTo();
-	string getExpertise();
-	void setCompany(string new_company);
-	void setPosition(string new_position);
-	void setFrom(string new_from);
-	void setTo(string new_to);
-	void setExpertise(string new_expertise);
-	string createJsonFile();
+ public:
+    Expertise() : Profile() {}
+    ~Expertise() {}
+    std::string getCompany();
+    std::string getPosition();
+    std::string getFrom();
+    std::string getTo();
+    std::string getExpertise();
+    void setCompany(std::string new_company);
+    void setPosition(std::string new_position);
+    void setFrom(std::string new_from);
+    void setTo(std::string new_to);
+    void setExpertise(std::string new_expertise);
+    std::string createJsonFile();
 };
 
 class Skills: public Profile {
-private:
-	string skills;
-	string parseSkills();
+ private:
+    std::string skills;
+    std::string parseSkills();
+    void getOwnInfo(rapidjson::Document &document);
 
-	void getOwnInfo(Document &document);
-
-public:
-	Skills() : Profile() {};
-	~Skills() {};
-	string getSkills();
-	void setSkills(string new_skills);
-	string createJsonFile();
+ public:
+    Skills() : Profile() {}
+    ~Skills() {}
+    std::string getSkills();
+    void setSkills(std::string new_skills);
+    std::string createJsonFile();
 };
 
 class Picture: public Profile {
-private:
-	string picture;
+ private:
+    std::string picture;
+	void getOwnInfo(rapidjson::Document &document);
 
-	void getOwnInfo(Document &document);
-
-public:
-	Picture() : Profile() {};
-	~Picture() {};
-	string getPicture();
-	void setPicture(string new_picture);
-	string createJsonFile();
+ public:
+    Picture() : Profile() {}
+    ~Picture() {}
+    std::string getPicture();
+    void setPicture(std::string new_picture);
+    std::string createJsonFile();
 };
 
 #endif

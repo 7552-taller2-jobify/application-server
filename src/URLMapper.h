@@ -7,19 +7,17 @@
 #include <sstream>
 #include "RegexMatcher.h"
 
-using namespace std;
-
-const string URL_FILE_PATH = "files/url.txt";
+const char URL_FILE_PATH[] = "files/url.txt";
 
 class URLMapper {
-private:
-	map<string, string> urls;
-	ifstream file;
+ private:
+    std::map<std::string, std::string> urls;
+    std::ifstream file;
 
-public:
-	URLMapper();
-	~URLMapper();
-	string find(string key_to_match);
+ public:
+    URLMapper();
+    ~URLMapper();
+    std::string find(std::string key);
 };
 
 #endif

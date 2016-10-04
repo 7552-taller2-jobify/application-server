@@ -1,10 +1,4 @@
-#include "TestDataBase.cpp"
-#include "TestLogger.cpp"
-#include "TestURLMapper.cpp"
-#include "TestAttendantsHandler.cpp"
-#include "Attendant.cpp"
-#include "TestProfile.cpp"
-#include "TestProfileHandler.cpp"
+#include <gtest/gtest.h>
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

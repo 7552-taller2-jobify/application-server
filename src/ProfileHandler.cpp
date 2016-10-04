@@ -1,6 +1,8 @@
+// "Copyright 2016 <Jobify>"
+
+#include "ProfileHandler.h"
 #include <string>
 #include <map>
-#include "ProfileHandler.h"
 
 ProfileHandler::ProfileHandler() {
     profiles["personal_.*"] = new Personal();

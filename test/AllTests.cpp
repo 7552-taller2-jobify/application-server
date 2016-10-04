@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #include <gtest/gtest.h>
 
 int main(int argc, char **argv) {

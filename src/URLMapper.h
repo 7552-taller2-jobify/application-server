@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #ifndef URLMAPPER_H_
 #define URLMAPPER_H_
 
@@ -20,4 +22,4 @@ class URLMapper {
     std::string find(std::string key);
 };
 
-#endif
+#endif  // URLMAPPER_H_

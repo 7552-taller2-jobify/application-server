@@ -1,4 +1,8 @@
+// "Copyright 2016 <Jobify>"
+
 #include "AttendantsHandler.h"
+#include <string>
+#include <map>
 
 AttendantsHandler::AttendantsHandler() {
     attendants["Login"] = new Login();
@@ -16,7 +20,8 @@ AttendantsHandler::AttendantsHandler() {
 AttendantsHandler::~AttendantsHandler() {}
 
 Attendant* AttendantsHandler::find(std::string key_to_match) {
-    for(std::map<std::string, Attendant*>::iterator it = this->attendants.begin(); it != this->attendants.end(); it++) {
+    for (std::map<std::string, Attendant*>::iterator it =
+                this->attendants.begin(); it != this->attendants.end(); it++) {
         if (key_to_match == it->first) {
             return it->second;
         }

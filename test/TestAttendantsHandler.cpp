@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #include <gtest/gtest.h>
 #include <fstream>
 #include "AttendantsHandler.h"
@@ -7,7 +9,7 @@ class TestAttendantsHandler : public ::testing::Test {
     AttendantsHandler *attendants_handler;
     std::ifstream file;
 
-    void SetUp() { 
+    void SetUp() {
         attendants_handler = new AttendantsHandler();
     }
 

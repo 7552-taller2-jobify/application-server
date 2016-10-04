@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #ifndef PROFILEHANDLER_H_
 #define PROFILEHANDLER_H_
 
@@ -17,4 +19,4 @@ class ProfileHandler {
     Profile* find(std::string key_to_match);
 };
 
-#endif
+#endif  // PROFILEHANDLER_H_

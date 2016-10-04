@@ -1,11 +1,13 @@
+// "Copyright 2016 <Jobify>"
+
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
+#include <stdio.h>
+#include <time.h>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <stdio.h>
-#include <time.h>
 
 enum LogStatus {error = 0, warn, info, debug};
 
@@ -27,4 +29,4 @@ class Logger {
     void log(enum LogStatus status, const std::string message);
 };
 
-#endif
+#endif  // LOGGER_H_

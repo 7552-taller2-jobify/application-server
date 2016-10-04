@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #ifndef ATTENDANT_H_
 #define ATTENDANT_H_
 
@@ -63,4 +65,4 @@ class ProfilePhoto: public Attendant {
     void attend(std::string operation);
 };
 
-#endif //ATTENDANT_H_
+#endif  // ATTENDANT_H_

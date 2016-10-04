@@ -1,15 +1,17 @@
-#include <string>
+// "Copyright 2016 <Jobify>"
+
 #include "Logger.h"
+#include <string>
 
 Logger::Logger() {
-    if(!file.is_open()) {
+    if (!file.is_open()) {
         file.open(LOG_FILE_PATH, std::fstream::out | std::fstream::app);
     }
-    file.seekg(0, std::ios::end);  
-    if(file.tellg() == 0) {    
+    file.seekg(0, std::ios::end);
+    if (file.tellg() == 0) {
         file << LOG_FILE_CREATED;
-        file.flush(); 
-    }       
+        file.flush();
+    }
 }
 
 Logger::~Logger() {
@@ -20,14 +22,14 @@ const std::string Logger::getCurrentDateParsed() {
     time_t now = time(0);
     struct tm tstruct;
     char buf[80];
-    tstruct = *localtime(&now);
+    localtime_r(&now, &tstruct);
     strftime(buf, sizeof(buf), "%Y-%m-%d %X ", &tstruct);
     return buf;
 }
 
 void Logger::log(enum LogStatus status, const std::string message) {
     std::string status_aux;
-    switch(status) {
+    switch (status) {
         case error:
             status_aux = "Error: ";
             break;
@@ -41,7 +43,7 @@ void Logger::log(enum LogStatus status, const std::string message) {
             status_aux = "Debug: ";
             break;
         default:
-            status_aux = "Error: ";			
+            status_aux = "Error: ";
     }
     file << getCurrentDateParsed() << status_aux << message << "\n";
     file.flush();

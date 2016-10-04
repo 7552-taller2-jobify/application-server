@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #ifndef ATTENDANTSHANDLER_H_
 #define ATTENDANTSHANDLER_H_
 
@@ -15,4 +17,4 @@ class AttendantsHandler {
     Attendant* find(std::string key_to_match);
 };
 
-#endif
+#endif  // ATTENDANTSHANDLER_H_

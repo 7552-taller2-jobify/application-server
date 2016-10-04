@@ -1,19 +1,24 @@
+// "Copyright 2016 <Jobify>"
+
 #include "Profile.h"
+#include <string>
 
 Profile::Profile() {}
 
 void Profile::updateJson(std::string json_file) {
     rapidjson::Document document;
-    if(document.Parse(this->createJsonFile().c_str()).HasParseError()) {
-        Logger::getInstance().log(error, "Could not create JSON file from profile.");
-    } else {	
+    if (document.Parse(this->createJsonFile().c_str()).HasParseError()) {
+        Logger::getInstance().log(error,
+                        "Could not create JSON file from profile.");
+    } else {
         FILE* file = fopen(json_file.c_str(), "w");
-        char writeBuffer[65536];
-        rapidjson::FileWriteStream stream(file, writeBuffer, sizeof(writeBuffer));
+        char buffer[65536];
+        rapidjson::FileWriteStream stream(file, buffer, sizeof(buffer));
         rapidjson::Writer<rapidjson::FileWriteStream> writer(stream);
         document.Accept(writer);
         fclose(file);
-        Logger::getInstance().log(info, "JSON file has been created successfully.");
+        Logger::getInstance().log(info,
+                            "JSON file has been created successfully.");
     }
 }
 
@@ -23,17 +28,19 @@ void Profile::getProfileInfo(std::string json_file) {
     rapidjson::FileReadStream stream(file, readBuffer, sizeof(readBuffer));
     fclose(file);
     rapidjson::Document document;
-    if(document.ParseStream(stream).HasParseError()) {
-        Logger::getInstance().log(error, "Could not parse file " + json_file + ".");
+    if (document.ParseStream(stream).HasParseError()) {
+        Logger::getInstance().log(error,
+                            "Could not parse file " + json_file + ".");
     } else {
         this->getOwnInfo(document);
-        Logger::getInstance().log(info, "File " + json_file + " has been parsed successfully.");
+        Logger::getInstance().log(info, "File " + json_file +
+                                    " has been parsed successfully.");
     }
 }
 
 
 
-void Personal::getOwnInfo(rapidjson::Document &document) {
+void Personal::getOwnInfo(const rapidjson::Document &document) {
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
     this->email = document["email"].GetString();
@@ -84,18 +91,20 @@ void Personal::setAddress(std::string new_lat, std::string new_lon) {
 }
 
 std::string Personal::createJsonFile() {
-    std::string first_name = "{\n\t\"first_name\": \"" + this->first_name + "\",\n",
+    std::string first_name = "{\n\t\"first_name\": \"" +
+                                this->first_name + "\",\n",
     last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
     email = "\t\"email\": \"" + this->email + "\",\n",
     birthday = "\t\"birthday\": \"" + this->birthday + "\",\n",
-    address_1 = "\t\"address\": {\n\t\t\"lat\": \"" + this->address[0] + "\",\n",
+    address_1 = "\t\"address\": {\n\t\t\"lat\": \"" +
+                                        this->address[0] + "\",\n",
     address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t}\n}";
     return first_name + last_name + email + birthday + address_1 + address_2;
 }
 
 
 
-void Summary::getOwnInfo(rapidjson::Document &document) {
+void Summary::getOwnInfo(const rapidjson::Document &document) {
     this->summary = document["summary"].GetString();
 }
 
@@ -108,12 +117,12 @@ void Summary::setSummary(std::string new_summary) {
 }
 
 std::string Summary::createJsonFile() {
-    return "{\n\t\"summary\": \"" + this->summary + "\"\n}"; 
+    return "{\n\t\"summary\": \"" + this->summary + "\"\n}";
 }
 
 
 
-void Expertise::getOwnInfo(rapidjson::Document &document) {
+void Expertise::getOwnInfo(const rapidjson::Document &document) {
     this->company = document["company"].GetString();
     this->position = document["position"].GetString();
     this->from = document["from"].GetString();
@@ -172,9 +181,9 @@ std::string Expertise::createJsonFile() {
 
 
 
-void Skills::getOwnInfo(rapidjson::Document &document) {
-    for(rapidjson::SizeType i = 0; i < document["skills"].Size(); i++) {
-        if(i != 0) {
+void Skills::getOwnInfo(const rapidjson::Document &document) {
+    for (rapidjson::SizeType i = 0; i < document["skills"].Size(); i++) {
+        if (i != 0) {
             this->skills += ", ";
         }
         this->skills += document["skills"][i].GetString();
@@ -186,7 +195,7 @@ std::string Skills::parseSkills() {
     std::stringstream ss;
     ss.str(this->skills);
     std::string item, aux;
-    while(getline(ss, item, ',')) {
+    while (getline(ss, item, ',')) {
         item.erase(remove(item.begin(), item.end(), ' '), item.end());
         aux = "\"" + item + "\", ";
         parsed_skills += aux;
@@ -210,7 +219,7 @@ std::string Skills::createJsonFile() {
 
 
 
-void Picture::getOwnInfo(rapidjson::Document &document) {
+void Picture::getOwnInfo(const rapidjson::Document &document) {
     this->picture = document["picture"].GetString();
 }
 
@@ -223,5 +232,5 @@ void Picture::setPicture(std::string new_picture) {
 }
 
 std::string Picture::createJsonFile() {
-    return "{\n\t\"picture\": \"" + this->picture + "\"\n}"; 
+    return "{\n\t\"picture\": \"" + this->picture + "\"\n}";
 }

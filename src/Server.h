@@ -1,8 +1,11 @@
+// "Copyright 2016 <Jobify>"
+
 #ifndef SERVER_H_
 #define SERVER_H_
 
 #include <iostream>
-#include "mongoose.h"
+#include <string>
+#include "mongoose/mongoose.h"
 #include "DataBase.h"
 #include "RequestAdministrator.h"
 #include "curl/curl.h"
@@ -24,4 +27,4 @@ class Server{
     void resolveRequest(std::string request);
 };
 
-#endif
+#endif  // SERVER_H_

@@ -1,6 +1,8 @@
+// "Copyright 2016 <Jobify>"
+
+#include "URLMapper.h"
 #include <string>
 #include <map>
-#include "URLMapper.h"
 
 URLMapper::URLMapper() {
     if (!file.is_open()) {
@@ -10,7 +12,7 @@ URLMapper::URLMapper() {
     while (getline(file, line)) {
         std::stringstream ss_line(line);
         std::string parameters[2];
-        ss_line >> parameters[0] >> parameters[1]; 
+        ss_line >> parameters[0] >> parameters[1];
         urls[parameters[0]] = parameters[1];
     }
     file.close();

@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #ifndef PROFILE_H_
 #define PROFILE_H_
 
@@ -14,7 +16,7 @@
 class Profile {
  protected:
     virtual std::string createJsonFile() = 0;
-    virtual void getOwnInfo(rapidjson::Document &document) = 0;
+    virtual void getOwnInfo(const rapidjson::Document &document) = 0;
 
  public:
     Profile();
@@ -30,7 +32,7 @@ class Personal: public Profile {
     std::string email;
     std::string birthday;
     std::string address[2];
-    void getOwnInfo(rapidjson::Document &document);
+    void getOwnInfo(const rapidjson::Document &document);
 
  public:
     Personal() : Profile() {}
@@ -51,7 +53,7 @@ class Personal: public Profile {
 class Summary: public Profile {
  private:
     std::string summary;
-    void getOwnInfo(rapidjson::Document &document);
+    void getOwnInfo(const rapidjson::Document &document);
 
  public:
     Summary() : Profile() {}
@@ -68,7 +70,7 @@ class Expertise: public Profile {
     std::string from;
     std::string to;
     std::string expertise;
-    void getOwnInfo(rapidjson::Document &document);
+    void getOwnInfo(const rapidjson::Document &document);
 
  public:
     Expertise() : Profile() {}
@@ -90,7 +92,7 @@ class Skills: public Profile {
  private:
     std::string skills;
     std::string parseSkills();
-    void getOwnInfo(rapidjson::Document &document);
+    void getOwnInfo(const rapidjson::Document &document);
 
  public:
     Skills() : Profile() {}
@@ -103,7 +105,7 @@ class Skills: public Profile {
 class Picture: public Profile {
  private:
     std::string picture;
-	void getOwnInfo(rapidjson::Document &document);
+    void getOwnInfo(const rapidjson::Document &document);
 
  public:
     Picture() : Profile() {}
@@ -113,4 +115,4 @@ class Picture: public Profile {
     std::string createJsonFile();
 };
 
-#endif
+#endif  // PROFILE_H_

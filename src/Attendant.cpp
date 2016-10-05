@@ -38,8 +38,6 @@ void Login::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
-void Login::hola() {}
-
 
 
 RecoveryPass::RecoveryPass() {
@@ -51,8 +49,6 @@ RecoveryPass::~RecoveryPass() {}
 void RecoveryPass::get(struct Message operation) {
     std::cout << "Chau\n" << std::endl;
 }
-
-void RecoveryPass::hola() {}
 
 
 
@@ -66,8 +62,6 @@ void Contact::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
-void Contact::hola() {}
-
 
 
 Accept::Accept() {
@@ -79,8 +73,6 @@ Accept::~Accept() {}
 void Accept::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
-
-void Accept::hola() {}
 
 
 
@@ -94,8 +86,6 @@ void Reject::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
-void Reject::hola() {}
-
 
 
 ProfilePersonal::ProfilePersonal() {
@@ -107,8 +97,6 @@ ProfilePersonal::~ProfilePersonal() {}
 void ProfilePersonal::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
-
-void ProfilePersonal::hola() {}
 
 
 
@@ -122,8 +110,6 @@ void ProfileSummary::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
-void ProfileSummary::hola() {}
-
 
 
 ProfileExpertise::ProfileExpertise() {
@@ -135,8 +121,6 @@ ProfileExpertise::~ProfileExpertise() {}
 void ProfileExpertise::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
-
-void ProfileExpertise::hola() {}
 
 
 
@@ -150,8 +134,6 @@ void ProfileSkills::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
-void ProfileSkills::hola() {}
-
 
 
 ProfilePhoto::ProfilePhoto() {
@@ -163,5 +145,3 @@ ProfilePhoto::~ProfilePhoto() {}
 void ProfilePhoto::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
-
-void ProfilePhoto::hola() {}

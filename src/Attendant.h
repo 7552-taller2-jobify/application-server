@@ -18,10 +18,9 @@ class Attendant {
 
  public:
     Attendant();
-    ~Attendant();
+    virtual ~Attendant();
     void attend(struct Message operation);
     static void get(struct Message operation);
-    virtual void hola() = 0;
 };
 
 
@@ -30,7 +29,6 @@ class Login: public Attendant {
     Login();
     ~Login();
     static void get(struct Message operation);
-    void hola();
 };
 
 class RecoveryPass: public Attendant {
@@ -38,7 +36,6 @@ class RecoveryPass: public Attendant {
     RecoveryPass();
     ~RecoveryPass();
     static void get(struct Message operation);
-    void hola();
 };
 
 class Contact: public Attendant {
@@ -46,7 +43,6 @@ class Contact: public Attendant {
     Contact();
     ~Contact();
     static void get(struct Message operation);
-    void hola();
 };
 
 class Accept: public Attendant {
@@ -54,7 +50,6 @@ class Accept: public Attendant {
     Accept();
     ~Accept();
     static void get(struct Message operation);
-    void hola();
 };
 
 class Reject: public Attendant {
@@ -62,7 +57,6 @@ class Reject: public Attendant {
     Reject();
     ~Reject();
     static void get(struct Message operation);
-    void hola();
 };
 
 class ProfilePersonal: public Attendant {
@@ -70,7 +64,6 @@ class ProfilePersonal: public Attendant {
     ProfilePersonal();
     ~ProfilePersonal();
     static void get(struct Message operation);
-    void hola();
 };
 
 class ProfileSummary: public Attendant {
@@ -78,7 +71,6 @@ class ProfileSummary: public Attendant {
     ProfileSummary();
     ~ProfileSummary();
     static void get(struct Message operation);
-    void hola();
 };
 
 class ProfileExpertise: public Attendant {
@@ -86,7 +78,6 @@ class ProfileExpertise: public Attendant {
     ProfileExpertise();
     ~ProfileExpertise();
     static void get(struct Message operation);
-    void hola();
 };
 
 class ProfileSkills: public Attendant {
@@ -94,7 +85,6 @@ class ProfileSkills: public Attendant {
     ProfileSkills();
     ~ProfileSkills();
     static void get(struct Message operation);
-    void hola();
 };
 
 class ProfilePhoto: public Attendant {
@@ -102,7 +92,6 @@ class ProfilePhoto: public Attendant {
     ProfilePhoto();
     ~ProfilePhoto();
     static void get(struct Message operation);
-    void hola();
 };
 
 #endif  // ATTENDANT_H_

@@ -7,7 +7,6 @@ static const char s_http_port[] = "8000";
 
 Server::Server() {
     this->IsOnLine = false;
-    this->db = new DataBase(PATH_DB);
     this->url_mapper = new URLMapper();
     this->attendants_handler = new AttendantsHandler();
 }
@@ -41,7 +40,6 @@ void Server::start() {
 }
 
 Server::~Server() {
-    delete this->db;
     delete this->url_mapper;
     delete this->attendants_handler;
 }

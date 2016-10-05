@@ -11,8 +11,8 @@ void Attendant::attend(struct Message operation) {
     if (isMethodSupported(operation.verb_http)) {
         this->functions[operation.verb_http](operation);
     } else {
-        // Logger::log(error, "Does not exist the request " +
-        //                    operation.verb_http + ".");
+        Logger::getInstance().log(error, "Does not exist the request " +
+                                        operation.verb_http + ".");
     }
 }
 

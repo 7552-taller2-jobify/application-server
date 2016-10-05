@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #ifndef REQUESTPARSE_H_
 #define REQUESTPARSE_H_
 
@@ -7,18 +9,17 @@
 #include <string>
 #include <sstream>
 
-using namespace std;
+class RequestParse {
+ private:
+    string getHTTPVerb(struct http_message* hm);
+    int areEqual(const struct mg_str *s1, const struct mg_str *s2);
 
-class RequestParse{
-private:
-	string getHTTPVerb(struct http_message* hm);
-	int areEqual(const struct mg_str *s1, const struct mg_str *s2);
-public:
-	RequestParse();
+ public:
+    RequestParse();
 
-	Message* parseRequest(struct http_message* hm);
+    Message* parseRequest(struct http_message* hm);
 
-	virtual ~RequestParse();
+    virtual ~RequestParse();
 };
 
 #endif /* REQUESTPARSE_H_ */

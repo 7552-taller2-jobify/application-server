@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #include "RequestParse.h"
 
 RequestParse::RequestParse() {

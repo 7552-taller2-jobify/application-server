@@ -3,9 +3,9 @@
 #include "DataBase.h"
 #include <string>
 
-DataBase::DataBase(std::string path) {
+DataBase::DataBase() {
     this->options.create_if_missing = true;
-    this->status = leveldb::DB::Open(options, path, &(this->db));
+    this->status = leveldb::DB::Open(options, PATH_DB, &(this->db));
     if (this->status.ok()) {
         Logger::getInstance().log(info, "Database opened successfully.");
     } else {

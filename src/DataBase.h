@@ -15,9 +15,14 @@ class DataBase {
     leveldb::DB* db;
     leveldb::Options options;
     leveldb::Status status;
+    DataBase();
 
  public:
-    explicit DataBase(std::string path);
+    static DataBase& getInstance() {
+        static DataBase an_instance;
+        return an_instance;
+    }
+    //explicit DataBase(std::string path);
     ~DataBase();
     std::string get(std::string key);
     void put(std::string key, std::string value);

@@ -18,6 +18,9 @@ void ev_handler(struct mg_connection *c, int ev, void *p) {
 }
 
 void Server::start() {
+    Request* request = new Request();
+    string response = request->Execute("http://demo.wp-api.org/wp-json/broker/v1");
+
     CURL *curl = curl_easy_init();
     this->IsOnLine = true;
     struct mg_mgr mgr;  // Mongoose event manager

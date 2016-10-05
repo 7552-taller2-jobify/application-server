@@ -12,6 +12,7 @@ Server::Server() {
     this->attendants_handler = new AttendantsHandler();
 }
 
+
 void ev_handler(struct mg_connection *c, int ev, void *p) {
     RequestAdministrator* requestAdministrator = new RequestAdministrator(c,ev,(struct http_message *)p);
     requestAdministrator->handle();

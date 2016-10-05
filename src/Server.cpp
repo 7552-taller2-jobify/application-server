@@ -11,8 +11,8 @@ Server::Server(){
 
 void ev_handler(struct mg_connection *c, int ev, void *p){
 	
-	RequestAdministrator* requestAdministrator = new RequestAdministrator();
-	requestAdministrator->handle(c,ev,p);
+	RequestAdministrator* requestAdministrator = new RequestAdministrator(c,ev,(struct http_message *)p);
+	requestAdministrator->handle();
 }
 
 void Server::start(){

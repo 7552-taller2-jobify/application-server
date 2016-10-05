@@ -3,40 +3,56 @@
 #include "Attendant.h"
 #include <string>
 
-Attendant::Attendant() {
-    this->methods = new std::vector<std::string>();
-}
+Attendant::Attendant() {}
 
 Attendant::~Attendant() {}
 
-void Attendant::attend(std::string operation) {}
+void Attendant::attend(struct Message operation) {
+    if (isMethodSupported(operation.verb_http)) {
+        this->functions[operation.verb_http](operation);
+    } else {
+        // Logger::log(error, "Does not exist the request " +
+        //                    operation.verb_http + ".");
+    }
+}
 
 bool Attendant::isMethodSupported(std::string a_method) {
-    for (int i = 0; i < this->methods->size(); i++) {
-        if (this->methods->at(i) == a_method) {
+    for (std::map<std::string, function>::iterator it = this->functions.begin();
+                                                it != this->functions.end(); it++) {
+        if (it->first == a_method) {
             return true;
         }
     }
     return false;
 }
 
+
+
 Login::Login() {
-    methods->push_back("GET");
+    this->functions["GET"] = get;
 }
 
 Login::~Login() {}
 
-void Login::attend(std::string operation) {}
+void Login::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+void Login::hola() {}
 
 
 
 RecoveryPass::RecoveryPass() {
-    // methods->push_back("GET");
+    this->functions["GET"] = get;
 }
 
 RecoveryPass::~RecoveryPass() {}
 
-void RecoveryPass::attend(std::string operation) {}
+void RecoveryPass::get(struct Message operation) {
+    std::cout << "Chau\n" << std::endl;
+}
+
+void RecoveryPass::hola() {}
 
 
 
@@ -46,7 +62,11 @@ Contact::Contact() {
 
 Contact::~Contact() {}
 
-void Contact::attend(std::string operation) {}
+void Contact::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+void Contact::hola() {}
 
 
 
@@ -56,7 +76,11 @@ Accept::Accept() {
 
 Accept::~Accept() {}
 
-void Accept::attend(std::string operation) {}
+void Accept::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+void Accept::hola() {}
 
 
 
@@ -66,7 +90,11 @@ Reject::Reject() {
 
 Reject::~Reject() {}
 
-void Reject::attend(std::string operation) {}
+void Reject::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+void Reject::hola() {}
 
 
 
@@ -76,7 +104,11 @@ ProfilePersonal::ProfilePersonal() {
 
 ProfilePersonal::~ProfilePersonal() {}
 
-void ProfilePersonal::attend(std::string operation) {}
+void ProfilePersonal::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+void ProfilePersonal::hola() {}
 
 
 
@@ -86,7 +118,11 @@ ProfileSummary::ProfileSummary() {
 
 ProfileSummary::~ProfileSummary() {}
 
-void ProfileSummary::attend(std::string operation) {}
+void ProfileSummary::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+void ProfileSummary::hola() {}
 
 
 
@@ -96,7 +132,11 @@ ProfileExpertise::ProfileExpertise() {
 
 ProfileExpertise::~ProfileExpertise() {}
 
-void ProfileExpertise::attend(std::string operation) {}
+void ProfileExpertise::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+void ProfileExpertise::hola() {}
 
 
 
@@ -106,7 +146,11 @@ ProfileSkills::ProfileSkills() {
 
 ProfileSkills::~ProfileSkills() {}
 
-void ProfileSkills::attend(std::string operation) {}
+void ProfileSkills::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+void ProfileSkills::hola() {}
 
 
 
@@ -116,4 +160,8 @@ ProfilePhoto::ProfilePhoto() {
 
 ProfilePhoto::~ProfilePhoto() {}
 
-void ProfilePhoto::attend(std::string operation) {}
+void ProfilePhoto::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+void ProfilePhoto::hola() {}

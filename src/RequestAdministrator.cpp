@@ -70,6 +70,3 @@ void RequestAdministrator::handle(struct mg_connection *c, int ev, void *p){
 	}
 }  
 */
-
-
->>>>>>> b591d65160a0146fffaeccbacad3c310aaaf799a

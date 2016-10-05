@@ -48,7 +48,7 @@ Server::~Server() {
 
 void Server::resolveRequest(std::string request) {
     std::string class_id = this->url_mapper->find(request);
-    Attendant *attendant = this->attendants_handler->find(class_id);
+    /*Attendant *attendant = this->attendants_handler->find(class_id);
     attendant->attend(request);
     /*TODO en lugar de string request, podría pasarse un struct con todos
     los datos necesarios.

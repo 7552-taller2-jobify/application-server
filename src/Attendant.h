@@ -29,6 +29,7 @@ class Login: public Attendant {
     Login();
     ~Login();
     static void get(struct Message operation);
+    static void post(struct Message operation);
 };
 
 class RecoveryPass: public Attendant {

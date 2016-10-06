@@ -31,12 +31,17 @@ bool Attendant::isMethodSupported(std::string a_method) {
 
 Login::Login() {
     this->functions["GET"] = get;
+    this->functions["POST"] = post;
 }
 
 Login::~Login() {}
 
 void Login::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
+}
+
+void Login::post(struct Message operation) {
+    //operation.body;
 }
 
 

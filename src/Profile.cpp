@@ -40,6 +40,35 @@ void Profile::getProfileInfo(std::string json_file) {
 
 
 
+void LoginInformation::getOwnInfo(const rapidjson::Document &document) {
+    this->email = document["email"].GetString();
+    this->password = document["password"].GetString();
+}
+
+std::string LoginInformation::getEmail() {
+    return this->email;
+}
+
+std::string LoginInformation::getPassword() {
+    return this->password;
+}
+
+void LoginInformation::setEmail(std::string new_email) {
+    this->email = new_email;
+}
+
+void LoginInformation::setPassword(std::string new_password) {
+    this->password = new_password;
+}
+
+std::string LoginInformation::createJsonFile() {
+    std::string email = "{\n\t\"email\": \"" + this->email + "\",\n",
+    password = "\t\"password\": \"" + this->password + "\"\n}";
+    return email + password;
+}
+
+
+
 void Personal::getOwnInfo(const rapidjson::Document &document) {
     this->id = document["id"].GetDouble();
     this->first_name = document["first_name"].GetString();

@@ -25,6 +25,22 @@ class Profile {
     void updateJson(std::string json_file);
 };
 
+class LoginInformation: public Profile {
+ private:
+    std::string email;
+    std::string password;
+    void getOwnInfo(const rapidjson::Document &document);
+
+ public:
+    LoginInformation() : Profile() {}
+    ~LoginInformation() {}
+    std::string getEmail();
+    std::string getPassword();
+    void setEmail(std::string new_email);
+    void setPassword(std::string new_password);
+    std::string createJsonFile();
+};
+
 class Personal: public Profile {
  private:
     double id;

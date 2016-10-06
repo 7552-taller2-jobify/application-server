@@ -17,7 +17,7 @@ class TestProfileHandler : public ::testing::Test {
 };
 
 TEST_F(TestProfileHandler, testFindExistingKey) {
-    Profile *profile = profile_handler->find("personal_juanperez@gmail.com");
+    Profile *profile = profile_handler->find("PERSONAL_juanperez@gmail.com");
     ASSERT_TRUE(dynamic_cast<Personal*> (profile));
 }
 

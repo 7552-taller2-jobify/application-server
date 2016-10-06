@@ -8,10 +8,12 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 include_directories(
 	${LEVELDB_PREFIX}/include
+	libs/curl-master/include
 )
 
 link_directories(
 	${LEVELDB_PREFIX}/lib
+	libs/curl-master/include
 )
 
 include_directories(

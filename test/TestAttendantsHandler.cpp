@@ -19,8 +19,13 @@ class TestAttendantsHandler : public ::testing::Test {
 };
 
 TEST_F(TestAttendantsHandler, testFindExistingKey) {
-    Attendant* attendant = attendants_handler->find("ProfileExpertise");
+    Attendant* attendant = attendants_handler->find("http://users/.*@.*/perfil/expertise");
     ASSERT_TRUE(dynamic_cast<ProfileExpertise*> (attendant));
+}
+
+TEST_F(TestAttendantsHandler, testFindLogin) {
+    Attendant* attendant = attendants_handler->find("/users/login");
+    ASSERT_TRUE(dynamic_cast<Login*> (attendant));
 }
 
 TEST_F(TestAttendantsHandler, testFindNonExistingKeyReturnsNull) {

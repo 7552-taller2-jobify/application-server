@@ -6,6 +6,8 @@
 #include <iostream>
 #include "mongoose/mongoose.h"
 #include "RequestParse.h"
+#include "AttendantsHandler.h"
+#include "Attendant.h"
 #include <string>
 #include "Constants.h"
 
@@ -15,6 +17,7 @@ private:
     int ev;
     struct http_message* hm;
     RequestParse* rp;	
+    AttendantsHandler* attendantHandler;
 
 public:
     RequestAdministrator(struct mg_connection *c, int ev, struct http_message* p);

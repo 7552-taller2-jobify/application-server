@@ -6,10 +6,12 @@
 #include <string>
 #include <map>
 #include "Attendant.h"
+#include "URLMapper.h"
 
 class AttendantsHandler {
  private:
     std::map<std::string, Attendant*> attendants;
+    URLMapper* url_mapper;
 
  public:
     AttendantsHandler();

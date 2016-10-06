@@ -15,11 +15,16 @@ AttendantsHandler::AttendantsHandler() {
     attendants["ProfileExpertise"] = new ProfileExpertise();
     attendants["ProfileSkills"] = new ProfileSkills();
     attendants["ProfilePhoto"] = new ProfilePhoto();
+
+    this->url_mapper = new URLMapper();
 }
 
 AttendantsHandler::~AttendantsHandler() {}
 
-Attendant* AttendantsHandler::find(std::string key_to_match) {
+Attendant* AttendantsHandler::find(std::string uri) {
+
+    std::string key_to_match = url_mapper->find(uri);
+
     for (std::map<std::string, Attendant*>::iterator it =
                 this->attendants.begin(); it != this->attendants.end(); it++) {
         if (key_to_match == it->first) {

@@ -23,6 +23,11 @@ TEST_F(TestURLMapper, testFindExistingKey) {
     ASSERT_EQ(id, "ProfileExpertise");
 }
 
+TEST_F(TestURLMapper, testFindExistingLogin) {
+    std::string id = url_mapper->find("/users/login");
+    ASSERT_EQ(id, "Login");
+}
+
 TEST_F(TestURLMapper, testFindNonExistingKeyReturnsNull) {
     std::string id = url_mapper->find("non_existing_key");
     ASSERT_TRUE(id.empty());

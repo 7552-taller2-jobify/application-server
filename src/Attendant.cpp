@@ -9,6 +9,7 @@ Attendant::~Attendant() {}
 
 void Attendant::attend(struct Message operation) {
     if (isMethodSupported(operation.verb)) {
+        std::cout<<"verb  exist"<< std::endl;
         this->functions[operation.verb](operation);
     } else {
         Logger::getInstance().log(error, "Does not exist the request " +

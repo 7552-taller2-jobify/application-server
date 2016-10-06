@@ -41,12 +41,17 @@ void Profile::getProfileInfo(std::string json_file) {
 
 
 void Personal::getOwnInfo(const rapidjson::Document &document) {
+    this->id = document["id"].GetDouble();
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
     this->email = document["email"].GetString();
     this->birthday = document["birthday"].GetString();
     this->address[0] = document["address"]["lat"].GetString();
     this->address[1] = document["address"]["lon"].GetString();
+}
+
+double Personal::getId() {
+    return this->id;
 }
 
 std::string Personal::getFirstName() {
@@ -67,6 +72,10 @@ std::string Personal::getBirthday() {
 
 std::string* Personal::getAddress() {
     return this->address;
+}
+
+void Personal::setId(double new_id) {
+    this->id = new_id;
 }
 
 void Personal::setFirstName(std::string new_name) {
@@ -91,7 +100,12 @@ void Personal::setAddress(std::string new_lat, std::string new_lon) {
 }
 
 std::string Personal::createJsonFile() {
-    std::string first_name = "{\n\t\"first_name\": \"" +
+    std::ostringstream oss;
+    oss << this->id;
+    std::string id_aux = oss.str();
+
+    std::string id = "{\n\t\"id\": " + id_aux + ",\n",
+    first_name = "\t\"first_name\": \"" +
                                 this->first_name + "\",\n",
     last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
     email = "\t\"email\": \"" + this->email + "\",\n",
@@ -99,7 +113,8 @@ std::string Personal::createJsonFile() {
     address_1 = "\t\"address\": {\n\t\t\"lat\": \"" +
                                         this->address[0] + "\",\n",
     address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t}\n}";
-    return first_name + last_name + email + birthday + address_1 + address_2;
+    return id + first_name + last_name + email + birthday +
+                                    address_1 + address_2;
 }
 
 

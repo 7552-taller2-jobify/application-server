@@ -3,6 +3,7 @@
 #include "curl/curl.h"
 #include <iostream>
 #include <sstream>
+#include "Response.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ private:
 public:
 		Request();
 		std::string Execute(string url);
-		std::string ExecutePost(string url, string body);
+		Response* ExecutePost(string url, string body);
 		~Request();
 };
 #endif

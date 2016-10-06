@@ -1,6 +1,7 @@
 // "Copyright 2016 <Jobify>"
 
 #include "Server.h"
+#include "Response.h"
 #include <string>
 
 static const char s_http_port[] = "8000";
@@ -20,13 +21,20 @@ void ev_handler(struct mg_connection *c, int ev, void *p) {
 void Server::start() {
     Request* request = new Request();
 // Poner IP de LAN de su compu
-    string response = request->ExecutePost("http://192.168.182.136:5000/categories","{ 'name': 'sport','description': 'Categoría relacionada con los deportes'}");
-    std::cout<< response << std::endl;
+	std::cout<< "----------------------TEST CURL SHARED--------------------------" << std::endl;
+    Response* responsePost = request->ExecutePost("http://192.168.182.136:5000/categories","{ \"name\": \"sport2\",\"description\": \"Categoría 2 relacionada con los deportes\"}");
+    std::cout<< "Http code: " << responsePost->getStatus() << " - content: "<< responsePost->getContent() << std::endl;
+    std::cout<< "----------------------fin post--------------------------" << std::endl;
     string responseTest = request->Execute("http://192.168.182.136:5000/job_positions/test");
 	std::cout<< responseTest << std::endl;
+	std::cout<< "----------------------fin test--------------------------" << std::endl;
 	string responseGet = request->Execute("http://192.168.182.136:5000/categories");
 	std::cout<< responseGet << std::endl;
-    CURL *curl = curl_easy_init();
+	std::cout<< "----------------------fin get--------------------------" << std::endl;
+	std::cout<< "----------------------FIN TEST CURL SHARED--------------------------" << std::endl;
+   
+   
+   
     this->IsOnLine = true;
     struct mg_mgr mgr;  // Mongoose event manager
     struct mg_connection *nc;  // Callback function (event handler) prototype

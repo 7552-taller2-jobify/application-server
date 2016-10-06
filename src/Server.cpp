@@ -19,8 +19,13 @@ void ev_handler(struct mg_connection *c, int ev, void *p) {
 
 void Server::start() {
     Request* request = new Request();
-    string response = request->Execute("http://demo.wp-api.org/wp-json/broker/v1");
-
+// Poner IP de LAN de su compu
+    string response = request->ExecutePost("http://192.168.182.136:5000/categories","{ 'name': 'sport','description': 'Categoría relacionada con los deportes'}");
+    std::cout<< response << std::endl;
+    string responseTest = request->Execute("http://192.168.182.136:5000/job_positions/test");
+	std::cout<< responseTest << std::endl;
+	string responseGet = request->Execute("http://192.168.182.136:5000/categories");
+	std::cout<< responseGet << std::endl;
     CURL *curl = curl_easy_init();
     this->IsOnLine = true;
     struct mg_mgr mgr;  // Mongoose event manager

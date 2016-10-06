@@ -21,14 +21,18 @@ void ev_handler(struct mg_connection *c, int ev, void *p) {
 void Server::start() {
     Request* request = new Request();
 // Poner IP de LAN de su compu
+//https://jobify-7552-taller2.herokuapp.com
 	std::cout<< "----------------------TEST CURL SHARED--------------------------" << std::endl;
-    Response* responsePost = request->ExecutePost("http://192.168.182.136:5000/categories","{ \"name\": \"sport2\",\"description\": \"Categoría 2 relacionada con los deportes\"}");
+    //Response* responsePost = request->ExecutePost("http://192.168.182.136:5000/categories","{ \"name\": \"sport2\",\"description\": \"Categoría 2 relacionada con los deportes\"}");
+    Response* responsePost = request->ExecutePost("https://jobify-7552-taller2.herokuapp.com/categories","{ \"name\": \"sport2\",\"description\": \"Categoría 2 relacionada con los deportes\"}");
     std::cout<< "Http code: " << responsePost->getStatus() << " - content: "<< responsePost->getContent() << std::endl;
     std::cout<< "----------------------fin post--------------------------" << std::endl;
-    string responseTest = request->Execute("http://192.168.182.136:5000/job_positions/test");
+    //string responseTest = request->Execute("http://192.168.182.136:5000/job_positions/test");
+    string responseTest = request->Execute("https://jobify-7552-taller2.herokuapp.com/job_positions/test");
 	std::cout<< responseTest << std::endl;
 	std::cout<< "----------------------fin test--------------------------" << std::endl;
-	string responseGet = request->Execute("http://192.168.182.136:5000/categories");
+	//string responseGet = request->Execute("http://192.168.182.136:5000/categories");
+	string responseGet = request->Execute("https://jobify-7552-taller2.herokuapp.com/categories");
 	std::cout<< responseGet << std::endl;
 	std::cout<< "----------------------fin get--------------------------" << std::endl;
 	std::cout<< "----------------------FIN TEST CURL SHARED--------------------------" << std::endl;

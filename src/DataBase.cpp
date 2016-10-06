@@ -11,6 +11,17 @@ DataBase::DataBase() {
     } else {
         Logger::getInstance().log(error, "The database could not be opened.");
     }
+
+
+// TODO DataBase example
+        this->put("personal_smpiano@gmail.com", "{\n\t\"first_name\": \"Sergio Matías\",\n\t\"last_name\": \"Piano\",\n\t\"email\": \"smpiano@gmail.com\",\n\t\"birthday\": \"24/07/1984\",\n\t\"address\": {\n\t\t\"lat\": \"-34.61543532\",\n\t\t\"lon\": \"-58.37213459\"\n\t}\n}");
+        this->put("smpiano@gmail.com", "admin");
+        this->put("personal_facundoddefalco@gmail.com", "{\n\t\"first_name\": \"Facundo\",\n\t\"last_name\": \"De Falco\",\n\t\"email\": \"facundoddefalco@gmail.com\",\n\t\"birthday\": \"22/12/1989\",\n\t\"address\": {\n\t\t\"lat\": \"-34.61543532\",\n\t\t\"lon\": \"-58.37213459\"\n\t}\n}");
+        this->put("facundoddefalco@gmail.com", "admin");
+        this->put("personal_facusan@gmail.com", "{\n\t\"first_name\": \"Facundo\",\n\t\"last_name\": \"Sánchez Galindo\",\n\t\"email\": \"facusan@gmail.com\",\n\t\"birthday\": \"26/02/1987\",\n\t\"address\": {\n\t\t\"lat\": \"-34.61543532\",\n\t\t\"lon\": \"-58.37213459\"\n\t}\n}");
+        this->put("facusan@gmail.com", "admin");
+        this->put("personal_hernanarroyogarcia@gmail.com", "{\n\t\"first_name\": \"Hernán\",\n\t\"last_name\": \"Arroyo García\",\n\t\"email\": \"hernanarroyogarcia@gmail.com\",\n\t\"birthday\": \"25/02/1990\",\n\t\"address\": {\n\t\t\"lat\": \"-34.61543532\",\n\t\t\"lon\": \"-58.37213459\"\n\t}\n}");
+
 }
 
 DataBase::~DataBase() {

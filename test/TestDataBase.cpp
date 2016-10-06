@@ -6,19 +6,13 @@
 class TestDataBase : public ::testing::Test {
  public:
     void SetUp() {
+        DataBase::getInstance().put("hernanarroyogarcia@gmail.com", "admin");
         DataBase::getInstance().put("10", "Diez");
         DataBase::getInstance().put("5", "Cinco");
         DataBase::getInstance().put("7", "Siete");
     }
 
     void TearDown() {
-        DataBase::getInstance().erase("5");
-        DataBase::getInstance().erase("10");
-        DataBase::getInstance().erase("7");
-        DataBase::getInstance().erase("8");
-    }
-
-    ~TestDataBase() {
         DataBase::getInstance().erase("5");
         DataBase::getInstance().erase("10");
         DataBase::getInstance().erase("7");

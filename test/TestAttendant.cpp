@@ -21,7 +21,7 @@ class TestAttendant : public ::testing::Test {
 // TODO modificar este test
 TEST_F(TestAttendant, testFindExistingKey) {
     struct Message message;
-    message.verb_http = "GET";
+    message.verb = "GET";
     login->attend(message);
     recoveryPass->attend(message);
     ASSERT_TRUE(true);

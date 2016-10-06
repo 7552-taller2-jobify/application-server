@@ -8,11 +8,11 @@ Attendant::Attendant() {}
 Attendant::~Attendant() {}
 
 void Attendant::attend(struct Message operation) {
-    if (isMethodSupported(operation.verb_http)) {
-        this->functions[operation.verb_http](operation);
+    if (isMethodSupported(operation.verb)) {
+        this->functions[operation.verb](operation);
     } else {
         Logger::getInstance().log(error, "Does not exist the request " +
-                                        operation.verb_http + ".");
+                                        operation.verb + ".");
     }
 }
 

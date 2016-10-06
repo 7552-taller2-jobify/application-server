@@ -25,10 +25,10 @@ void RequestAdministrator::handle(){
         case MG_EV_HTTP_REQUEST:
 
             msg = this->rp->parseRequest(this->hm);
-            cout << " quien: " << msg->who_send << " type: " << msg->type << endl;
+            cout << " uri: " << msg->uri << " body: " << msg->body << " verb : " << msg->verb  << "\n" << endl;
             // CHEQUEAR QUE OPERACION REALIZAR MEDIANTE MSG
 
-            if (mg_vcmp(&this->hm->uri, "/api/hola") == 0) {
+            if (msg->uri == "/api/hola") {
                 handle_hola(this->c); /* Handle hola call */
             }
             else if (mg_vcmp(&this->hm->uri, "/printcontent") == 0) {

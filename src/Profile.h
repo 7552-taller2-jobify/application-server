@@ -23,6 +23,7 @@ class Profile {
     ~Profile() {}
     virtual void getProfileInfo(std::string json_file);
     void updateJson(std::string json_file);
+    void loadJson(std::string json);
 };
 
 class LoginInformation: public Profile {

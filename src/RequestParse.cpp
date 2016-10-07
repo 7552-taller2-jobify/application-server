@@ -7,19 +7,19 @@ RequestParse::RequestParse() {
 }
 
 Message* RequestParse::parseRequest(struct http_message* hm) {
-    string uri;
+    std::string uri;
     for (size_t i = 0; i < hm->uri.len; i++) {
         uri = uri + hm->uri.p[i];
     }
 
     Logger::getInstance().log(info, "The URI arrived was: " + uri);
 
-    string body = "";
+    std::string body = "";
     for (size_t i = 0; i < hm->body.len; i++) {
         body = body + hm->body.p[i];
     }
- 
-    string verb = "";
+
+    std::string verb = "";
     for (size_t i = 0; i < hm->method.len; i++) {
         verb = verb + hm->method.p[i];
     }

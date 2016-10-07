@@ -8,6 +8,7 @@
 #include <iostream> //TODO borrar
 #include "Constants.h"
 #include "Logger.h"
+#include "Profile.h"
 
 typedef void (*function)(struct Message operation);
 

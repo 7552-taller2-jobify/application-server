@@ -25,8 +25,7 @@ Attendant* AttendantsHandler::find(std::string uri) {
 
     std::string key_to_match = url_mapper->find(uri);
 
-    for (std::map<std::string, Attendant*>::iterator it =
-                this->attendants.begin(); it != this->attendants.end(); it++) {
+    for (std::map<std::string, Attendant*>::iterator it = attendants.begin(); it != attendants.end(); it++) {
         if (key_to_match == it->first) {
             return it->second;
         }

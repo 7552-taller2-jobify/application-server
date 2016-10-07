@@ -8,8 +8,7 @@ Profile::Profile() {}
 void Profile::updateJson(std::string json_file) {
     rapidjson::Document document;
     if (document.Parse(this->createJsonFile().c_str()).HasParseError()) {
-        Logger::getInstance().log(error,
-                        "Could not create JSON file from profile.");
+        Logger::getInstance().log(error, "Could not create JSON file from profile.");
     } else {
         FILE* file = fopen(json_file.c_str(), "w");
         char buffer[65536];
@@ -17,9 +16,14 @@ void Profile::updateJson(std::string json_file) {
         rapidjson::Writer<rapidjson::FileWriteStream> writer(stream);
         document.Accept(writer);
         fclose(file);
-        Logger::getInstance().log(info,
-                            "JSON file has been created successfully.");
+        Logger::getInstance().log(info, "JSON file has been created successfully.");
     }
+}
+
+void Profile::loadJson(std::string json) {
+    rapidjson::Document document;
+    rapidjson::ParseResult parseRes = document.Parse(json.c_str());
+    this->getOwnInfo(document);
 }
 
 void Profile::getProfileInfo(std::string json_file) {
@@ -29,12 +33,10 @@ void Profile::getProfileInfo(std::string json_file) {
     fclose(file);
     rapidjson::Document document;
     if (document.ParseStream(stream).HasParseError()) {
-        Logger::getInstance().log(error,
-                            "Could not parse file " + json_file + ".");
+        Logger::getInstance().log(error, "Could not parse file " + json_file + ".");
     } else {
         this->getOwnInfo(document);
-        Logger::getInstance().log(info, "File " + json_file +
-                                    " has been parsed successfully.");
+        Logger::getInstance().log(info, "File " + json_file + " has been parsed successfully.");
     }
 }
 
@@ -131,19 +133,16 @@ void Personal::setAddress(std::string new_lat, std::string new_lon) {
 std::string Personal::createJsonFile() {
     std::ostringstream oss;
     oss << this->id;
-    std::string id_aux = oss.str();
+    std::string id_parsed = oss.str();
 
-    std::string id = "{\n\t\"id\": " + id_aux + ",\n",
-    first_name = "\t\"first_name\": \"" +
-                                this->first_name + "\",\n",
+    std::string id = "{\n\t\"id\": " + id_parsed + ",\n",
+    first_name = "\t\"first_name\": \"" + this->first_name + "\",\n",
     last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
     email = "\t\"email\": \"" + this->email + "\",\n",
     birthday = "\t\"birthday\": \"" + this->birthday + "\",\n",
-    address_1 = "\t\"address\": {\n\t\t\"lat\": \"" +
-                                        this->address[0] + "\",\n",
+    address_1 = "\t\"address\": {\n\t\t\"lat\": \"" + this->address[0] + "\",\n",
     address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t}\n}";
-    return id + first_name + last_name + email + birthday +
-                                    address_1 + address_2;
+    return id + first_name + last_name + email + birthday + address_1 + address_2;
 }
 
 

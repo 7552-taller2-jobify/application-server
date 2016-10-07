@@ -32,8 +32,7 @@ std::string DataBase::get(std::string key) {
     std::string value;
     this->status = this->db->Get(leveldb::ReadOptions(), key, &value);
     if (this->status.ok()) {
-        Logger::getInstance().log(info,
-                        "A value has been retrieved successfully.");
+        Logger::getInstance().log(info, "A value has been retrieved successfully.");
     } else {
         Logger::getInstance().log(info, "The key " + key + " does not exist.");
     }
@@ -43,23 +42,17 @@ std::string DataBase::get(std::string key) {
 void DataBase::put(std::string key, std::string value) {
     this->status = this->db->Put(leveldb::WriteOptions(), key, value);
     if (this->status.ok()) {
-        Logger::getInstance().log(info,
-                        "A new pair key-value has been put successfully.");
+        Logger::getInstance().log(info, "A new pair key-value has been put successfully.");
     } else {
-        Logger::getInstance().log(info,
-                "The new pair key-value could not be put in the Database.");
+        Logger::getInstance().log(info, "The new pair key-value could not be put in the Database.");
     }
 }
 
 void DataBase::erase(std::string key) {
     this->status = this->db->Delete(leveldb::WriteOptions(), key);
     if (this->status.ok()) {
-        Logger::getInstance().log(info,
-                "The pair key-value associated to the key " + key +
-                " has been deleted successfully.");
+        Logger::getInstance().log(info, "The value associated to the key " + key + " has been deleted successfully.");
     } else {
-        Logger::getInstance().log(info,
-                "The pair key-value associated to the key " + key +
-                " could not be deleted.");
+        Logger::getInstance().log(info, "The value associated to the key " + key + " could not be deleted.");
     }
 }

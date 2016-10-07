@@ -6,7 +6,6 @@
 class TestDataBase : public ::testing::Test {
  public:
     void SetUp() {
-        DataBase::getInstance().put("hernanarroyogarcia@gmail.com", "admin");
         DataBase::getInstance().put("10", "Diez");
         DataBase::getInstance().put("5", "Cinco");
         DataBase::getInstance().put("7", "Siete");

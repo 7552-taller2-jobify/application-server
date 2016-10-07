@@ -12,14 +12,14 @@
 #include "Constants.h"
 
 class RequestAdministrator {
-private:
+ private:
     struct mg_connection *c;
     int ev;
     struct http_message* hm;
     RequestParse* rp;	
     AttendantsHandler* attendantHandler;
 
-public:
+ public:
     RequestAdministrator(struct mg_connection *c, int ev, struct http_message* p);
     ~RequestAdministrator();
     void handle();

@@ -12,14 +12,12 @@ void Attendant::attend(struct Message operation) {
         std::cout<<"verb  exist"<< std::endl;
         this->functions[operation.verb](operation);
     } else {
-        Logger::getInstance().log(error, "Does not exist the request " +
-                                        operation.verb + ".");
+        Logger::getInstance().log(error, "Does not exist the request " + operation.verb + ".");
     }
 }
 
 bool Attendant::isMethodSupported(std::string a_method) {
-    for (std::map<std::string, function>::iterator it = this->functions.begin();
-                                                it != this->functions.end(); it++) {
+    for (std::map<std::string, function>::iterator it = this->functions.begin(); it != this->functions.end(); it++) {
         if (it->first == a_method) {
             return true;
         }
@@ -41,7 +39,11 @@ void Login::get(struct Message operation) {
 }
 
 void Login::post(struct Message operation) {
-    //operation.body;
+    LoginInformation *loginInformation = new LoginInformation();
+    loginInformation->loadJson(operation.body.c_str());
+    // TODO hay que redefinir qué hace este método
+    std::cout << "Email: " << loginInformation->getEmail() << std::endl;
+    std::cout << "Password: " << loginInformation->getPassword() << std::endl;
 }
 
 

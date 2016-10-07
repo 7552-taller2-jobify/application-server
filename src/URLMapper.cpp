@@ -22,8 +22,7 @@ URLMapper::~URLMapper() {}
 
 std::string URLMapper::find(std::string key) {
     RegexMatcher regex_matcher;
-    for (std::map<std::string, std::string>::iterator it = this->urls.begin();
-                                                it != this->urls.end(); it++) {
+    for (std::map<std::string, std::string>::iterator it = this->urls.begin(); it != this->urls.end(); it++) {
         if (regex_matcher.match(key.c_str(), it->first.c_str()) == 1) {
             return it->second;
         }

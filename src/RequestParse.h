@@ -11,7 +11,7 @@
 
 class RequestParse {
  private:
-    string getHTTPVerb(struct http_message* hm);
+    std::string getHTTPVerb(struct http_message* hm);
     int areEqual(const struct mg_str *s1, const struct mg_str *s2);
 
  public:
@@ -22,4 +22,4 @@ class RequestParse {
     virtual ~RequestParse();
 };
 
-#endif /* REQUESTPARSE_H_ */
+#endif // REQUESTPARSE_H_

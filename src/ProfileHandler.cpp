@@ -22,10 +22,8 @@ ProfileHandler::~ProfileHandler() {}
 
 Profile* ProfileHandler::find(std::string key_to_match) {
     RegexMatcher regex_matcher;
-    for (std::map<std::string, Profile*>::iterator it = this->profiles.begin();
-                                            it != this->profiles.end(); it++) {
-        if (this->checkBegining(key_to_match) && 
-                                (!this->checkBegining(it->first))) {
+    for (std::map<std::string, Profile*>::iterator it = this->profiles.begin(); it != this->profiles.end(); it++) {
+        if (this->checkBegining(key_to_match) &&  (!this->checkBegining(it->first))) {
             continue;
         }
         if (regex_matcher.match(key_to_match.c_str(), it->first.c_str()) == 1) {
@@ -36,15 +34,14 @@ Profile* ProfileHandler::find(std::string key_to_match) {
 }
 
 bool ProfileHandler::checkBegining(std::string key_to_match) {
-    for (int i = 0; i < sizeof(beginings)/sizeof(*beginings) - 1; i++) {
+    for (int i = 0; i < ((sizeof(beginings)/sizeof(*beginings)) - 1); i++) {
         int length;
         if (strlen(beginings[i].c_str()) > strlen(key_to_match.c_str())) {
             length = strlen(key_to_match.c_str());
         } else {
             length = strlen(beginings[i].c_str());
         }
-        if (strncmp(key_to_match.c_str(), beginings[i].c_str(), 
-                                                length - 1) == 0) {
+        if (strncmp(key_to_match.c_str(), beginings[i].c_str(), length - 1) == 0) {
             return true;
         }
     }

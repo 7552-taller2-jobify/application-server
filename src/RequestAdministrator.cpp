@@ -2,7 +2,7 @@
 
 #include "RequestAdministrator.h"
 
-RequestAdministrator::RequestAdministrator(struct mg_connection *c, int ev, struct http_message* p){
+RequestAdministrator::RequestAdministrator(struct mg_connection *c, int ev, struct http_message* p) {
     this->c = c;
     this->ev = ev;
     this->hm = p;
@@ -20,13 +20,13 @@ static void handle_hola(struct mg_connection *nc) {
     mg_send_http_chunk(nc, "", 0);  // Send empty chunk, the end of response
 }
 
-void RequestAdministrator::handle(){
+void RequestAdministrator::handle() {
     Message* msg = NULL;
 
-    if (this->ev == MG_EV_HTTP_REQUEST){
+    if (this->ev == MG_EV_HTTP_REQUEST) {
 
         msg = this->rp->parseRequest(this->hm);
-        cout << " uri: " << msg->uri << " body: " << msg->body << " verb : " << msg->verb  << "\n" << endl;
+        std::cout << " uri: " << msg->uri << " body: " << msg->body << " verb : " << msg->verb  << "\n" << std::endl;
 
         Attendant* attendant = this->attendantHandler->find(msg->uri);
         if (attendant != NULL){

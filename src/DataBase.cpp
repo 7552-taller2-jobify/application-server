@@ -20,7 +20,8 @@ DataBase::DataBase() {
         this->put("facundoddefalco@gmail.com", "admin");
         this->put("personal_facusan@gmail.com", "{\n\t\"id\": \"3\",\n\t\"first_name\": \"Facundo\",\n\t\"last_name\": \"Sánchez Galindo\",\n\t\"email\": \"facusan@gmail.com\",\n\t\"birthday\": \"26/02/1987\",\n\t\"address\": {\n\t\t\"lat\": \"-34.61543532\",\n\t\t\"lon\": \"-58.37213459\"\n\t}\n}");
         this->put("facusan@gmail.com", "admin");
-        this->put("personal_hernanarroyogarcia@gmail.com", "{\n\t\"id\": \"4\",\n\t\"first_name\": \"Hernán\",\n\t\"last_name\": \"Arroyo García\",\n\t\"email\": \"hernanarroyogarcia@gmail.com\",\n\t\"birthday\": \"25/02/1990\",\n\t\"address\": {\n\t\t\"lat\": \"-34.61543532\",\n\t\t\"lon\": \"-58.37213459\"\n\t}\n}");
+        this->put("personal_hernanfiuba2009@gmail.com", "{\n\t\"id\": \"4\",\n\t\"first_name\": \"Hernán\",\n\t\"last_name\": \"Arroyo García\",\n\t\"email\": \"hernanafiuba2009@gmail.com\",\n\t\"birthday\": \"25/02/1990\",\n\t\"address\": {\n\t\t\"lat\": \"-34.61543532\",\n\t\t\"lon\": \"-58.37213459\"\n\t}\n}");
+        this->put("hernanfiuba2009@gmail.com", "admin");
 
 }
 
@@ -32,7 +33,8 @@ std::string DataBase::get(std::string key) {
     std::string value;
     this->status = this->db->Get(leveldb::ReadOptions(), key, &value);
     if (this->status.ok()) {
-        Logger::getInstance().log(info, "A value has been retrieved successfully.");
+        Logger::getInstance().log(info,
+                        "A value has been retrieved successfully.");
     } else {
         Logger::getInstance().log(info, "The key " + key + " does not exist.");
     }
@@ -42,17 +44,23 @@ std::string DataBase::get(std::string key) {
 void DataBase::put(std::string key, std::string value) {
     this->status = this->db->Put(leveldb::WriteOptions(), key, value);
     if (this->status.ok()) {
-        Logger::getInstance().log(info, "A new pair key-value has been put successfully.");
+        Logger::getInstance().log(info,
+                        "A new pair key-value has been put successfully.");
     } else {
-        Logger::getInstance().log(info, "The new pair key-value could not be put in the Database.");
+        Logger::getInstance().log(info,
+                "The new pair key-value could not be put in the Database.");
     }
 }
 
 void DataBase::erase(std::string key) {
     this->status = this->db->Delete(leveldb::WriteOptions(), key);
     if (this->status.ok()) {
-        Logger::getInstance().log(info, "The value associated to the key " + key + " has been deleted successfully.");
+        Logger::getInstance().log(info,
+                "The pair key-value associated to the key " + key +
+                " has been deleted successfully.");
     } else {
-        Logger::getInstance().log(info, "The value associated to the key " + key + " could not be deleted.");
+        Logger::getInstance().log(info,
+                "The pair key-value associated to the key " + key +
+                " could not be deleted.");
     }
 }

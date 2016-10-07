@@ -22,7 +22,7 @@ static void handle_hola(struct mg_connection *nc) {
 
 void RequestAdministrator::handle() {
     Message* msg = NULL;
-
+    Response* response = NULL;
     if (this->ev == MG_EV_HTTP_REQUEST) {
 
         msg = this->rp->parseRequest(this->hm);
@@ -30,40 +30,22 @@ void RequestAdministrator::handle() {
 
         Attendant* attendant = this->attendantHandler->find(msg->uri);
         if (attendant != NULL){
-            attendant->attend(*msg);
+            response = attendant->attend(*msg);
         }
+
+        if (response != NULL){
+            std::cout << "body out : " << response->getContent() << std::endl;
+            std::cout << "status out : " << response->getStatus() << std::endl;
+
+	    mg_printf(c, "HTTP/1.0 %li\r\n"
+                     "Content-Length: %d\r\n"
+                     "Content-Type: application/json\r\n\r\n%s", 
+                     response->getStatus(), (int) response->getContent().size(), response->getContent().c_str()); 
+        }
+
+
+        
     }
-    /*
-    switch (this->ev) {
-        case MG_EV_HTTP_REQUEST:
-
-            msg = this->rp->parseRequest(this->hm);
-            cout << " uri: " << msg->uri << " body: " << msg->body << " verb : " << msg->verb  << "\n" << endl;
-            // CHEQUEAR QUE OPERACION REALIZAR MEDIANTE MSG
-
-
-
-            Attendant* attendant = this->attendantHandler->find(msg.uri);
-            attendant->attend(msg);
-
-            if (msg->uri == "/api/hola") {
-                handle_hola(this->c); /* Handle hola call 
-            }
-            else if (mg_vcmp(&this->hm->uri, "/printcontent") == 0) {
-                char buf[100] = {0};
-                memcpy(buf, this->hm->body.p,
-                       sizeof(buf) - 1 < this->hm->body.len ? sizeof(buf) - 1 : this->hm->body.len);
-                printf("%s\n", buf);
-                mg_printf(this->c, "%s", "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
-                mg_send_http_chunk(this->c, "", 0); // Send empty chunk, the end of response 
-            }
-            //delete msg;
-            break;
-        default:
-            break;
-    }
-
-    */
 }
 
 

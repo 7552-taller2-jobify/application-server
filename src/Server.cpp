@@ -2,7 +2,6 @@
 
 #include "Server.h"
 #include "Response.h"
-#include <string>
 
 static const char s_http_port[] = "8000";
 

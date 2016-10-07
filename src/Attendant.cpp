@@ -1,19 +1,20 @@
 // "Copyright 2016 <Jobify>"
 
 #include "Attendant.h"
-#include <string>
 
 Attendant::Attendant() {}
 
 Attendant::~Attendant() {}
 
-void Attendant::attend(struct Message operation) {
+Response* Attendant::attend(struct Message operation) {
+    Response* response = NULL;
     if (isMethodSupported(operation.verb)) {
         std::cout<<"verb  exist"<< std::endl;
-        this->functions[operation.verb](operation);
+         response = this->functions[operation.verb](operation);
     } else {
         Logger::getInstance().log(error, "Does not exist the request " + operation.verb + ".");
     }
+    return response;
 }
 
 bool Attendant::isMethodSupported(std::string a_method) {
@@ -34,16 +35,23 @@ Login::Login() {
 
 Login::~Login() {}
 
-void Login::get(struct Message operation) {
+Response* Login::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
-void Login::post(struct Message operation) {
+Response* Login::post(struct Message operation) {
     LoginInformation *loginInformation = new LoginInformation();
     loginInformation->loadJson(operation.body.c_str());
-    // TODO hay que redefinir qué hace este método
-    std::cout << "Email: " << loginInformation->getEmail() << std::endl;
-    std::cout << "Password: " << loginInformation->getPassword() << std::endl;
+    
+    Response* response = new Response();
+
+    if (DataBase::getInstance().get(loginInformation->getEmail()) == loginInformation->getPassword()){
+        // Falta contemplar mas chequeos         
+        response->setContent(DataBase::getInstance().get("personal_" + loginInformation->getEmail()));
+        response->setStatus(200);
+    }   
+
+    return response;
 }
 
 
@@ -54,7 +62,7 @@ RecoveryPass::RecoveryPass() {
 
 RecoveryPass::~RecoveryPass() {}
 
-void RecoveryPass::get(struct Message operation) {
+Response* RecoveryPass::get(struct Message operation) {
     std::cout << "Chau\n" << std::endl;
 }
 
@@ -66,7 +74,7 @@ Contact::Contact() {
 
 Contact::~Contact() {}
 
-void Contact::get(struct Message operation) {
+Response* Contact::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
@@ -78,7 +86,7 @@ Accept::Accept() {
 
 Accept::~Accept() {}
 
-void Accept::get(struct Message operation) {
+Response* Accept::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
@@ -90,7 +98,7 @@ Reject::Reject() {
 
 Reject::~Reject() {}
 
-void Reject::get(struct Message operation) {
+Response* Reject::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
@@ -102,7 +110,7 @@ ProfilePersonal::ProfilePersonal() {
 
 ProfilePersonal::~ProfilePersonal() {}
 
-void ProfilePersonal::get(struct Message operation) {
+Response* ProfilePersonal::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
@@ -114,7 +122,7 @@ ProfileSummary::ProfileSummary() {
 
 ProfileSummary::~ProfileSummary() {}
 
-void ProfileSummary::get(struct Message operation) {
+Response* ProfileSummary::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
@@ -126,7 +134,7 @@ ProfileExpertise::ProfileExpertise() {
 
 ProfileExpertise::~ProfileExpertise() {}
 
-void ProfileExpertise::get(struct Message operation) {
+Response* ProfileExpertise::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
@@ -138,7 +146,7 @@ ProfileSkills::ProfileSkills() {
 
 ProfileSkills::~ProfileSkills() {}
 
-void ProfileSkills::get(struct Message operation) {
+Response* ProfileSkills::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }
 
@@ -150,6 +158,6 @@ ProfilePhoto::ProfilePhoto() {
 
 ProfilePhoto::~ProfilePhoto() {}
 
-void ProfilePhoto::get(struct Message operation) {
+Response* ProfilePhoto::get(struct Message operation) {
     std::cout << "Hola\n" << std::endl;
 }

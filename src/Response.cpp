@@ -1,4 +1,5 @@
 #include "Response.h"
+#include <string>
 
 Response::Response() {
 }

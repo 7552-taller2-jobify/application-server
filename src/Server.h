@@ -15,7 +15,6 @@
 class Server{
  private:
     bool IsOnLine;
-    DataBase *db;
     URLMapper *url_mapper;
     AttendantsHandler *attendants_handler;
 

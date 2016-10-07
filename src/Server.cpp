@@ -8,14 +8,14 @@ static const char s_http_port[] = "8000";
 
 Server::Server() {
     this->IsOnLine = false;
-    this->db = new DataBase(PATH_DB);
     this->url_mapper = new URLMapper();
     this->attendants_handler = new AttendantsHandler();
 }
 
+
 void ev_handler(struct mg_connection *c, int ev, void *p) {
-    RequestAdministrator* requestAdministrator = new RequestAdministrator();
-    requestAdministrator->handle(c, ev, p);
+    RequestAdministrator* requestAdministrator = new RequestAdministrator(c,ev,(struct http_message *)p);
+    requestAdministrator->handle();
 }
 
 void Server::start() {
@@ -60,14 +60,13 @@ void Server::start() {
 }
 
 Server::~Server() {
-    delete this->db;
     delete this->url_mapper;
     delete this->attendants_handler;
 }
 
 void Server::resolveRequest(std::string request) {
     std::string class_id = this->url_mapper->find(request);
-    Attendant *attendant = this->attendants_handler->find(class_id);
+    /*Attendant *attendant = this->attendants_handler->find(class_id);
     attendant->attend(request);
     /*TODO en lugar de string request, podría pasarse un struct con todos
     los datos necesarios.

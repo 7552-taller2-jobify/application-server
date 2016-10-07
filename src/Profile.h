@@ -23,10 +23,28 @@ class Profile {
     ~Profile() {}
     virtual void getProfileInfo(std::string json_file);
     void updateJson(std::string json_file);
+    void loadJson(std::string json);
+};
+
+class LoginInformation: public Profile {
+ private:
+    std::string email;
+    std::string password;
+    void getOwnInfo(const rapidjson::Document &document);
+
+ public:
+    LoginInformation() : Profile() {}
+    ~LoginInformation() {}
+    std::string getEmail();
+    std::string getPassword();
+    void setEmail(std::string new_email);
+    void setPassword(std::string new_password);
+    std::string createJsonFile();
 };
 
 class Personal: public Profile {
  private:
+    double id;
     std::string first_name;
     std::string last_name;
     std::string email;
@@ -37,11 +55,13 @@ class Personal: public Profile {
  public:
     Personal() : Profile() {}
     ~Personal() {}
+    double getId();
     std::string getFirstName();
     std::string getLastName();
     std::string getEmail();
     std::string getBirthday();
     std::string* getAddress();
+    void setId(double new_id);
     void setFirstName(std::string new_first_name);
     void setLastName(std::string new_last_name);
     void setEmail(std::string new_email);

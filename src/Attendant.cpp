@@ -7,26 +7,149 @@ Attendant::Attendant() {}
 
 Attendant::~Attendant() {}
 
-void Attendant::attend(std::string operation) {}
+void Attendant::attend(struct Message operation) {
+    if (isMethodSupported(operation.verb)) {
+        std::cout<<"verb  exist"<< std::endl;
+        this->functions[operation.verb](operation);
+    } else {
+        Logger::getInstance().log(error, "Does not exist the request " + operation.verb + ".");
+    }
+}
 
-Login::Login() {}
+bool Attendant::isMethodSupported(std::string a_method) {
+    for (std::map<std::string, function>::iterator it = this->functions.begin(); it != this->functions.end(); it++) {
+        if (it->first == a_method) {
+            return true;
+        }
+    }
+    return false;
+}
 
-void Login::attend(std::string operation) {}
 
-void RecoveryPass::attend(std::string operation) {}
 
-void Contact::attend(std::string operation) {}
+Login::Login() {
+    this->functions["GET"] = get;
+    this->functions["POST"] = post;
+}
 
-void Accept::attend(std::string operation) {}
+Login::~Login() {}
 
-void Reject::attend(std::string operation) {}
+void Login::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
 
-void ProfilePersonal::attend(std::string operation) {}
+void Login::post(struct Message operation) {
+    LoginInformation *loginInformation = new LoginInformation();
+    loginInformation->loadJson(operation.body.c_str());
+    // TODO hay que redefinir qué hace este método
+    std::cout << "Email: " << loginInformation->getEmail() << std::endl;
+    std::cout << "Password: " << loginInformation->getPassword() << std::endl;
+}
 
-void ProfileSummary::attend(std::string operation) {}
 
-void ProfileExpertise::attend(std::string operation) {}
 
-void ProfileSkills::attend(std::string operation) {}
+RecoveryPass::RecoveryPass() {
+    this->functions["GET"] = get;
+}
 
-void ProfilePhoto::attend(std::string operation) {}
+RecoveryPass::~RecoveryPass() {}
+
+void RecoveryPass::get(struct Message operation) {
+    std::cout << "Chau\n" << std::endl;
+}
+
+
+
+Contact::Contact() {
+    // methods->push_back("GET");
+}
+
+Contact::~Contact() {}
+
+void Contact::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+
+
+Accept::Accept() {
+    // methods->push_back("GET");
+}
+
+Accept::~Accept() {}
+
+void Accept::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+
+
+Reject::Reject() {
+    // methods->push_back("GET");
+}
+
+Reject::~Reject() {}
+
+void Reject::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+
+
+ProfilePersonal::ProfilePersonal() {
+    // methods->push_back("GET");
+}
+
+ProfilePersonal::~ProfilePersonal() {}
+
+void ProfilePersonal::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+
+
+ProfileSummary::ProfileSummary() {
+    // methods->push_back("GET");
+}
+
+ProfileSummary::~ProfileSummary() {}
+
+void ProfileSummary::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+
+
+ProfileExpertise::ProfileExpertise() {
+    // methods->push_back("GET");
+}
+
+ProfileExpertise::~ProfileExpertise() {}
+
+void ProfileExpertise::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+
+
+ProfileSkills::ProfileSkills() {
+    // methods->push_back("GET");
+}
+
+ProfileSkills::~ProfileSkills() {}
+
+void ProfileSkills::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}
+
+
+
+ProfilePhoto::ProfilePhoto() {
+    // methods->push_back("GET");
+}
+
+ProfilePhoto::~ProfilePhoto() {}
+
+void ProfilePhoto::get(struct Message operation) {
+    std::cout << "Hola\n" << std::endl;
+}

@@ -13,11 +13,17 @@ const char PATH_DB[] = "./db";
 class DataBase {
  private:
     leveldb::DB* db;
+    leveldb::DB* main_db;
+    leveldb::DB* test_db;
     leveldb::Options options;
     leveldb::Status status;
+    DataBase();
 
  public:
-    explicit DataBase(std::string path);
+    static DataBase& getInstance() {
+        static DataBase an_instance;
+        return an_instance;
+    }
     ~DataBase();
     std::string get(std::string key);
     void put(std::string key, std::string value);

@@ -8,8 +8,7 @@ Profile::Profile() {}
 void Profile::updateJson(std::string json_file) {
     rapidjson::Document document;
     if (document.Parse(this->createJsonFile().c_str()).HasParseError()) {
-        Logger::getInstance().log(error,
-                        "Could not create JSON file from profile.");
+        Logger::getInstance().log(error, "Could not create JSON file from profile.");
     } else {
         FILE* file = fopen(json_file.c_str(), "w");
         char buffer[65536];
@@ -17,9 +16,14 @@ void Profile::updateJson(std::string json_file) {
         rapidjson::Writer<rapidjson::FileWriteStream> writer(stream);
         document.Accept(writer);
         fclose(file);
-        Logger::getInstance().log(info,
-                            "JSON file has been created successfully.");
+        Logger::getInstance().log(info, "JSON file has been created successfully.");
     }
+}
+
+void Profile::loadJson(std::string json) {
+    rapidjson::Document document;
+    rapidjson::ParseResult parseRes = document.Parse(json.c_str());
+    this->getOwnInfo(document);
 }
 
 void Profile::getProfileInfo(std::string json_file) {
@@ -29,24 +33,56 @@ void Profile::getProfileInfo(std::string json_file) {
     fclose(file);
     rapidjson::Document document;
     if (document.ParseStream(stream).HasParseError()) {
-        Logger::getInstance().log(error,
-                            "Could not parse file " + json_file + ".");
+        Logger::getInstance().log(error, "Could not parse file " + json_file + ".");
     } else {
         this->getOwnInfo(document);
-        Logger::getInstance().log(info, "File " + json_file +
-                                    " has been parsed successfully.");
+        Logger::getInstance().log(info, "File " + json_file + " has been parsed successfully.");
     }
 }
 
 
 
+void LoginInformation::getOwnInfo(const rapidjson::Document &document) {
+    this->email = document["email"].GetString();
+    this->password = document["password"].GetString();
+}
+
+std::string LoginInformation::getEmail() {
+    return this->email;
+}
+
+std::string LoginInformation::getPassword() {
+    return this->password;
+}
+
+void LoginInformation::setEmail(std::string new_email) {
+    this->email = new_email;
+}
+
+void LoginInformation::setPassword(std::string new_password) {
+    this->password = new_password;
+}
+
+std::string LoginInformation::createJsonFile() {
+    std::string email = "{\n\t\"email\": \"" + this->email + "\",\n",
+    password = "\t\"password\": \"" + this->password + "\"\n}";
+    return email + password;
+}
+
+
+
 void Personal::getOwnInfo(const rapidjson::Document &document) {
+    this->id = document["id"].GetDouble();
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
     this->email = document["email"].GetString();
     this->birthday = document["birthday"].GetString();
     this->address[0] = document["address"]["lat"].GetString();
     this->address[1] = document["address"]["lon"].GetString();
+}
+
+double Personal::getId() {
+    return this->id;
 }
 
 std::string Personal::getFirstName() {
@@ -67,6 +103,10 @@ std::string Personal::getBirthday() {
 
 std::string* Personal::getAddress() {
     return this->address;
+}
+
+void Personal::setId(double new_id) {
+    this->id = new_id;
 }
 
 void Personal::setFirstName(std::string new_name) {
@@ -91,15 +131,18 @@ void Personal::setAddress(std::string new_lat, std::string new_lon) {
 }
 
 std::string Personal::createJsonFile() {
-    std::string first_name = "{\n\t\"first_name\": \"" +
-                                this->first_name + "\",\n",
+    std::ostringstream oss;
+    oss << this->id;
+    std::string id_parsed = oss.str();
+
+    std::string id = "{\n\t\"id\": " + id_parsed + ",\n",
+    first_name = "\t\"first_name\": \"" + this->first_name + "\",\n",
     last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
     email = "\t\"email\": \"" + this->email + "\",\n",
     birthday = "\t\"birthday\": \"" + this->birthday + "\",\n",
-    address_1 = "\t\"address\": {\n\t\t\"lat\": \"" +
-                                        this->address[0] + "\",\n",
+    address_1 = "\t\"address\": {\n\t\t\"lat\": \"" + this->address[0] + "\",\n",
     address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t}\n}";
-    return first_name + last_name + email + birthday + address_1 + address_2;
+    return id + first_name + last_name + email + birthday + address_1 + address_2;
 }
 
 

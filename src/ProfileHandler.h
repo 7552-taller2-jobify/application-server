@@ -12,6 +12,8 @@
 class ProfileHandler {
  private:
     std::map<std::string, Profile*> profiles;
+    std::string beginings[5];
+    bool checkBegining(std::string key_to_match);
 
  public:
     ProfileHandler();

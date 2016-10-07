@@ -8,9 +8,9 @@
 #include "mongoose/mongoose.h"
 #include "DataBase.h"
 #include "RequestAdministrator.h"
-#include "curl/curl.h"
 #include "URLMapper.h"
 #include "AttendantsHandler.h"
+#include "Request.h"
 
 class Server{
  private:

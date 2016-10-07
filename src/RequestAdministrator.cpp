@@ -31,21 +31,21 @@ void RequestAdministrator::handle() {
         Attendant* attendant = this->attendantHandler->find(msg->uri);
         if (attendant != NULL){
             response = attendant->attend(*msg);
-        }
 
-        if (response != NULL){
-            std::cout << "body out : " << response->getContent() << std::endl;
-            std::cout << "status out : " << response->getStatus() << std::endl;
+            if (response != NULL){
+                std::cout << "body out : " << response->getContent() << std::endl;
+                std::cout << "status out : " << response->getStatus() << std::endl;
 
-	    mg_printf(c, "HTTP/1.0 %li\r\n"
-                     "Content-Length: %d\r\n"
-                     "Content-Type: application/json\r\n\r\n%s", 
-                     response->getStatus(), (int) response->getContent().size(), response->getContent().c_str()); 
-        }
-
-
+        	    mg_printf(c, "HTTP/1.0 %li\r\n"
+                             "Content-Length: %d\r\n"
+                             "Content-Type: application/json\r\n\r\n%s", 
+                             response->getStatus(), (int) response->getContent().size(), response->getContent().c_str()); 
+            }
+            std::cout << " reponse NULL" << std::endl;
         
+        }
     }
+
 }
 
 

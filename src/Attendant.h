@@ -9,6 +9,7 @@
 #include "Logger.h"
 #include "Profile.h"
 #include "Response.h"
+#include "DataBaseAdministrator.h"
 #include "DataBase.h"
 
 typedef Response* (*function)(struct Message operation);

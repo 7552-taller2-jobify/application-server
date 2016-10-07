@@ -2,7 +2,8 @@
 
 #include "Attendant.h"
 
-Attendant::Attendant() {}
+Attendant::Attendant() {
+}
 
 Attendant::~Attendant() {}
 
@@ -40,14 +41,16 @@ Response* Login::get(struct Message operation) {
 }
 
 Response* Login::post(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     LoginInformation *loginInformation = new LoginInformation();
     loginInformation->loadJson(operation.body.c_str());
     
-    Response* response = new Response();
+    Response* response = NULL;
 
-    if (DataBase::getInstance().get(loginInformation->getEmail()) == loginInformation->getPassword()){
+    if (dbAdministrator->existsClient(loginInformation)){
         // Falta contemplar mas chequeos         
-        response->setContent(DataBase::getInstance().get("personal_" + loginInformation->getEmail()));
+        response = new Response();
+        response->setContent(dbAdministrator->getDataOfClient(loginInformation));
         response->setStatus(200);
     }   
 

@@ -14,7 +14,7 @@ private:
 
 public:
 		Request();
-		std::string Execute(string url);
+		Response* Execute(string url);
 		Response* ExecutePost(string url, string body);
 		~Request();
 };

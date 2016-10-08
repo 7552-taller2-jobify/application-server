@@ -5,37 +5,37 @@
 
 class TestDataBase : public ::testing::Test {
  public:
-    DataBase *db;
-
     void SetUp() {
-        db = new DataBase("./testdb");
-        db->put("10", "Diez");
-        db->put("5", "Cinco");
-        db->put("7", "Siete");
+        DataBase::getInstance().put("10", "Diez");
+        DataBase::getInstance().put("5", "Cinco");
+        DataBase::getInstance().put("7", "Siete");
     }
 
-    ~TestDataBase() {
-        delete db;
+    void TearDown() {
+        DataBase::getInstance().erase("5");
+        DataBase::getInstance().erase("10");
+        DataBase::getInstance().erase("7");
+        DataBase::getInstance().erase("8");
     }
 };
 
 TEST_F(TestDataBase, testDBWellCreated) {
-    ASSERT_EQ(db->get("10"), "Diez");
-    ASSERT_EQ(db->get("5"), "Cinco");
-    ASSERT_EQ(db->get("7"), "Siete");
+    ASSERT_EQ(DataBase::getInstance().get("10"), "Diez");
+    ASSERT_EQ(DataBase::getInstance().get("5"), "Cinco");
+    ASSERT_EQ(DataBase::getInstance().get("7"), "Siete");
 }
 
 TEST_F(TestDataBase, testDeleteKey) {
-    db->erase("5");
-    ASSERT_EQ(db->get("5"), "");
-    ASSERT_EQ(db->get("10"), "Diez");
-    ASSERT_EQ(db->get("7"), "Siete");
+    DataBase::getInstance().erase("5");
+    ASSERT_EQ(DataBase::getInstance().get("5"), "");
+    ASSERT_EQ(DataBase::getInstance().get("10"), "Diez");
+    ASSERT_EQ(DataBase::getInstance().get("7"), "Siete");
 }
 
 TEST_F(TestDataBase, testAddKey) {
-    db->put("8", "Ocho");
-    ASSERT_EQ(db->get("8"), "Ocho");
-    ASSERT_EQ(db->get("10"), "Diez");
-    ASSERT_EQ(db->get("5"), "Cinco");
-    ASSERT_EQ(db->get("7"), "Siete");
+    DataBase::getInstance().put("8", "Ocho");
+    ASSERT_EQ(DataBase::getInstance().get("8"), "Ocho");
+    ASSERT_EQ(DataBase::getInstance().get("10"), "Diez");
+    ASSERT_EQ(DataBase::getInstance().get("5"), "Cinco");
+    ASSERT_EQ(DataBase::getInstance().get("7"), "Siete");
 }

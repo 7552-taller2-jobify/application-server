@@ -3,13 +3,27 @@
 #ifndef ATTENDANT_H_
 #define ATTENDANT_H_
 
-#include <string>
+#include <map>
+#include <iostream> //TODO borrar
+#include "Constants.h"
+#include "Logger.h"
+#include "Profile.h"
+#include "Response.h"
+#include "DataBaseAdministrator.h"
+#include "DataBase.h"
+
+typedef Response* (*function)(struct Message operation);
 
 class Attendant {
+ protected:
+    std::map<std::string, function> functions;
+    bool isMethodSupported(std::string a_method);
+
  public:
     Attendant();
-    ~Attendant();
-    virtual void attend(std::string operation);
+    virtual ~Attendant();
+    Response* attend(struct Message operation);
+    static Response* get(struct Message operation);
 };
 
 
@@ -17,52 +31,71 @@ class Login: public Attendant {
  public:
     Login();
     ~Login();
-    void attend(std::string operation);
+    static Response* get(struct Message operation);
+    static Response* post(struct Message operation);
 };
 
 class RecoveryPass: public Attendant {
  public:
-    void attend(std::string operation);
+    RecoveryPass();
+    ~RecoveryPass();
+    static Response* get(struct Message operation);
 };
 
 class Contact: public Attendant {
  public:
-    void attend(std::string operation);
+    Contact();
+    ~Contact();
+    static Response* get(struct Message operation);
 };
 
 class Accept: public Attendant {
  public:
-    void attend(std::string operation);
+    Accept();
+    ~Accept();
+    static Response* get(struct Message operation);
 };
 
 class Reject: public Attendant {
  public:
-    void attend(std::string operation);
+    Reject();
+    ~Reject();
+    static Response* get(struct Message operation);
 };
 
 class ProfilePersonal: public Attendant {
  public:
-    void attend(std::string operation);
+    ProfilePersonal();
+    ~ProfilePersonal();
+    static Response* get(struct Message operation);
 };
 
 class ProfileSummary: public Attendant {
  public:
-    void attend(std::string operation);
+    ProfileSummary();
+    ~ProfileSummary();
+    static Response* get(struct Message operation);
 };
 
 class ProfileExpertise: public Attendant {
  public:
-    void attend(std::string operation);
+    ProfileExpertise();
+    ~ProfileExpertise();
+    static Response* get(struct Message operation);
 };
 
 class ProfileSkills: public Attendant {
  public:
-    void attend(std::string operation);
+    ProfileSkills();
+    ~ProfileSkills();
+    static Response* get(struct Message operation);
 };
 
 class ProfilePhoto: public Attendant {
  public:
-    void attend(std::string operation);
+    ProfilePhoto();
+    ~ProfilePhoto();
+    static Response* get(struct Message operation);
 };
 
 #endif  // ATTENDANT_H_

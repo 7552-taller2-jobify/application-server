@@ -5,12 +5,24 @@
 
 #include <iostream>
 #include "mongoose/mongoose.h"
+#include "RequestParse.h"
+#include "AttendantsHandler.h"
+#include "Attendant.h"
+#include <string>
+#include "Constants.h"
 
 class RequestAdministrator {
+ private:
+    struct mg_connection *c;
+    int ev;
+    struct http_message* hm;
+    RequestParse* rp;	
+    AttendantsHandler* attendantHandler;
+
  public:
-    RequestAdministrator();
+    RequestAdministrator(struct mg_connection *c, int ev, struct http_message* p);
     ~RequestAdministrator();
-    void handle(struct mg_connection *c, int ev, void *p);
+    void handle();
 };
 
 #endif  // REQUESTADMINISTRATOR_H_

@@ -6,6 +6,7 @@
 
 AttendantsHandler::AttendantsHandler() {
     attendants["Login"] = new Login();
+    attendants["Register"] = new Register();
     attendants["RecoveryPass"] = new RecoveryPass();
     attendants["Contact"] = new Contact();
     attendants["Accept"] = new Accept();

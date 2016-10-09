@@ -10,7 +10,6 @@ Attendant::~Attendant() {}
 Response* Attendant::attend(struct Message operation) {
     Response* response = NULL;
     if (isMethodSupported(operation.verb)) {
-        std::cout<<"verb  exist"<< std::endl;
          response = this->functions[operation.verb](operation);
     } else {
         Logger::getInstance().log(error, "Does not exist the request " + operation.verb + ".");
@@ -42,7 +41,7 @@ Response* Login::get(struct Message operation) {
 
 Response* Login::post(struct Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
-    LoginInformation *loginInformation = new LoginInformation();
+    Profile *loginInformation = new LoginInformation();
     loginInformation->loadJson(operation.body.c_str());
     
     Response* response = NULL;
@@ -56,6 +55,41 @@ Response* Login::post(struct Message operation) {
 
     return response;
 }
+
+Register::Register() {
+    this->functions["GET"] = get;
+    this->functions["POST"] = post;
+}
+
+Register::~Register() {}
+
+Response* Register::get(struct Message operation) {
+    std::cout << " GET Register\n" << std::endl;
+}
+
+Response* Register::post(struct Message operation) {
+ 
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+
+    Profile *loginInformation = new LoginInformation();
+    // Contemplar errores
+    loginInformation->loadJson(operation.body.c_str());
+    Profile *personal = new Personal();
+    personal->loadJson(operation.body.c_str());
+ 
+    Response* response = NULL;
+
+    dbAdministrator->addClient(loginInformation, personal);
+    
+    if (dbAdministrator->existsClient(loginInformation)){         
+        response = new Response();
+        response->setContent("{\n\t\"message\": \"Cliente was registered OK\"\n}");
+        response->setStatus(200);
+    }   
+
+    return response;
+}
+
 
 
 

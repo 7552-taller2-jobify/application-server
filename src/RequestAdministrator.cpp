@@ -26,7 +26,7 @@ void RequestAdministrator::handle() {
     if (this->ev == MG_EV_HTTP_REQUEST) {
 
         msg = this->rp->parseRequest(this->hm);
-        std::cout << " uri: " << msg->uri << " body: " << msg->body << " verb : " << msg->verb  << "\n" << std::endl;
+        std::cout << "uri: " << msg->uri << "\nbody: " << msg->body << "\nverb : " << msg->verb  << std::endl;
 
         Attendant* attendant = this->attendantHandler->find(msg->uri);
         if (attendant != NULL){
@@ -41,8 +41,6 @@ void RequestAdministrator::handle() {
                              "Content-Type: application/json\r\n\r\n%s", 
                              response->getStatus(), (int) response->getContent().size(), response->getContent().c_str()); 
             }
-            std::cout << " reponse NULL" << std::endl;
-        
         }
     }
 

@@ -9,15 +9,22 @@ DataBaseAdministrator::DataBaseAdministrator(){
 DataBaseAdministrator::~DataBaseAdministrator(){
 }
 
-bool DataBaseAdministrator::existsClient(LoginInformation *loginInformation){
-	std::cout<<"exist client ???"<< std::endl; 
-	std::cout<<loginInformation->getEmail()<< std::endl;
-	std::cout<<loginInformation->getPassword()<< std::endl;
+bool DataBaseAdministrator::existsClient(Profile *loginInformation){
+	LoginInformation* li = (LoginInformation*) loginInformation;
+	std::cout<<li->getEmail()<< std::endl;
+	std::cout<<li->getPassword()<< std::endl;
 
-	return (DataBase::getInstance().get(loginInformation->getEmail()) == loginInformation->getPassword());
+	return (DataBase::getInstance().get(li->getEmail()) == li->getPassword());
 }
 
-std::string DataBaseAdministrator::getDataOfClient(LoginInformation *loginInformation){
-	std::cout<<"get data of client ???"<< std::endl;
-    return DataBase::getInstance().get("personal_" + loginInformation->getEmail());	
+std::string DataBaseAdministrator::getDataOfClient(Profile *loginInformation){
+	LoginInformation* li = (LoginInformation*) loginInformation;
+    return DataBase::getInstance().get("personal_" + li->getEmail());	
+}
+
+void DataBaseAdministrator::addClient(Profile *loginInformation, Profile* personal){
+	LoginInformation* li = (LoginInformation*) loginInformation;
+	DataBase::getInstance().put(li->getEmail(), li->getPassword());
+	Personal* p = (Personal*) personal;
+	DataBase::getInstance().put("personal_" + p->getEmail(), p->createJsonFile());
 }

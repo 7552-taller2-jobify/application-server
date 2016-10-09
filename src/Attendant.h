@@ -35,6 +35,14 @@ class Login: public Attendant {
     static Response* post(struct Message operation);
 };
 
+class Register: public Attendant {
+ public:
+    Register();
+    ~Register();
+    static Response* get(struct Message operation);
+    static Response* post(struct Message operation);
+};
+
 class RecoveryPass: public Attendant {
  public:
     RecoveryPass();

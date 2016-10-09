@@ -2,6 +2,7 @@
 
 #include "Profile.h"
 #include <string>
+#include <iostream>
 
 Profile::Profile() {}
 
@@ -72,13 +73,14 @@ std::string LoginInformation::createJsonFile() {
 
 
 void Personal::getOwnInfo(const rapidjson::Document &document) {
-    this->id = document["id"].GetDouble();
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
     this->email = document["email"].GetString();
     this->birthday = document["birthday"].GetString();
     this->address[0] = document["address"]["lat"].GetString();
     this->address[1] = document["address"]["lon"].GetString();
+    std::cout<<"por parsear id" << std::endl;
+    this->id = document["id"].GetDouble();
 }
 
 double Personal::getId() {

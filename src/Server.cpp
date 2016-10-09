@@ -2,6 +2,7 @@
 
 #include "Server.h"
 #include "Response.h"
+#include <string>
 
 static const char s_http_port[] = "8000";
 
@@ -18,6 +19,7 @@ void ev_handler(struct mg_connection *c, int ev, void *p) {
 }
 
 void Server::start() {
+    /*
     Request* request = new Request();
 // Poner IP de LAN de su compu
 //https://jobify-7552-taller2.herokuapp.com
@@ -36,7 +38,7 @@ void Server::start() {
 	std::cout<< "----------------------fin get--------------------------" << std::endl;
 	std::cout<< "----------------------FIN TEST CURL SHARED--------------------------" << std::endl;
    
-   
+   */
    
     this->IsOnLine = true;
     struct mg_mgr mgr;  // Mongoose event manager

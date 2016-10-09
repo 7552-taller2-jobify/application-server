@@ -13,8 +13,10 @@ class DataBaseAdministrator {
     public:
         DataBaseAdministrator();
         ~DataBaseAdministrator();
-        bool existsClient(LoginInformation *loginInformation);
-        std::string getDataOfClient(LoginInformation *loginInformation);	
+        bool existsClient(Profile *loginInformation);
+        std::string getDataOfClient(Profile *loginInformation);
+        void addClient(Profile *loginInformation, Profile* personal);	
+
 
 };
 

@@ -9,7 +9,7 @@ Attendant::~Attendant() {}
 
 Response* Attendant::attend(struct Message operation) {
     Response* response = NULL;
-    if (isMethodSupported(operation.verb)) {
+    if (this->isMethodSupported(operation.verb)) {
          response = this->functions[operation.verb](operation);
     } else {
         Logger::getInstance().log(error, "Does not exist the request " + operation.verb + ".");
@@ -29,19 +29,14 @@ bool Attendant::isMethodSupported(std::string a_method) {
 
 
 Login::Login() {
-    this->functions["GET"] = get;
     this->functions["POST"] = post;
 }
 
 Login::~Login() {}
 
-Response* Login::get(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
-}
-
 Response* Login::post(struct Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
-    Profile *loginInformation = new LoginInformation();
+    LoginInformation *loginInformation = new LoginInformation();
     loginInformation->loadJson(operation.body.c_str());
     
     Response* response = NULL;
@@ -57,15 +52,10 @@ Response* Login::post(struct Message operation) {
 }
 
 Register::Register() {
-    this->functions["GET"] = get;
     this->functions["POST"] = post;
 }
 
 Register::~Register() {}
-
-Response* Register::get(struct Message operation) {
-    std::cout << " GET Register\n" << std::endl;
-}
 
 Response* Register::post(struct Message operation) {
  

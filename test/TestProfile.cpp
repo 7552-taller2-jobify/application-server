@@ -46,14 +46,16 @@ class TestProfile : public ::testing::Test {
 };
 
 TEST_F(TestProfile, testPersonalWellCreated) {
-    ASSERT_EQ(personal->getId(), 1);
+    ASSERT_EQ(personal->getDeviceId(), 1);
     ASSERT_EQ(personal->getFirstName(), "Sergio Matías");
     ASSERT_EQ(personal->getLastName(), "Piano");
     ASSERT_EQ(personal->getEmail(), "smpiano@gmail.com");
+    ASSERT_EQ(personal->getGender(), "M");
     ASSERT_EQ(personal->getBirthday(), "24/07/1984");
     std::string lat = "-34.61543532", lon = "-58.37213459";
     ASSERT_EQ(personal->getAddress()[0], lat);
     ASSERT_EQ(personal->getAddress()[1], lon);
+    ASSERT_EQ(personal->getCity(), "La Plata");
 }
 
 TEST_F(TestProfile, testSummaryWellCreated) {
@@ -61,11 +63,18 @@ TEST_F(TestProfile, testSummaryWellCreated) {
 }
 
 TEST_F(TestProfile, testExpertiseWellCreated) {
-    ASSERT_EQ(expertise->getCompany(), "Lalala");
-    ASSERT_EQ(expertise->getPosition(), "Líder técnico");
-    ASSERT_EQ(expertise->getFrom(), "01/01/2010");
-    ASSERT_EQ(expertise->getTo(), "26/09/2016");
-    ASSERT_EQ(expertise->getExpertise(), "aaer");
+    ASSERT_EQ(expertise->getCompany(0), "Lalala");
+    ASSERT_EQ(expertise->getPosition(0), "Líder técnico");
+    ASSERT_EQ(expertise->getFrom(0), "01/01/2010");
+    ASSERT_EQ(expertise->getTo(0), "26/09/2016");
+    ASSERT_EQ(expertise->getExpertise(0), "aaer");
+    ASSERT_EQ(expertise->getCategory(0), "software");
+    ASSERT_EQ(expertise->getCompany(1), "Lololo");
+    ASSERT_EQ(expertise->getPosition(1), "Especialista técnico");
+    ASSERT_EQ(expertise->getFrom(1), "02/02/2012");
+    ASSERT_EQ(expertise->getTo(1), "02/02/2016");
+    ASSERT_EQ(expertise->getExpertise(1), "aaer");
+    ASSERT_EQ(expertise->getCategory(1), "hardware");
 }
 
 TEST_F(TestProfile, testSkillsWellCreated) {
@@ -91,6 +100,11 @@ TEST_F(TestProfile, testChangeEmail) {
     ASSERT_EQ(personal->getEmail(), "juanperez@gmail.com");
 }
 
+TEST_F(TestProfile, testChangeGender) {
+    personal->setGender("F");
+    ASSERT_EQ(personal->getGender(), "F");
+}
+
 TEST_F(TestProfile, testChangeBirthday) {
     personal->setBirthday("10/10/1990");
     ASSERT_EQ(personal->getBirthday(), "10/10/1990");
@@ -103,34 +117,44 @@ TEST_F(TestProfile, testChangeAddress) {
     ASSERT_EQ(personal->getAddress()[1], lon);
 }
 
+TEST_F(TestProfile, testChangeCity) {
+    personal->setCity("CABA");
+    ASSERT_EQ(personal->getCity(), "CABA");
+}
+
 TEST_F(TestProfile, testChangeSummary) {
     summary->setSummary("Nueva descripción");
     ASSERT_EQ(summary->getSummary(), "Nueva descripción");
 }
 
 TEST_F(TestProfile, testChangeCompany) {
-    expertise->setCompany("Nueva compañía");
-    ASSERT_EQ(expertise->getCompany(), "Nueva compañía");
+    expertise->setCompany("Nueva compañía", 0);
+    ASSERT_EQ(expertise->getCompany(0), "Nueva compañía");
 }
 
 TEST_F(TestProfile, testChangePosition) {
-    expertise->setPosition("Nueva posición");
-    ASSERT_EQ(expertise->getPosition(), "Nueva posición");
+    expertise->setPosition("Nueva posición", 0);
+    ASSERT_EQ(expertise->getPosition(0), "Nueva posición");
 }
 
 TEST_F(TestProfile, testChangeFrom) {
-    expertise->setFrom("20/10/2000");
-    ASSERT_EQ(expertise->getFrom(), "20/10/2000");
+    expertise->setFrom("20/10/2000", 0);
+    ASSERT_EQ(expertise->getFrom(0), "20/10/2000");
 }
 
 TEST_F(TestProfile, testChangeTo) {
-    expertise->setTo("02/01/2015");
-    ASSERT_EQ(expertise->getTo(), "02/01/2015");
+    expertise->setTo("02/01/2015", 0);
+    ASSERT_EQ(expertise->getTo(0), "02/01/2015");
 }
 
 TEST_F(TestProfile, testChangeExpertise) {
-    expertise->setExpertise("Nueva experiencia");
-    ASSERT_EQ(expertise->getExpertise(), "Nueva experiencia");
+    expertise->setExpertise("Nueva experiencia", 0);
+    ASSERT_EQ(expertise->getExpertise(0), "Nueva experiencia");
+}
+
+TEST_F(TestProfile, testChangeExpertiseCategory) {
+    expertise->setCategory("Nueva categoría", 0);
+    ASSERT_EQ(expertise->getCategory(0), "Nueva categoría");
 }
 
 TEST_F(TestProfile, testChangeSkills) {
@@ -170,19 +194,27 @@ TEST_F(TestProfile, testUpdateJsonSummary) {
 }
 
 TEST_F(TestProfile, testUpdateJsonExpertise) {
-    expertise->setCompany("Mercadolibre");
-    expertise->setPosition("Desarrollador");
-    expertise->setFrom("12/12/1999");
-    expertise->setTo("03/07/2005");
-    expertise->setExpertise("Desarrollo Java");
+    expertise->setCompany("Mercadolibre", 0);
+    expertise->setPosition("Desarrollador", 0);
+    expertise->setFrom("12/12/1999", 0);
+    expertise->setTo("03/07/2005", 0);
+    expertise->setExpertise("Desarrollo Java", 0);
+    expertise->setCategory("Desarrollo", 0);
     expertise->updateJson(expertise_output);
     Expertise *expertise_modified = new Expertise();
     expertise_modified->getProfileInfo(expertise_output);
-    ASSERT_EQ(expertise_modified->getCompany(), "Mercadolibre");
-    ASSERT_EQ(expertise_modified->getPosition(), "Desarrollador");
-    ASSERT_EQ(expertise_modified->getFrom(), "12/12/1999");
-    ASSERT_EQ(expertise_modified->getTo(), "03/07/2005");
-    ASSERT_EQ(expertise_modified->getExpertise(), "Desarrollo Java");
+    ASSERT_EQ(expertise_modified->getCompany(0), "Mercadolibre");
+    ASSERT_EQ(expertise_modified->getPosition(0), "Desarrollador");
+    ASSERT_EQ(expertise_modified->getFrom(0), "12/12/1999");
+    ASSERT_EQ(expertise_modified->getTo(0), "03/07/2005");
+    ASSERT_EQ(expertise_modified->getExpertise(0), "Desarrollo Java");
+    ASSERT_EQ(expertise_modified->getCategory(0), "Desarrollo");
+    ASSERT_EQ(expertise_modified->getCompany(1), "Lololo");
+    ASSERT_EQ(expertise_modified->getPosition(1), "Especialista técnico");
+    ASSERT_EQ(expertise_modified->getFrom(1), "02/02/2012");
+    ASSERT_EQ(expertise_modified->getTo(1), "02/02/2016");
+    ASSERT_EQ(expertise_modified->getExpertise(1), "aaer");
+    ASSERT_EQ(expertise_modified->getCategory(1), "hardware");
 }
 
 TEST_F(TestProfile, testUpdateJsonSkills) {

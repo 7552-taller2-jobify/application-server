@@ -22,8 +22,8 @@ class Profile {
     Profile();
     ~Profile() {}
     virtual void getProfileInfo(std::string json_file);
-    void updateJson(std::string json_file);
-    void loadJson(std::string json);
+    void updateJson(const std::string json_file);
+    void loadJson(const std::string json);
 };
 
 class LoginInformation: public Profile {
@@ -44,29 +44,35 @@ class LoginInformation: public Profile {
 
 class Personal: public Profile {
  private:
-    double id;
+    double device_id;
     std::string first_name;
     std::string last_name;
     std::string email;
+    std::string gender;
     std::string birthday;
     std::string address[2];
+    std::string city;
     void getOwnInfo(const rapidjson::Document &document);
 
  public:
     Personal() : Profile() {}
     ~Personal() {}
-    double getId();
+    double getDeviceId();
     std::string getFirstName();
     std::string getLastName();
     std::string getEmail();
+    std::string getGender();
     std::string getBirthday();
     std::string* getAddress();
-    void setId(double new_id);
+    std::string getCity();
+    void setDeviceId(double new_id);
     void setFirstName(std::string new_first_name);
     void setLastName(std::string new_last_name);
     void setEmail(std::string new_email);
+    void setGender(std::string new_gender);
     void setBirthday(std::string new_birthday);
     void setAddress(std::string new_lat, std::string new_lon);
+    void setCity(std::string new_city);
     std::string createJsonFile();
 };
 
@@ -85,26 +91,33 @@ class Summary: public Profile {
 
 class Expertise: public Profile {
  private:
-    std::string company;
-    std::string position;
-    std::string from;
-    std::string to;
-    std::string expertise;
+    std::string *company;
+    std::string *position;
+    std::string *from;
+    std::string *to;
+    std::string *expertise;
+    std::string *category;
+    int number_of_expertises;
+
     void getOwnInfo(const rapidjson::Document &document);
+    std::string getItemByIndex(std::string *items, int index);
+    void setItem(std::string *items, int index, std::string new_item);
 
  public:
     Expertise() : Profile() {}
-    ~Expertise() {}
-    std::string getCompany();
-    std::string getPosition();
-    std::string getFrom();
-    std::string getTo();
-    std::string getExpertise();
-    void setCompany(std::string new_company);
-    void setPosition(std::string new_position);
-    void setFrom(std::string new_from);
-    void setTo(std::string new_to);
-    void setExpertise(std::string new_expertise);
+    ~Expertise();
+    std::string getCompany(int index);
+    std::string getPosition(int index);
+    std::string getFrom(int index);
+    std::string getTo(int index);
+    std::string getExpertise(int index);
+    std::string getCategory(int index);
+    void setCompany(std::string new_company, int index);
+    void setPosition(std::string new_position, int index);
+    void setFrom(std::string new_from, int index);
+    void setTo(std::string new_to, int index);
+    void setExpertise(std::string new_expertise, int index);
+    void setCategory(std::string new_category, int index);
     std::string createJsonFile();
 };
 

@@ -1,7 +1,19 @@
 {
-	"company": "Lalala",
-	"position": "Líder técnico",
-	"from": "01/01/2010",
-	"to": "26/09/2016",
-	"expertise": "aaer"
+    "expertises":
+    [{
+	    "company": "Lalala",
+	    "position": "Líder técnico",
+	    "from": "01/01/2010",
+	    "to": "26/09/2016",
+	    "expertise": "aaer",
+        "category": "software"
+    },
+    {
+	    "company": "Lololo",
+	    "position": "Especialista técnico",
+	    "from": "02/02/2012",
+	    "to": "02/02/2016",
+	    "expertise": "aaer",
+        "category": "hardware"
+    }]
 }

@@ -13,7 +13,7 @@ Request::Request(){
 
 }
 
-std::string Request::Execute(const std::string url){
+Response*  Request::Execute(const std::string url){
     curl_global_init(CURL_GLOBAL_DEFAULT);
     
     curl = curl_easy_init();
@@ -54,6 +54,9 @@ std::string Request::Execute(const std::string url){
     /* Perform the request, res will get the return code */
     CURLcode res = curl_easy_perform(curl);
     
+    long http_code = 0;
+  curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
+    
     
     /* Check for errors */
     if (res != CURLE_OK) {
@@ -61,7 +64,12 @@ std::string Request::Execute(const std::string url){
                 curl_easy_strerror(res));
     }
     curl_global_cleanup();
-    return out.str();
+    
+    Response* response = new Response();
+	response->setContent(out.str());
+	response->setStatus( http_code);
+  
+  return response;
 }
 
 struct WriteThis {

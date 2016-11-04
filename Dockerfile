@@ -24,3 +24,9 @@ RUN \
 RUN \
   apt-get install -y autoconf libtool && \
   wget https://curl.haxx.se/download/curl-7.50.3.tar.gz && tar -xzf curl-7.50.3.tar.gz && rm curl-7.50.3.tar.gz && cd curl-7.50.3 && ./buildconf && ./configure && make && make install
+
+#JWT.io
+RUN \
+  apt-get install -y software-properties-common && \
+  add-apt-repository ppa:ben-collins/libjwt && \
+  apt-get update

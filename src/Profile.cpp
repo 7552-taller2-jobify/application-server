@@ -6,7 +6,7 @@
 
 Profile::Profile() {}
 
-void Profile::updateJson(std::string json_file) {
+void Profile::updateJson(const std::string json_file) {
     rapidjson::Document document;
     if (document.Parse(this->createJsonFile().c_str()).HasParseError()) {
         Logger::getInstance().log(error, "Could not create JSON file from profile.");
@@ -21,7 +21,7 @@ void Profile::updateJson(std::string json_file) {
     }
 }
 
-void Profile::loadJson(std::string json) {
+void Profile::loadJson(const std::string json) {
     rapidjson::Document document;
     rapidjson::ParseResult parseRes = document.Parse(json.c_str());
     this->getOwnInfo(document);
@@ -76,15 +76,16 @@ void Personal::getOwnInfo(const rapidjson::Document &document) {
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
     this->email = document["email"].GetString();
+    this->gender = document["gender"].GetString();
     this->birthday = document["birthday"].GetString();
     this->address[0] = document["address"]["lat"].GetString();
     this->address[1] = document["address"]["lon"].GetString();
-    std::cout<<"por parsear id" << std::endl;
-    this->id = document["id"].GetDouble();
+    this->city = document["city"].GetString();
+    this->device_id = document["device_id"].GetDouble();
 }
 
-double Personal::getId() {
-    return this->id;
+double Personal::getDeviceId() {
+    return this->device_id;
 }
 
 std::string Personal::getFirstName() {
@@ -99,6 +100,10 @@ std::string Personal::getEmail() {
     return this->email;
 }
 
+std::string Personal::getGender() {
+    return this->gender;
+}
+
 std::string Personal::getBirthday() {
     return this->birthday;
 }
@@ -107,8 +112,12 @@ std::string* Personal::getAddress() {
     return this->address;
 }
 
-void Personal::setId(double new_id) {
-    this->id = new_id;
+std::string Personal::getCity() {
+    return this->city;
+}
+
+void Personal::setDeviceId(double new_id) {
+    this->device_id = new_id;
 }
 
 void Personal::setFirstName(std::string new_name) {
@@ -123,6 +132,10 @@ void Personal::setEmail(std::string new_email) {
     this->email = new_email;
 }
 
+void Personal::setGender(std::string new_gender) {
+    this->gender = new_gender;
+}
+
 void Personal::setBirthday(std::string new_birthday) {
     this->birthday = new_birthday;
 }
@@ -132,19 +145,25 @@ void Personal::setAddress(std::string new_lat, std::string new_lon) {
     this->address[1] = new_lon.c_str();
 }
 
+void Personal::setCity(std::string new_city) {
+    this->city = new_city;
+}
+
 std::string Personal::createJsonFile() {
     std::ostringstream oss;
-    oss << this->id;
+    oss << this->device_id;
     std::string id_parsed = oss.str();
 
-    std::string id = "{\n\t\"id\": " + id_parsed + ",\n",
+    std::string id = "{\n\t\"device_id\": " + id_parsed + ",\n",
     first_name = "\t\"first_name\": \"" + this->first_name + "\",\n",
     last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
     email = "\t\"email\": \"" + this->email + "\",\n",
+    gender = "\t\"gender\": \"" + this->gender + "\",\n",
     birthday = "\t\"birthday\": \"" + this->birthday + "\",\n",
     address_1 = "\t\"address\": {\n\t\t\"lat\": \"" + this->address[0] + "\",\n",
-    address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t}\n}";
-    return id + first_name + last_name + email + birthday + address_1 + address_2;
+    address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t},\n",
+    city = "\t\"city\": \"" + this->city + "\"\n}";
+    return id + first_name + last_name + email + gender + birthday + address_1 + address_2 + city;
 }
 
 
@@ -168,60 +187,109 @@ std::string Summary::createJsonFile() {
 
 
 void Expertise::getOwnInfo(const rapidjson::Document &document) {
-    this->company = document["company"].GetString();
-    this->position = document["position"].GetString();
-    this->from = document["from"].GetString();
-    this->to = document["to"].GetString();
-    this->expertise = document["expertise"].GetString();
+    this->number_of_expertises = document["expertises"].Size();
+    this->company = new std::string[this->number_of_expertises];
+    this->position = new std::string[this->number_of_expertises];
+    this->from = new std::string[this->number_of_expertises];
+    this->to = new std::string[this->number_of_expertises];
+    this->expertise = new std::string[this->number_of_expertises];
+    this->category = new std::string[this->number_of_expertises];
+    for (rapidjson::SizeType i = 0; i < this->number_of_expertises; i++) {
+        this->company[i] = document["expertises"][i]["company"].GetString();
+        this->position[i] = document["expertises"][i]["position"].GetString();
+        this->from[i] = document["expertises"][i]["from"].GetString();
+        this->to[i] = document["expertises"][i]["to"].GetString();
+        this->expertise[i] = document["expertises"][i]["expertise"].GetString();
+        this->category[i] = document["expertises"][i]["category"].GetString();
+    }
 }
 
-std::string Expertise::getCompany() {
-    return this->company;
+std::string Expertise::getItemByIndex(std::string *items, int index) {
+    if (index < items->length()) {
+        return items[index];
+    }
+    return "";
 }
 
-std::string Expertise::getPosition() {
-    return this->position;
+std::string Expertise::getCompany(int index) {
+    return getItemByIndex(this->company, index);
 }
 
-std::string Expertise::getFrom() {
-    return this->from;
+std::string Expertise::getPosition(int index) {
+    return getItemByIndex(this->position, index);
 }
 
-std::string Expertise::getTo() {
-    return this->to;
+std::string Expertise::getFrom(int index) {
+    return getItemByIndex(this->from, index);
 }
 
-std::string Expertise::getExpertise() {
-    return this->expertise;
+std::string Expertise::getTo(int index) {
+    return getItemByIndex(this->to, index);
 }
 
-void Expertise::setCompany(std::string new_company) {
-    this->company = new_company;
+std::string Expertise::getExpertise(int index) {
+    return getItemByIndex(this->expertise, index);
 }
 
-void Expertise::setPosition(std::string new_position) {
-    this->position = new_position;
+std::string Expertise::getCategory(int index) {
+    return getItemByIndex(this->category, index);
 }
 
-void Expertise::setFrom(std::string new_from) {
-    this->from = new_from;
+void Expertise::setItem(std::string *items, int index, std::string new_item) {
+    if (index < items->length()) {
+        items[index] = new_item;
+    }
 }
 
-void Expertise::setTo(std::string new_to) {
-    this->to = new_to;
+void Expertise::setCompany(std::string new_company, int index) {
+    setItem(this->company, index, new_company);
 }
 
-void Expertise::setExpertise(std::string new_expertise) {
-    this->expertise = new_expertise;
+void Expertise::setPosition(std::string new_position, int index) {
+    setItem(this->position, index, new_position);
+}
+
+void Expertise::setFrom(std::string new_from, int index) {
+    setItem(this->from, index, new_from);
+}
+
+void Expertise::setTo(std::string new_to, int index) {
+    setItem(this->to, index, new_to);
+}
+
+void Expertise::setExpertise(std::string new_expertise, int index) {
+    setItem(this->expertise, index, new_expertise);
+}
+
+void Expertise::setCategory(std::string new_category, int index) {
+    setItem(this->category, index, new_category);
+}
+
+Expertise::~Expertise() {
+    delete[] this->company;
+    delete[] this->position;
+    delete[] this->from;
+    delete[] this->to;
+    delete[] this->expertise;
+    delete[] this->category;
 }
 
 std::string Expertise::createJsonFile() {
-    std::string company = "{\n\t\"company\": \"" + this->company + "\",\n",
-    position = "\t\"position\": \"" + this->position + "\",\n",
-    from = "\t\"from\": \"" + this->from + "\",\n",
-    to = "\t\"to\": \"" + this->to + "\",\n",
-    expertise = "\t\"expertise\": \"" + this->expertise + "\"\n}";
-    return company + position + from + to + expertise;
+    std::string result = "{\n\t\"expertises\":\n\t[";
+    int last = this->number_of_expertises - 1;
+    for (int i = 0; i < this->number_of_expertises; i++) {
+        result += "{\n\t\t\"company\": \"" + this->company[i] + "\",\n\t\t"
+                + "\"position\": \"" + this->position[i] + "\",\n\t\t"
+                + "\"from\": \"" + this->from[i] + "\",\n\t\t"
+                + "\"to\": \"" + this->to[i] + "\",\n\t\t"
+                + "\"expertise\": \"" + this->expertise[i] + "\",\n\t\t"
+                + "\"category\": \"" + this->category[i] + "\"\n\t}";
+        if (i != last) {
+            result += ",\n\t";
+        }
+    }
+    result += "]\n}";
+    return result;
 }
 
 

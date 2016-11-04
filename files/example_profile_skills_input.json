@@ -1,3 +1,11 @@
 {
-	"skills": ["skill1", "skill2", "skill3", "skill4"]
+    "every_skill":
+    [{
+	    "skills": ["java","c","UML"],
+        "category": "software"
+    },
+    {
+        "skills": ["moto","auto"],
+        "category": "licencia manejo"
+    }]
 }

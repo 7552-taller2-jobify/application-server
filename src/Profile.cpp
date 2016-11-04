@@ -41,6 +41,19 @@ void Profile::getProfileInfo(std::string json_file) {
     }
 }
 
+std::string Profile::getItemByIndex(std::string *items, int index) {
+    if (index < items->length()) {
+        return items[index];
+    }
+    return "";
+}
+
+void Profile::setItem(std::string *items, int index, std::string new_item) {
+    if (index < items->length()) {
+        items[index] = new_item;
+    }
+}
+
 
 
 void LoginInformation::getOwnInfo(const rapidjson::Document &document) {
@@ -204,65 +217,52 @@ void Expertise::getOwnInfo(const rapidjson::Document &document) {
     }
 }
 
-std::string Expertise::getItemByIndex(std::string *items, int index) {
-    if (index < items->length()) {
-        return items[index];
-    }
-    return "";
-}
-
 std::string Expertise::getCompany(int index) {
-    return getItemByIndex(this->company, index);
+    return this->getItemByIndex(this->company, index);
 }
 
 std::string Expertise::getPosition(int index) {
-    return getItemByIndex(this->position, index);
+    return this->getItemByIndex(this->position, index);
 }
 
 std::string Expertise::getFrom(int index) {
-    return getItemByIndex(this->from, index);
+    return this->getItemByIndex(this->from, index);
 }
 
 std::string Expertise::getTo(int index) {
-    return getItemByIndex(this->to, index);
+    return this->getItemByIndex(this->to, index);
 }
 
 std::string Expertise::getExpertise(int index) {
-    return getItemByIndex(this->expertise, index);
+    return this->getItemByIndex(this->expertise, index);
 }
 
 std::string Expertise::getCategory(int index) {
-    return getItemByIndex(this->category, index);
-}
-
-void Expertise::setItem(std::string *items, int index, std::string new_item) {
-    if (index < items->length()) {
-        items[index] = new_item;
-    }
+    return this->getItemByIndex(this->category, index);
 }
 
 void Expertise::setCompany(std::string new_company, int index) {
-    setItem(this->company, index, new_company);
+    this->setItem(this->company, index, new_company);
 }
 
 void Expertise::setPosition(std::string new_position, int index) {
-    setItem(this->position, index, new_position);
+    this->setItem(this->position, index, new_position);
 }
 
 void Expertise::setFrom(std::string new_from, int index) {
-    setItem(this->from, index, new_from);
+    this->setItem(this->from, index, new_from);
 }
 
 void Expertise::setTo(std::string new_to, int index) {
-    setItem(this->to, index, new_to);
+    this->setItem(this->to, index, new_to);
 }
 
 void Expertise::setExpertise(std::string new_expertise, int index) {
-    setItem(this->expertise, index, new_expertise);
+    this->setItem(this->expertise, index, new_expertise);
 }
 
 void Expertise::setCategory(std::string new_category, int index) {
-    setItem(this->category, index, new_category);
+    this->setItem(this->category, index, new_category);
 }
 
 Expertise::~Expertise() {
@@ -295,18 +295,24 @@ std::string Expertise::createJsonFile() {
 
 
 void Skills::getOwnInfo(const rapidjson::Document &document) {
-    for (rapidjson::SizeType i = 0; i < document["skills"].Size(); i++) {
-        if (i != 0) {
-            this->skills += ", ";
+    this->number_of_skills = document["every_skill"].Size();
+    this->skills = new std::string[this->number_of_skills];
+    this->category = new std::string[this->number_of_skills];
+    for (rapidjson::SizeType i = 0; i < this->number_of_skills; i++) {
+        for (rapidjson::SizeType j = 0; j < document["every_skill"][i]["skills"].Size(); j++) {
+            if (j != 0) {
+                this->skills[i] += ", ";
+            }
+            this->skills[i] += document["every_skill"][i]["skills"][j].GetString();
         }
-        this->skills += document["skills"][i].GetString();
+        this->category[i] = document["every_skill"][i]["category"].GetString();
     }
 }
 
-std::string Skills::parseSkills() {
+std::string Skills::parseSkills(int index) {
     std::string parsed_skills;
     std::stringstream ss;
-    ss.str(this->skills);
+    ss.str(this->skills[index]);
     std::string item, aux;
     while (getline(ss, item, ',')) {
         item.erase(remove(item.begin(), item.end(), ' '), item.end());
@@ -314,20 +320,37 @@ std::string Skills::parseSkills() {
         parsed_skills += aux;
     }
     parsed_skills = parsed_skills.substr(0, parsed_skills.length() - 2);
-    parsed_skills += "]\n}";
     return parsed_skills;
 }
 
-std::string Skills::getSkills() {
-    return this->skills;
+std::string Skills::getSkills(int index) {
+    return this->getItemByIndex(this->skills, index);
 }
 
-void Skills::setSkills(std::string new_skills) {
-    this->skills = new_skills;
+std::string Skills::getCategory(int index) {
+    return this->getItemByIndex(this->category, index);
+}
+
+void Skills::setSkills(std::string new_skills, int index) {
+    this->setItem(this->skills, index, new_skills);
+}
+
+void Skills::setCategory(std::string new_category, int index) {
+    this->setItem(this->category, index, new_category);
 }
 
 std::string Skills::createJsonFile() {
-    return "{\n\t\"skills\": [" + this->parseSkills();
+    std::string result = "{\n\t\"every_skill\":\n\t[";
+    int last = this->number_of_skills - 1;
+    for (int i = 0; i < this->number_of_skills; i++) {
+        result += "{\n\t\t\"skills\": [" + this->parseSkills(i) + "],\n\t\t"
+                + "\"category\": \"" + this->category[i] + "\"\n\t}";
+        if (i != last) {
+            result += ",\n\t";
+        }
+    }
+    result += "]\n}";
+    return result;
 }
 
 

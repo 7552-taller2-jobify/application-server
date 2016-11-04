@@ -17,6 +17,8 @@ class Profile {
  protected:
     virtual std::string createJsonFile() = 0;
     virtual void getOwnInfo(const rapidjson::Document &document) = 0;
+    std::string getItemByIndex(std::string *items, int index);
+    void setItem(std::string *items, int index, std::string new_item);
 
  public:
     Profile();
@@ -100,8 +102,6 @@ class Expertise: public Profile {
     int number_of_expertises;
 
     void getOwnInfo(const rapidjson::Document &document);
-    std::string getItemByIndex(std::string *items, int index);
-    void setItem(std::string *items, int index, std::string new_item);
 
  public:
     Expertise() : Profile() {}
@@ -123,15 +123,19 @@ class Expertise: public Profile {
 
 class Skills: public Profile {
  private:
-    std::string skills;
-    std::string parseSkills();
+    std::string *skills;
+    std::string *category;
+    std::string parseSkills(int index);
+    int number_of_skills;
     void getOwnInfo(const rapidjson::Document &document);
 
  public:
     Skills() : Profile() {}
     ~Skills() {}
-    std::string getSkills();
-    void setSkills(std::string new_skills);
+    std::string getSkills(int index);
+    std::string getCategory(int index);
+    void setSkills(std::string new_skills, int index);
+    void setCategory(std::string new_skills, int index);
     std::string createJsonFile();
 };
 

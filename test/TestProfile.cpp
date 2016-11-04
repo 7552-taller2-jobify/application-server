@@ -230,10 +230,10 @@ TEST_F(TestProfile, testUpdateJsonSkills) {
     skills->updateJson(skills_output);
     Skills *skills_modified = new Skills();
     skills_modified->getProfileInfo(skills_output);
-    /*ASSERT_EQ(skills_modified->getSkills(0), "Nueva_skill_1, Nueva_skill_2");
+    ASSERT_EQ(skills_modified->getSkills(0), "Nueva_skill_1, Nueva_skill_2");
     ASSERT_EQ(skills_modified->getCategory(0), "software");
     ASSERT_EQ(skills_modified->getSkills(1), "moto, auto");
-    ASSERT_EQ(skills_modified->getCategory(1), "licencia manejo");*/ASSERT_EQ(1,1);
+    ASSERT_EQ(skills_modified->getCategory(1), "licencia manejo");
 }
 
 TEST_F(TestProfile, testUpdateJsonPicture) {

@@ -370,3 +370,41 @@ void Picture::setPicture(std::string new_picture) {
 std::string Picture::createJsonFile() {
     return "{\n\t\"picture\": \"" + this->picture + "\"\n}";
 }
+
+
+
+void Contacts::getOwnInfo(const rapidjson::Document &document) {
+    this->number_of_contacts = document["number_of_contacts"].GetInt();
+}
+
+int Contacts::getNumberOfContacts() {
+    return this->number_of_contacts;
+}
+
+void Contacts::addContact(std::string contact_to_add) {
+    this->contacts.push_back(contact_to_add);
+    std::sort(this->contacts.begin(), this->contacts.end(), std::greater<std::string>());
+    this->number_of_contacts++;
+}
+
+void Contacts::removeContact(std::string contact_to_remove) {
+    bool found = false;
+    int index = 0;
+    while (!found) {
+        std::string contact = this->contacts.at(index);
+        if (std::strcmp(contact.c_str(), contact_to_remove.c_str())) {
+            this->contacts.erase(this->contacts.begin() + index);
+            continue;
+        }
+        index++;
+    }
+    this->number_of_contacts--;
+}
+
+std::string Contacts::createJsonFile() {
+    std::ostringstream oss;
+    oss << this->number_of_contacts;
+    std::string contacts_parsed = oss.str();
+
+    return "{\n\t\"number_of_contacts\": " + contacts_parsed + "\n}";
+}

@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <sstream>
 #include <algorithm>
+#include <vector>
+#include <functional>
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
@@ -149,6 +151,21 @@ class Picture: public Profile {
     ~Picture() {}
     std::string getPicture();
     void setPicture(std::string new_picture);
+    std::string createJsonFile();
+};
+
+class Contacts: public Profile {
+ private:
+    int number_of_contacts;
+    std::vector<std::string> contacts;
+    void getOwnInfo(const rapidjson::Document &document);
+
+ public:
+    Contacts() : Profile() {}
+    ~Contacts() {}
+    int getNumberOfContacts();
+    void addContact(std::string contact_to_add);
+    void removeContact(std::string contact_to_remove);
     std::string createJsonFile();
 };
 

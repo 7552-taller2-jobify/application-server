@@ -373,8 +373,17 @@ std::string Picture::createJsonFile() {
 
 
 
+Contacts::~Contacts() {}
+
 int Contacts::getNumberOfContacts() {
     return this->contacts.size();
+}
+
+std::string Contacts::getContactAt(int index) {
+    if (this->contacts.size() > index) {
+        return this->contacts.at(index);
+    }
+    return "";
 }
 
 int Contacts::search(std::string contact) {
@@ -397,7 +406,7 @@ void Contacts::addContact(std::string contact_to_add) {
     int index = this->search(contact_to_add);
     if (index == -1) {
         this->contacts.push_back(contact_to_add);
-        std::sort(this->contacts.begin(), this->contacts.end(), std::greater<std::string>());
+        std::sort(this->contacts.begin(), this->contacts.end(), std::less<std::string>());
     }
 }
 

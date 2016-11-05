@@ -9,11 +9,18 @@ const char summary_input[] = "files/example_profile_summary_input.json";
 const char expertise_input[] = "files/example_profile_expertise_input.json";
 const char skills_input[] = "files/example_profile_skills_input.json";
 const char picture_input[] = "files/example_profile_picture_input.json";
+const char friends_input[] = "files/example_profile_friends_input.json";
+const char own_recommendations_input[] = "files/example_profile_own_recommendations_input.json";
+const char others_recommendations_input[] = "files/example_profile_others_recommendations_input.json";
+
 const char personal_output[] = "files/example_profile_personal_output.json";
 const char summary_output[] = "files/example_profile_summary_output.json";
 const char expertise_output[] = "files/example_profile_expertise_output.json";
 const char skills_output[] = "files/example_profile_skills_output.json";
 const char picture_output[] = "files/example_profile_picture_output.json";
+const char friends_output[] = "files/example_profile_friends_output.json";
+const char own_recommendations_output[] = "files/example_profile_own_recommendations_output.json";
+const char others_recommendations_output[] = "files/example_profile_others_recommendations_output.json";
 
 class TestProfile : public ::testing::Test {
  public:
@@ -22,6 +29,9 @@ class TestProfile : public ::testing::Test {
     Expertise *expertise;
     Skills *skills;
     Picture *picture;
+    Friends *friends;
+    OwnRecommendations *own_recommendations;
+    OthersRecommendations *others_recommendations;
 
     void SetUp() {
         personal = new Personal();
@@ -29,11 +39,18 @@ class TestProfile : public ::testing::Test {
         expertise = new Expertise();
         skills = new Skills();
         picture = new Picture();
+        friends = new Friends();
+        own_recommendations = new OwnRecommendations();
+        others_recommendations = new OthersRecommendations();
+
         personal->getProfileInfo(personal_input);
         summary->getProfileInfo(summary_input);
         expertise->getProfileInfo(expertise_input);
         skills->getProfileInfo(skills_input);
         picture->getProfileInfo(picture_input);
+        friends->getProfileInfo(friends_input);
+        own_recommendations->getProfileInfo(own_recommendations_input);
+        others_recommendations->getProfileInfo(others_recommendations_input);
     }
 
     ~TestProfile() {
@@ -42,6 +59,9 @@ class TestProfile : public ::testing::Test {
         delete expertise;
         delete skills;
         delete picture;
+        delete friends;
+        delete own_recommendations;
+        delete others_recommendations;
     }
 };
 
@@ -86,6 +106,24 @@ TEST_F(TestProfile, testSkillsWellCreated) {
 
 TEST_F(TestProfile, testPictureWellCreated) {
     ASSERT_EQ(picture->getPicture(), "link");
+}
+
+TEST_F(TestProfile, testFriendsWellCreated) {
+    ASSERT_EQ(friends->getNumberOfContacts(), 2);
+    ASSERT_EQ(friends->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(friends->getContactAt(1), "smpiano@gmail.com");
+}
+
+TEST_F(TestProfile, testOwnRecommendationsWellCreated) {
+    ASSERT_EQ(own_recommendations->getNumberOfContacts(), 2);
+    ASSERT_EQ(own_recommendations->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(own_recommendations->getContactAt(1), "smpiano@gmail.com");
+}
+
+TEST_F(TestProfile, testOthersRecommendationsWellCreated) {
+    ASSERT_EQ(others_recommendations->getNumberOfContacts(), 2);
+    ASSERT_EQ(others_recommendations->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(others_recommendations->getContactAt(1), "smpiano@gmail.com");
 }
 
 TEST_F(TestProfile, testChangeFirstName) {
@@ -175,6 +213,48 @@ TEST_F(TestProfile, testChangePicture) {
     ASSERT_EQ(picture->getPicture(), "nuevo_link");
 }
 
+TEST_F(TestProfile, testAddFriend) {
+    friends->addContact("hernan@gmail.com");
+    ASSERT_EQ(friends->getNumberOfContacts(), 3);
+    ASSERT_EQ(friends->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(friends->getContactAt(1), "hernan@gmail.com");
+    ASSERT_EQ(friends->getContactAt(2), "smpiano@gmail.com");
+}
+
+TEST_F(TestProfile, testRemoveFriend) {
+    friends->removeContact("smpiano@gmail.com");
+    ASSERT_EQ(friends->getNumberOfContacts(), 1);
+    ASSERT_EQ(friends->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+}
+
+TEST_F(TestProfile, testAddOwnRecommendation) {
+    own_recommendations->addContact("hernan@gmail.com");
+    ASSERT_EQ(own_recommendations->getNumberOfContacts(), 3);
+    ASSERT_EQ(own_recommendations->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(own_recommendations->getContactAt(1), "hernan@gmail.com");
+    ASSERT_EQ(own_recommendations->getContactAt(2), "smpiano@gmail.com");
+}
+
+TEST_F(TestProfile, testRemoveOwnRecommendation) {
+    own_recommendations->removeContact("smpiano@gmail.com");
+    ASSERT_EQ(own_recommendations->getNumberOfContacts(), 1);
+    ASSERT_EQ(own_recommendations->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+}
+
+TEST_F(TestProfile, testAddOthersRecommendation) {
+    others_recommendations->addContact("hernan@gmail.com");
+    ASSERT_EQ(others_recommendations->getNumberOfContacts(), 3);
+    ASSERT_EQ(others_recommendations->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(others_recommendations->getContactAt(1), "hernan@gmail.com");
+    ASSERT_EQ(others_recommendations->getContactAt(2), "smpiano@gmail.com");
+}
+
+TEST_F(TestProfile, testRemoveOthersRecommendation) {
+    others_recommendations->removeContact("smpiano@gmail.com");
+    ASSERT_EQ(others_recommendations->getNumberOfContacts(), 1);
+    ASSERT_EQ(others_recommendations->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+}
+
 TEST_F(TestProfile, testUpdateJsonPersonal) {
     personal->setFirstName("Juan");
     personal->setLastName("Pérez");
@@ -242,4 +322,37 @@ TEST_F(TestProfile, testUpdateJsonPicture) {
     Picture *picture_modified = new Picture();
     picture_modified->getProfileInfo(picture_output);
     ASSERT_EQ(picture_modified->getPicture(), "link_nueva_foto_de_perfil");
+}
+
+TEST_F(TestProfile, testUpdateJsonFriends) {
+    friends->addContact("hernan@gmail.com");
+    friends->updateJson(friends_output);
+    Friends *friends_modified = new Friends();
+    friends_modified->getProfileInfo(friends_output);
+    ASSERT_EQ(friends_modified->getNumberOfContacts(), 3);
+    ASSERT_EQ(friends_modified->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(friends_modified->getContactAt(1), "hernan@gmail.com");
+    ASSERT_EQ(friends_modified->getContactAt(2), "smpiano@gmail.com");
+}
+
+TEST_F(TestProfile, testUpdateJsonOwnRecommendations) {
+    own_recommendations->addContact("hernan@gmail.com");
+    own_recommendations->updateJson(own_recommendations_output);
+    OwnRecommendations *own_recommendations_modified = new OwnRecommendations();
+    own_recommendations_modified->getProfileInfo(own_recommendations_output);
+    ASSERT_EQ(own_recommendations_modified->getNumberOfContacts(), 3);
+    ASSERT_EQ(own_recommendations_modified->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(own_recommendations_modified->getContactAt(1), "hernan@gmail.com");
+    ASSERT_EQ(own_recommendations_modified->getContactAt(2), "smpiano@gmail.com");
+}
+
+TEST_F(TestProfile, testUpdateJsonOthersRecommendations) {
+    others_recommendations->addContact("hernan@gmail.com");
+    others_recommendations->updateJson(others_recommendations_output);
+    OthersRecommendations *others_recommendations_modified = new OthersRecommendations();
+    others_recommendations_modified->getProfileInfo(others_recommendations_output);
+    ASSERT_EQ(others_recommendations_modified->getNumberOfContacts(), 3);
+    ASSERT_EQ(others_recommendations_modified->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(others_recommendations_modified->getContactAt(1), "hernan@gmail.com");
+    ASSERT_EQ(others_recommendations_modified->getContactAt(2), "smpiano@gmail.com");
 }

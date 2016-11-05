@@ -2,8 +2,7 @@
 
 #include "Attendant.h"
 
-Attendant::Attendant() {
-}
+Attendant::Attendant() {}
 
 Attendant::~Attendant() {}
 

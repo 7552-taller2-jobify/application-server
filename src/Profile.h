@@ -161,15 +161,15 @@ class Contacts: public Profile {
     std::vector<std::string> contacts;
     int search(std::string contact);
     void getOwnInfo(const rapidjson::Document &document);
+
+ public:
+    Contacts() : Profile() {}
+    virtual ~Contacts();
+    std::string getContactAt(int index);
     std::string createJsonFile();
     int getNumberOfContacts();
     void addContact(std::string contact_to_add);
     void removeContact(std::string contact_to_remove);
-    void defineFields(const rapidjson::Document &document, std::string number_name, std::string contacts_name);
-
- public:
-    Contacts() : Profile() {}
-    virtual ~Contacts() = 0;
 };
 
 class Friends: public Contacts {

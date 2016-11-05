@@ -438,3 +438,89 @@ std::string Contacts::createJsonFile() {
     }
     return result + "]\n}";
 }
+
+
+
+void Solicitudes::getOwnInfo(const rapidjson::Document &document) {
+    int number_of_solicitudes = document["number_of_solicitudes"].GetInt();
+    for (rapidjson::SizeType i = 0; i < number_of_solicitudes; i++) {
+        struct Solicitude solicitude;
+        solicitude.date = document["solicitudes"][i]["date"].GetString();
+        solicitude.time = document["solicitudes"][i]["time"].GetString();
+        solicitude.mail = document["solicitudes"][i]["mail"].GetString();
+        this->addSolicitude(solicitude);
+    }
+}
+
+std::string Solicitudes::getDateAt(int index) {
+    if (this->solicitudes.size() > index) {
+        return this->solicitudes.at(index).date;
+    }
+    return "";
+}
+
+std::string Solicitudes::getTimeAt(int index) {
+    if (this->solicitudes.size() > index) {
+        return this->solicitudes.at(index).time;
+    }
+    return "";
+}
+
+std::string Solicitudes::getMailAt(int index) {
+    if (this->solicitudes.size() > index) {
+        return this->solicitudes.at(index).mail;
+    }
+    return "";
+}
+
+int Solicitudes::search(struct Solicitude solicitude) {
+    int index = 0;
+    while ((this->solicitudes.size() > index)) {
+        struct Solicitude aux_solicitude = this->solicitudes.at(index);
+        int comparison = std::strcmp(aux_solicitude.mail.c_str(), solicitude.mail.c_str());
+        if (comparison == 0) {
+            return index;
+        }
+        index++;
+    }
+    return -1;
+}
+
+std::string Solicitudes::getSolicitudeAt(int index) {
+    return (this->getDateAt(index) + "," + this->getTimeAt(index) + "," + this->getMailAt(index));
+}
+
+void Solicitudes::addSolicitude(struct Solicitude solicitude_to_add) {
+    int index = this->search(solicitude_to_add);
+    if (index == -1) {
+        this->solicitudes.push_back(solicitude_to_add);
+    }
+}
+
+void Solicitudes::removeSolicitude(struct Solicitude solicitude_to_remove) {
+    int index = this->search(solicitude_to_remove);
+    if (index != -1) {
+        this->solicitudes.erase(this->solicitudes.begin() + index);
+    }
+}
+
+int Solicitudes::getNumberOfSolicitudes() {
+    return this->solicitudes.size();
+}
+
+std::string Solicitudes::createJsonFile() {
+    std::ostringstream oss;
+    oss << this->solicitudes.size();
+    std::string solicitudes_parsed = oss.str();
+    std::string result = "{\n\t\"number_of_solicitudes\": " + solicitudes_parsed + ",\n\t" + 
+                         "\"solicitudes\": [";
+    for (int i = 0; i < this->solicitudes.size(); i++) {
+        result += "{\n\t\t\"date\": \"" + this->solicitudes.at(i).date + "\"," +
+                    "\n\t\t\"time\": \"" + this->solicitudes.at(i).time + "\"," +
+                    "\n\t\t\"mail\": \"" + this->solicitudes.at(i).mail + "\"\n\t}";
+        if (i != (this->solicitudes.size() - 1)) {
+            result += ",\n\t";
+        }
+    }
+    return result + "]\n}";
+}

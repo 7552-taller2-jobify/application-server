@@ -12,6 +12,7 @@ const char picture_input[] = "files/example_profile_picture_input.json";
 const char friends_input[] = "files/example_profile_friends_input.json";
 const char own_recommendations_input[] = "files/example_profile_own_recommendations_input.json";
 const char others_recommendations_input[] = "files/example_profile_others_recommendations_input.json";
+const char solicitudes_input[] = "files/example_profile_solicitudes_input.json";
 
 const char personal_output[] = "files/example_profile_personal_output.json";
 const char summary_output[] = "files/example_profile_summary_output.json";
@@ -21,6 +22,7 @@ const char picture_output[] = "files/example_profile_picture_output.json";
 const char friends_output[] = "files/example_profile_friends_output.json";
 const char own_recommendations_output[] = "files/example_profile_own_recommendations_output.json";
 const char others_recommendations_output[] = "files/example_profile_others_recommendations_output.json";
+const char solicitudes_output[] = "files/example_profile_solicitudes_output.json";
 
 class TestProfile : public ::testing::Test {
  public:
@@ -32,6 +34,7 @@ class TestProfile : public ::testing::Test {
     Friends *friends;
     OwnRecommendations *own_recommendations;
     OthersRecommendations *others_recommendations;
+    Solicitudes *solicitudes;
 
     void SetUp() {
         personal = new Personal();
@@ -42,6 +45,7 @@ class TestProfile : public ::testing::Test {
         friends = new Friends();
         own_recommendations = new OwnRecommendations();
         others_recommendations = new OthersRecommendations();
+        solicitudes = new Solicitudes();
 
         personal->getProfileInfo(personal_input);
         summary->getProfileInfo(summary_input);
@@ -51,6 +55,7 @@ class TestProfile : public ::testing::Test {
         friends->getProfileInfo(friends_input);
         own_recommendations->getProfileInfo(own_recommendations_input);
         others_recommendations->getProfileInfo(others_recommendations_input);
+        solicitudes->getProfileInfo(solicitudes_input);
     }
 
     ~TestProfile() {
@@ -62,6 +67,7 @@ class TestProfile : public ::testing::Test {
         delete friends;
         delete own_recommendations;
         delete others_recommendations;
+        delete solicitudes;
     }
 };
 
@@ -124,6 +130,12 @@ TEST_F(TestProfile, testOthersRecommendationsWellCreated) {
     ASSERT_EQ(others_recommendations->getNumberOfContacts(), 2);
     ASSERT_EQ(others_recommendations->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
     ASSERT_EQ(others_recommendations->getContactAt(1), "smpiano@gmail.com");
+}
+
+TEST_F(TestProfile, testSolicitudesWellCreated) {
+    ASSERT_EQ(solicitudes->getNumberOfSolicitudes(), 2);
+    ASSERT_EQ(solicitudes->getSolicitudeAt(0), "01/01/2010,10:10,smpiano@gmail.com");
+    ASSERT_EQ(solicitudes->getSolicitudeAt(1), "03/01/2010,12:15,facundo.sanchez.galindo@gmail.com");
 }
 
 TEST_F(TestProfile, testChangeFirstName) {
@@ -255,6 +267,26 @@ TEST_F(TestProfile, testRemoveOthersRecommendation) {
     ASSERT_EQ(others_recommendations->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
 }
 
+TEST_F(TestProfile, testAddSolicitude) {
+    struct Solicitude solicitude;
+    solicitude.date = "28/10/2016";
+    solicitude.time = "17:53";
+    solicitude.mail = "hernan@gmail.com";
+    solicitudes->addSolicitude(solicitude);
+    ASSERT_EQ(solicitudes->getNumberOfSolicitudes(), 3);
+    ASSERT_EQ(solicitudes->getSolicitudeAt(0), "01/01/2010,10:10,smpiano@gmail.com");
+    ASSERT_EQ(solicitudes->getSolicitudeAt(1), "03/01/2010,12:15,facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(solicitudes->getSolicitudeAt(2), "28/10/2016,17:53,hernan@gmail.com");
+}
+
+TEST_F(TestProfile, testRemoveSolicitude) {
+    struct Solicitude solicitude;
+    solicitude.mail = "smpiano@gmail.com";
+    solicitudes->removeSolicitude(solicitude);
+    ASSERT_EQ(solicitudes->getNumberOfSolicitudes(), 1);
+    ASSERT_EQ(solicitudes->getSolicitudeAt(0), "03/01/2010,12:15,facundo.sanchez.galindo@gmail.com");
+}
+
 TEST_F(TestProfile, testUpdateJsonPersonal) {
     personal->setFirstName("Juan");
     personal->setLastName("Pérez");
@@ -355,4 +387,19 @@ TEST_F(TestProfile, testUpdateJsonOthersRecommendations) {
     ASSERT_EQ(others_recommendations_modified->getContactAt(0), "facundo.sanchez.galindo@gmail.com");
     ASSERT_EQ(others_recommendations_modified->getContactAt(1), "hernan@gmail.com");
     ASSERT_EQ(others_recommendations_modified->getContactAt(2), "smpiano@gmail.com");
+}
+
+TEST_F(TestProfile, testUpdateJsonSolicitudes) {
+    struct Solicitude solicitude;
+    solicitude.date = "28/10/2016";
+    solicitude.time = "17:53";
+    solicitude.mail = "hernan@gmail.com";
+    solicitudes->addSolicitude(solicitude);
+    solicitudes->updateJson(solicitudes_output);
+    Solicitudes *solicitudes_modified = new Solicitudes();
+    solicitudes_modified->getProfileInfo(solicitudes_output);
+    ASSERT_EQ(solicitudes_modified->getNumberOfSolicitudes(), 3);
+    ASSERT_EQ(solicitudes_modified->getSolicitudeAt(0), "01/01/2010,10:10,smpiano@gmail.com");
+    ASSERT_EQ(solicitudes_modified->getSolicitudeAt(1), "03/01/2010,12:15,facundo.sanchez.galindo@gmail.com");
+    ASSERT_EQ(solicitudes_modified->getSolicitudeAt(2), "28/10/2016,17:53,hernan@gmail.com");
 }

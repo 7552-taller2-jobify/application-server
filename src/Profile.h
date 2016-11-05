@@ -199,4 +199,30 @@ class OthersRecommendations: public Contacts {
     ~OthersRecommendations() {}
 };
 
+struct Solicitude {
+    std::string date;
+    std::string time;
+    std::string mail;
+};
+
+class Solicitudes: public Profile {
+ private:
+    std::vector<struct Solicitude> solicitudes;
+
+    void getOwnInfo(const rapidjson::Document &document);
+    std::string getDateAt(int index);
+    std::string getTimeAt(int index);
+    std::string getMailAt(int index);
+    int search(struct Solicitude solicitude);
+
+ public:
+    Solicitudes() : Profile() {}
+    ~Solicitudes() {}
+    std::string getSolicitudeAt(int index);
+    void addSolicitude(struct Solicitude solicitude_to_add);
+    void removeSolicitude(struct Solicitude solicitude_to_remove);
+    int getNumberOfSolicitudes();
+    std::string createJsonFile();
+};
+
 #endif  // PROFILE_H_

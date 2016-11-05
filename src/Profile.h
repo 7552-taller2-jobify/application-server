@@ -155,18 +155,48 @@ class Picture: public Profile {
 };
 
 class Contacts: public Profile {
- private:
-    int number_of_contacts;
+ protected:
+    std::string number_name;
+    std::string contacts_name;
     std::vector<std::string> contacts;
+    int search(std::string contact);
     void getOwnInfo(const rapidjson::Document &document);
-
- public:
-    Contacts() : Profile() {}
-    ~Contacts() {}
+    std::string createJsonFile();
     int getNumberOfContacts();
     void addContact(std::string contact_to_add);
     void removeContact(std::string contact_to_remove);
-    std::string createJsonFile();
+    void defineFields(const rapidjson::Document &document, std::string number_name, std::string contacts_name);
+
+ public:
+    Contacts() : Profile() {}
+    virtual ~Contacts() = 0;
+};
+
+class Friends: public Contacts {
+ public:
+    Friends() : Contacts() {
+        this->number_name = "number_of_friends";
+        this->contacts_name = "friends";
+    }
+    ~Friends() {}
+};
+
+class OwnRecommendations: public Contacts {
+ public:
+    OwnRecommendations() : Contacts() {
+        this->number_name = "number_of_own_recommendations";
+        this->contacts_name = "own_recommendations";
+    }
+    ~OwnRecommendations() {}
+};
+
+class OthersRecommendations: public Contacts {
+ public:
+    OthersRecommendations() : Contacts() {
+        this->number_name = "number_of_others_recommendations";
+        this->contacts_name = "others_recommendations";
+    }
+    ~OthersRecommendations() {}
 };
 
 #endif  // PROFILE_H_

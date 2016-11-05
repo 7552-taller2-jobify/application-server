@@ -373,38 +373,59 @@ std::string Picture::createJsonFile() {
 
 
 
-void Contacts::getOwnInfo(const rapidjson::Document &document) {
-    this->number_of_contacts = document["number_of_contacts"].GetInt();
-}
-
 int Contacts::getNumberOfContacts() {
-    return this->number_of_contacts;
+    return this->contacts.size();
 }
 
-void Contacts::addContact(std::string contact_to_add) {
-    this->contacts.push_back(contact_to_add);
-    std::sort(this->contacts.begin(), this->contacts.end(), std::greater<std::string>());
-    this->number_of_contacts++;
-}
-
-void Contacts::removeContact(std::string contact_to_remove) {
-    bool found = false;
+int Contacts::search(std::string contact) {
     int index = 0;
-    while (!found) {
-        std::string contact = this->contacts.at(index);
-        if (std::strcmp(contact.c_str(), contact_to_remove.c_str())) {
-            this->contacts.erase(this->contacts.begin() + index);
-            continue;
+    while ((this->contacts.size() > index)) {
+        std::string aux_contact = this->contacts.at(index);
+        int comparison = std::strcmp(aux_contact.c_str(), contact.c_str());
+        if (comparison > 0) {
+            return -1;
+        }
+        if (comparison == 0) {
+            return index;
         }
         index++;
     }
-    this->number_of_contacts--;
+    return -1;
+}
+
+void Contacts::addContact(std::string contact_to_add) {
+    int index = this->search(contact_to_add);
+    if (index == -1) {
+        this->contacts.push_back(contact_to_add);
+        std::sort(this->contacts.begin(), this->contacts.end(), std::greater<std::string>());
+    }
+}
+
+void Contacts::removeContact(std::string contact_to_remove) {
+    int index = this->search(contact_to_remove);
+    if (index != -1) {
+        this->contacts.erase(this->contacts.begin() + index);
+    }
+}
+
+void Contacts::getOwnInfo(const rapidjson::Document &document) {
+    int number_of_contacts = document[this->number_name.c_str()].GetInt();
+    for (rapidjson::SizeType i = 0; i < number_of_contacts; i++) {
+        this->addContact(document[this->contacts_name.c_str()][i].GetString());
+    }
 }
 
 std::string Contacts::createJsonFile() {
     std::ostringstream oss;
-    oss << this->number_of_contacts;
+    oss << this->contacts.size();
     std::string contacts_parsed = oss.str();
-
-    return "{\n\t\"number_of_contacts\": " + contacts_parsed + "\n}";
+    std::string result = "{\n\t\"" + this->number_name + "\": " + contacts_parsed + ",\n\t\"" + 
+                                                            this->contacts_name.c_str() + "\": [";
+    for (int i = 0; i < this->contacts.size(); i++) {
+        result += "\"" + this->contacts.at(i) + "\"";
+        if (i != (this->contacts.size() - 1)) {
+            result += ",";
+        }
+    }
+    return result + "]\n}";
 }

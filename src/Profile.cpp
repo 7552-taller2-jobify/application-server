@@ -524,3 +524,72 @@ std::string Solicitudes::createJsonFile() {
     }
     return result + "]\n}";
 }
+
+
+
+void Conversation::getOwnInfo(const rapidjson::Document &document) {
+    int number_of_messages = document["number_of_messages"].GetInt();
+    for (rapidjson::SizeType i = 0; i < number_of_messages; i++) {
+        struct ChatMessage message;
+        message.date = document["conversation"][i]["date"].GetString();
+        message.time = document["conversation"][i]["time"].GetString();
+        message.sender = document["conversation"][i]["sender"].GetString();
+        message.message = document["conversation"][i]["message"].GetString();
+        this->addMessage(message);
+    }
+}
+
+std::string Conversation::getDateAt(int index) {
+    if (this->messages.size() > index) {
+        return this->messages.at(index).date;
+    }
+    return "";
+}
+
+std::string Conversation::getTimeAt(int index) {
+    if (this->messages.size() > index) {
+        return this->messages.at(index).time;
+    }
+    return "";
+}
+
+std::string Conversation::getSenderAt(int index) {
+    if (this->messages.size() > index) {
+        return this->messages.at(index).sender;
+    }
+    return "";
+}
+
+std::string Conversation::getMessageAt(int index) {
+    if (this->messages.size() > index) {
+        return this->messages.at(index).message;
+    }
+    return "";
+}
+
+std::string Conversation::getConversationMessageAt(int index) {
+    return (this->getDateAt(index) + "," + this->getTimeAt(index) + "," +
+            this->getSenderAt(index) + "," + this->getMessageAt(index));
+}
+
+void Conversation::addMessage(struct ChatMessage message_to_add) {
+    this->messages.push_back(message_to_add);
+}
+
+std::string Conversation::createJsonFile() {
+    std::ostringstream oss;
+    oss << this->messages.size();
+    std::string messages_parsed = oss.str();
+    std::string result = "{\n\t\"number_of_messages\": " + messages_parsed + ",\n\t" + 
+                         "\"conversation\": [";
+    for (int i = 0; i < this->messages.size(); i++) {
+        result += "{\n\t\t\"date\": \"" + this->messages.at(i).date + "\"," +
+                    "\n\t\t\"time\": \"" + this->messages.at(i).time + "\"," +
+                    "\n\t\t\"sender\": \"" + this->messages.at(i).sender + "\"," +
+                    "\n\t\t\"message\": \"" + this->messages.at(i).message + "\"\n\t}";
+        if (i != (this->messages.size() - 1)) {
+            result += ",\n\t";
+        }
+    }
+    return result + "]\n}";
+}

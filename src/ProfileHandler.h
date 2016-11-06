@@ -12,7 +12,7 @@
 class ProfileHandler {
  private:
     std::map<std::string, Profile*> profiles;
-    std::string beginings[5];
+    std::vector<std::string> beginings;
     bool checkBegining(std::string key_to_match);
 
  public:

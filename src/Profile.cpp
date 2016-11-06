@@ -375,10 +375,6 @@ std::string Picture::createJsonFile() {
 
 Contacts::~Contacts() {}
 
-int Contacts::getNumberOfContacts() {
-    return this->contacts.size();
-}
-
 std::string Contacts::getContactAt(int index) {
     if (this->contacts.size() > index) {
         return this->contacts.at(index);
@@ -418,18 +414,13 @@ void Contacts::removeContact(std::string contact_to_remove) {
 }
 
 void Contacts::getOwnInfo(const rapidjson::Document &document) {
-    int number_of_contacts = document[this->number_name.c_str()].GetInt();
-    for (rapidjson::SizeType i = 0; i < number_of_contacts; i++) {
+    for (rapidjson::SizeType i = 0; i < document[this->contacts_name.c_str()].Size(); i++) {
         this->addContact(document[this->contacts_name.c_str()][i].GetString());
     }
 }
 
 std::string Contacts::createJsonFile() {
-    std::ostringstream oss;
-    oss << this->contacts.size();
-    std::string contacts_parsed = oss.str();
-    std::string result = "{\n\t\"" + this->number_name + "\": " + contacts_parsed + ",\n\t\"" + 
-                                                            this->contacts_name.c_str() + "\": [";
+    std::string result = "{\n\t\"" + this->contacts_name + "\": [";
     for (int i = 0; i < this->contacts.size(); i++) {
         result += "\"" + this->contacts.at(i) + "\"";
         if (i != (this->contacts.size() - 1)) {
@@ -442,11 +433,9 @@ std::string Contacts::createJsonFile() {
 
 
 void Solicitudes::getOwnInfo(const rapidjson::Document &document) {
-    int number_of_solicitudes = document["number_of_solicitudes"].GetInt();
-    for (rapidjson::SizeType i = 0; i < number_of_solicitudes; i++) {
+    for (rapidjson::SizeType i = 0; i < document["solicitudes"].Size(); i++) {
         struct Solicitude solicitude;
         solicitude.date = document["solicitudes"][i]["date"].GetString();
-        solicitude.time = document["solicitudes"][i]["time"].GetString();
         solicitude.mail = document["solicitudes"][i]["mail"].GetString();
         this->addSolicitude(solicitude);
     }
@@ -455,13 +444,6 @@ void Solicitudes::getOwnInfo(const rapidjson::Document &document) {
 std::string Solicitudes::getDateAt(int index) {
     if (this->solicitudes.size() > index) {
         return this->solicitudes.at(index).date;
-    }
-    return "";
-}
-
-std::string Solicitudes::getTimeAt(int index) {
-    if (this->solicitudes.size() > index) {
-        return this->solicitudes.at(index).time;
     }
     return "";
 }
@@ -487,7 +469,7 @@ int Solicitudes::search(struct Solicitude solicitude) {
 }
 
 std::string Solicitudes::getSolicitudeAt(int index) {
-    return (this->getDateAt(index) + "," + this->getTimeAt(index) + "," + this->getMailAt(index));
+    return (this->getDateAt(index) + "," + this->getMailAt(index));
 }
 
 void Solicitudes::addSolicitude(struct Solicitude solicitude_to_add) {
@@ -504,19 +486,10 @@ void Solicitudes::removeSolicitude(struct Solicitude solicitude_to_remove) {
     }
 }
 
-int Solicitudes::getNumberOfSolicitudes() {
-    return this->solicitudes.size();
-}
-
 std::string Solicitudes::createJsonFile() {
-    std::ostringstream oss;
-    oss << this->solicitudes.size();
-    std::string solicitudes_parsed = oss.str();
-    std::string result = "{\n\t\"number_of_solicitudes\": " + solicitudes_parsed + ",\n\t" + 
-                         "\"solicitudes\": [";
+    std::string result = "{\n\t\"solicitudes\":\n\t[";
     for (int i = 0; i < this->solicitudes.size(); i++) {
         result += "{\n\t\t\"date\": \"" + this->solicitudes.at(i).date + "\"," +
-                    "\n\t\t\"time\": \"" + this->solicitudes.at(i).time + "\"," +
                     "\n\t\t\"mail\": \"" + this->solicitudes.at(i).mail + "\"\n\t}";
         if (i != (this->solicitudes.size() - 1)) {
             result += ",\n\t";
@@ -528,11 +501,9 @@ std::string Solicitudes::createJsonFile() {
 
 
 void Conversation::getOwnInfo(const rapidjson::Document &document) {
-    int number_of_messages = document["number_of_messages"].GetInt();
-    for (rapidjson::SizeType i = 0; i < number_of_messages; i++) {
+    for (rapidjson::SizeType i = 0; i < document["conversation"].Size(); i++) {
         struct ChatMessage message;
         message.date = document["conversation"][i]["date"].GetString();
-        message.time = document["conversation"][i]["time"].GetString();
         message.sender = document["conversation"][i]["sender"].GetString();
         message.message = document["conversation"][i]["message"].GetString();
         this->addMessage(message);
@@ -542,13 +513,6 @@ void Conversation::getOwnInfo(const rapidjson::Document &document) {
 std::string Conversation::getDateAt(int index) {
     if (this->messages.size() > index) {
         return this->messages.at(index).date;
-    }
-    return "";
-}
-
-std::string Conversation::getTimeAt(int index) {
-    if (this->messages.size() > index) {
-        return this->messages.at(index).time;
     }
     return "";
 }
@@ -568,8 +532,7 @@ std::string Conversation::getMessageAt(int index) {
 }
 
 std::string Conversation::getConversationMessageAt(int index) {
-    return (this->getDateAt(index) + "," + this->getTimeAt(index) + "," +
-            this->getSenderAt(index) + "," + this->getMessageAt(index));
+    return (this->getDateAt(index) + "," + this->getSenderAt(index) + "," + this->getMessageAt(index));
 }
 
 void Conversation::addMessage(struct ChatMessage message_to_add) {
@@ -577,14 +540,9 @@ void Conversation::addMessage(struct ChatMessage message_to_add) {
 }
 
 std::string Conversation::createJsonFile() {
-    std::ostringstream oss;
-    oss << this->messages.size();
-    std::string messages_parsed = oss.str();
-    std::string result = "{\n\t\"number_of_messages\": " + messages_parsed + ",\n\t" + 
-                         "\"conversation\": [";
+    std::string result = "{\n\t\"conversation\":\n\t[";
     for (int i = 0; i < this->messages.size(); i++) {
         result += "{\n\t\t\"date\": \"" + this->messages.at(i).date + "\"," +
-                    "\n\t\t\"time\": \"" + this->messages.at(i).time + "\"," +
                     "\n\t\t\"sender\": \"" + this->messages.at(i).sender + "\"," +
                     "\n\t\t\"message\": \"" + this->messages.at(i).message + "\"\n\t}";
         if (i != (this->messages.size() - 1)) {

@@ -156,7 +156,6 @@ class Picture: public Profile {
 
 class Contacts: public Profile {
  protected:
-    std::string number_name;
     std::string contacts_name;
     std::vector<std::string> contacts;
     int search(std::string contact);
@@ -167,7 +166,6 @@ class Contacts: public Profile {
     virtual ~Contacts();
     std::string getContactAt(int index);
     std::string createJsonFile();
-    int getNumberOfContacts();
     void addContact(std::string contact_to_add);
     void removeContact(std::string contact_to_remove);
 };
@@ -175,7 +173,6 @@ class Contacts: public Profile {
 class Friends: public Contacts {
  public:
     Friends() : Contacts() {
-        this->number_name = "number_of_friends";
         this->contacts_name = "friends";
     }
     ~Friends() {}
@@ -184,7 +181,6 @@ class Friends: public Contacts {
 class OwnRecommendations: public Contacts {
  public:
     OwnRecommendations() : Contacts() {
-        this->number_name = "number_of_own_recommendations";
         this->contacts_name = "own_recommendations";
     }
     ~OwnRecommendations() {}
@@ -193,7 +189,6 @@ class OwnRecommendations: public Contacts {
 class OthersRecommendations: public Contacts {
  public:
     OthersRecommendations() : Contacts() {
-        this->number_name = "number_of_others_recommendations";
         this->contacts_name = "others_recommendations";
     }
     ~OthersRecommendations() {}
@@ -201,7 +196,6 @@ class OthersRecommendations: public Contacts {
 
 struct Solicitude {
     std::string date;
-    std::string time;
     std::string mail;
 };
 
@@ -211,7 +205,6 @@ class Solicitudes: public Profile {
 
     void getOwnInfo(const rapidjson::Document &document);
     std::string getDateAt(int index);
-    std::string getTimeAt(int index);
     std::string getMailAt(int index);
     int search(struct Solicitude solicitude);
 
@@ -221,13 +214,11 @@ class Solicitudes: public Profile {
     std::string getSolicitudeAt(int index);
     void addSolicitude(struct Solicitude solicitude_to_add);
     void removeSolicitude(struct Solicitude solicitude_to_remove);
-    int getNumberOfSolicitudes();
     std::string createJsonFile();
 };
 
 struct ChatMessage {
     std::string date;
-    std::string time;
     std::string sender;
     std::string message;
 };
@@ -238,7 +229,6 @@ class Conversation: public Profile {
 
     void getOwnInfo(const rapidjson::Document &document);
     std::string getDateAt(int index);
-    std::string getTimeAt(int index);
     std::string getSenderAt(int index);
     std::string getMessageAt(int index);
 

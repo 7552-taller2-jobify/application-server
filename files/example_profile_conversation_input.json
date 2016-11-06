@@ -1,15 +1,12 @@
 {
-    "number_of_messages": 2,
     "conversation":
     [{
-	    "date": "20/03/2016",
-	    "time": "12:34",
+	    "date": "20-03-2016T12:34:00.000Z",
 	    "sender": "smpiano@gmail.com",
 	    "message": "Hola, cómo andás?"
     },
     {
-	    "date": "20/03/2016",
-	    "time": "12:35",
+	    "date": "20-03-2016T12:35:01.234Z",
 	    "sender": "facundo.sanchez.galindo@gmail.com",
 	    "message": "Todo bien, vos?"
     }]

@@ -1,14 +1,11 @@
 {
-    "number_of_solicitudes": 2,
     "solicitudes":
     [{
-	    "date": "01/01/2010",
-	    "time": "10:10",
+	    "date": "01-01-2010T12:34:00.000Z",
 	    "mail": "smpiano@gmail.com"
     },
     {
-	    "date": "03/01/2010",
-	    "time": "12:15",
+	    "date": "03-01-2010T12:34:00.000Z",
 	    "mail": "facundo.sanchez.galindo@gmail.com"
     }]
 }

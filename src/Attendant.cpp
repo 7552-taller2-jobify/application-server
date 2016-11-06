@@ -40,12 +40,12 @@ Response* Login::post(struct Message operation) {
     
     Response* response = NULL;
 
-    if (dbAdministrator->existsClient(loginInformation)){
+    /*if (dbAdministrator->existsClient(loginInformation)){
         // Falta contemplar mas chequeos         
         response = new Response();
         response->setContent(dbAdministrator->getDataOfClient(loginInformation));
         response->setStatus(200);
-    }   
+    } */  
 
     return response;
 }
@@ -59,8 +59,44 @@ Register::~Register() {}
 Response* Register::post(struct Message operation) {
  
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    Personal *personal = new Personal();
 
-    Profile *loginInformation = new LoginInformation();
+    if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
+        // cargar datos de facebook
+        personal->setFirstName("");
+        personal->setLastName("");
+        personal->setGender("");      
+        personal->setBirthday("");
+        personal->setPassword("");
+        personal->setCity("");
+        personal->setAddress("", "");
+    } else {
+         personal->loadJson(operation.body.c_str());
+    }
+
+
+    int success = dbAdministrator->addClient(personal, operation);
+    std::ostringstream s;
+    s << success;
+    std::string success_parsed = s.str();
+
+    Response* response = new Response();
+    if (success == 0) {
+        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client was registered OK\"}");
+        response->setStatus(201);
+    } else {
+            if (success == 1) {
+                response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client already exists.\"}");
+                response->setStatus(500);
+            } else {
+                response->setContent("{\"code\":" + success_parsed + ",\"message\":\"There are empty fields.\"}");
+                response->setStatus(500);
+            }
+    }
+std::cout<<"Content: "<<response->getContent()<<std::endl;
+std::cout<<"success: "<<success<<std::endl;
+
+/*    Profile *loginInformation = new LoginInformation();
     // Contemplar errores
     loginInformation->loadJson(operation.body.c_str());
     Profile *personal = new Personal();
@@ -74,7 +110,7 @@ Response* Register::post(struct Message operation) {
         response = new Response();
         response->setContent("{\n\t\"message\": \"Cliente was registered OK\"\n}");
         response->setStatus(200);
-    }   
+    }   */
 
     return response;
 }

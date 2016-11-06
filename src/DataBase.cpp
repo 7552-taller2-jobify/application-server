@@ -37,6 +37,7 @@ std::string DataBase::get(std::string key) {
                         "A value has been retrieved successfully.");
     } else {
         Logger::getInstance().log(info, "The key " + key + " does not exist.");
+        value = "";
     }
     return value;
 }

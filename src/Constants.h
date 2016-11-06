@@ -13,6 +13,7 @@ struct Message {
     std::string uri;
     std::string body;
     std::string verb;
+    std::string params;
 };
 
 #endif /* CONSTANTS_H_ */

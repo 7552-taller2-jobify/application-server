@@ -16,7 +16,7 @@ static void handle_hola(struct mg_connection *nc) {
     // Send headers
     mg_printf(nc, "%s",
             "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
-    mg_printf_http_chunk(nc, "{ \"HOLA TALLER 2  \"}\n");
+    mg_printf_http_chunk(nc, "{ \"HOLA TALLER 2\"}\n");
     mg_send_http_chunk(nc, "", 0);  // Send empty chunk, the end of response
 }
 
@@ -26,7 +26,7 @@ void RequestAdministrator::handle() {
     if (this->ev == MG_EV_HTTP_REQUEST) {
 
         msg = this->rp->parseRequest(this->hm);
-        std::cout << "uri: " << msg->uri << "\nbody: " << msg->body << "\nverb : " << msg->verb  << std::endl;
+        std::cout << "uri: " << msg->uri << "\nbody: " << msg->body << "\nverb: " << msg->verb  << std::endl;
 
         Attendant* attendant = this->attendantHandler->find(msg->uri);
         if (attendant != NULL){

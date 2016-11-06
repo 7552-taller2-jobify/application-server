@@ -97,6 +97,10 @@ void Personal::getOwnInfo(const rapidjson::Document &document) {
     this->device_id = document["device_id"].GetDouble();
 }
 
+bool Personal::isNull(std::string field) {
+    return (std::strcmp(field.c_str(), "") == 0);
+}
+
 double Personal::getDeviceId() {
     return this->device_id;
 }
@@ -162,6 +166,10 @@ void Personal::setCity(std::string new_city) {
     this->city = new_city;
 }
 
+void Personal::setPassword(std::string password) {
+    this->password = password;
+}
+
 std::string Personal::createJsonFile() {
     std::ostringstream oss;
     oss << this->device_id;
@@ -177,6 +185,14 @@ std::string Personal::createJsonFile() {
     address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t},\n",
     city = "\t\"city\": \"" + this->city + "\"\n}";
     return id + first_name + last_name + email + gender + birthday + address_1 + address_2 + city;
+}
+
+bool Personal::emptyFields() {
+    if ((isNull(first_name)) || (isNull(last_name)) || (isNull(email)) || (isNull(gender)) || (isNull(birthday))
+                || (isNull(address[0])) || (isNull(address[1])) || (isNull(city))) {
+        return true;
+    }
+    return false;
 }
 
 

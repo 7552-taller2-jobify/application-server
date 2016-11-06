@@ -56,7 +56,9 @@ class Personal: public Profile {
     std::string birthday;
     std::string address[2];
     std::string city;
+    std::string password;
     void getOwnInfo(const rapidjson::Document &document);
+    bool isNull(std::string field);
 
  public:
     Personal() : Profile() {}
@@ -71,6 +73,7 @@ class Personal: public Profile {
     std::string getCity();
     void setDeviceId(double new_id);
     void setFirstName(std::string new_first_name);
+    void setPassword(std::string password);
     void setLastName(std::string new_last_name);
     void setEmail(std::string new_email);
     void setGender(std::string new_gender);
@@ -78,6 +81,7 @@ class Personal: public Profile {
     void setAddress(std::string new_lat, std::string new_lon);
     void setCity(std::string new_city);
     std::string createJsonFile();
+    bool emptyFields();
 };
 
 class Summary: public Profile {

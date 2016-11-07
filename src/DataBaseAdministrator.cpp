@@ -18,23 +18,20 @@ std::string DataBaseAdministrator::getDataOfClient(Profile *loginInformation) {
 
 // Returns 0 if success, 1 if email exists, 2 if there are empty fields
 int DataBaseAdministrator::addClient(Personal *personal, struct Message operation) {
+
+    if (this->existsClient(personal->getEmail())) {
+        return 1;
+    }
+
     if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
-        if (this->existsClient(personal->getEmail())) {
-            return 1;
-        }
 	    //DataBase::getInstance().put("TOKEN_" + person->getEmail(), llamar función token);
 	    DataBase::getInstance().put("PERSONAL_" + personal->getEmail(), personal->createJsonFile());
-        return 3;
     } else {
-        if (this->existsClient(personal->getEmail())) {
-            return 1;
-        }
-	    //DataBase::getInstance().put("TOKEN_" + person->getEmail(), llamar función token);
+ 	    //DataBase::getInstance().put("TOKEN_" + person->getEmail(), llamar función token);
         if (personal->emptyFields()) {
             return 2;
         }
 	    DataBase::getInstance().put("PERSONAL_" + personal->getEmail(), personal->createJsonFile());
     }
-
     return 0;
 }

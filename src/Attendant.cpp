@@ -74,7 +74,6 @@ Response* Register::post(struct Message operation) {
          personal->loadJson(operation.body.c_str());
     }
 
-
     int success = dbAdministrator->addClient(personal, operation);
     std::ostringstream s;
     s << success;
@@ -93,25 +92,6 @@ Response* Register::post(struct Message operation) {
                 response->setStatus(500);
             }
     }
-std::cout<<"Content: "<<response->getContent()<<std::endl;
-std::cout<<"success: "<<success<<std::endl;
-
-/*    Profile *loginInformation = new LoginInformation();
-    // Contemplar errores
-    loginInformation->loadJson(operation.body.c_str());
-    Profile *personal = new Personal();
-    personal->loadJson(operation.body.c_str());
- 
-    Response* response = NULL;
-
-    dbAdministrator->addClient(loginInformation, personal);
-    
-    if (dbAdministrator->existsClient(loginInformation)){         
-        response = new Response();
-        response->setContent("{\n\t\"message\": \"Cliente was registered OK\"\n}");
-        response->setStatus(200);
-    }   */
-
     return response;
 }
 

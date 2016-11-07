@@ -28,6 +28,7 @@ Message* RequestParse::parseRequest(struct http_message* hm) {
     message->uri = uri;
     message->body = body;
     message->verb = verb;
+    message->params = "";
 
     for (size_t i = 0; i < hm->query_string.len; i++) {
         message->params += hm->query_string.p[i];

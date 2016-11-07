@@ -86,6 +86,7 @@ std::string LoginInformation::createJsonFile() {
 
 
 void Personal::getOwnInfo(const rapidjson::Document &document) {
+    std::cout<<"Carga Objeto Personal"<<std::endl;
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
     this->email = document["email"].GetString();

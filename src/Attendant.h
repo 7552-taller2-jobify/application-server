@@ -18,7 +18,6 @@ class Attendant {
  protected:
     std::map<std::string, function> functions;
     bool isMethodSupported(std::string a_method);
-
  public:
     Attendant();
     virtual ~Attendant();

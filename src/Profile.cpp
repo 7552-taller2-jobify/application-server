@@ -86,7 +86,7 @@ std::string LoginInformation::createJsonFile() {
 
 
 void Personal::getOwnInfo(const rapidjson::Document &document) {
-    std::cout<<"Carga Objeto Personal"<<std::endl;
+    std::cout<<"Inicio carga Objeto Personal"<<std::endl;
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
     this->email = document["email"].GetString();
@@ -96,6 +96,7 @@ void Personal::getOwnInfo(const rapidjson::Document &document) {
     this->address[1] = document["address"]["lon"].GetString();
     this->city = document["city"].GetString();
     this->device_id = document["device_id"].GetDouble();
+    std::cout<<"Fin carga Objeto Personal"<<std::endl;
 }
 
 bool Personal::isNull(std::string field) {

@@ -34,11 +34,24 @@ Login::Login() {
 Login::~Login() {}
 
 Response* Login::post(struct Message operation) {
+    
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     LoginInformation *loginInformation = new LoginInformation();
-    loginInformation->loadJson(operation.body.c_str());
-    
+    if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
+        // cargar datos de facebook
+        loginInformation->setEmail("");
+        loginInformation->setPassword("");
+    } else {
+        loginInformation->loadJson(operation.body.c_str());
+    }
+        
     Response* response = NULL;
+   
+    if (dbAdministrator->existsClient(loginInformation->getEmail())){
+        response = new Response();
+        response->setContent(dbAdministrator->getDataOfClient(loginInformation));
+        response->setStatus(200);
+    }
 
     /*if (dbAdministrator->existsClient(loginInformation)){
         // Falta contemplar mas chequeos         
@@ -81,7 +94,7 @@ Response* Register::post(struct Message operation) {
 
     Response* response = new Response();
     if (success == 0) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client was registered OK\"}");
+        response->setContent("{\"registration\":\"OK\"}");
         response->setStatus(201);
     } else {
             if (success == 1) {

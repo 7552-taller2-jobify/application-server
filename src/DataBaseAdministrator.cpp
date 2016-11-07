@@ -22,7 +22,7 @@ std::string DataBaseAdministrator::getDataOfClient(LoginInformation *loginInform
     Personal *personal = new Personal();
     personal->loadJson(personal_parser);
     
-   Picture *picture = new Picture();
+    Picture *picture = new Picture();
     if (strcmp(picture_parser.c_str(), "") != 0){
         picture->loadJson(picture_parser);
     } else {

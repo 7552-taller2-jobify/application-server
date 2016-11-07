@@ -45,20 +45,14 @@ Response* Login::post(struct Message operation) {
         loginInformation->loadJson(operation.body.c_str());
     }
         
-    Response* response = NULL;
-   
+    Response* response = new Response();;
     if (dbAdministrator->existsClient(loginInformation->getEmail())){
-        response = new Response();
         response->setContent(dbAdministrator->getDataOfClient(loginInformation));
         response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
     }
-
-    /*if (dbAdministrator->existsClient(loginInformation)){
-        // Falta contemplar mas chequeos         
-        response = new Response();
-        response->setContent(dbAdministrator->getDataOfClient(loginInformation));
-        response->setStatus(200);
-    } */  
 
     return response;
 }

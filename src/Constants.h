@@ -1,3 +1,5 @@
+// "Copyright 2016 <Jobify>"
+
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
@@ -16,4 +18,4 @@ struct Message {
     std::string params;
 };
 
-#endif /* CONSTANTS_H_ */
+#endif // CONSTANTS_H_

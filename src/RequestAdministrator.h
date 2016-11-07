@@ -4,11 +4,11 @@
 #define REQUESTADMINISTRATOR_H_
 
 #include <iostream>
+#include <string>
 #include "mongoose/mongoose.h"
 #include "RequestParse.h"
 #include "AttendantsHandler.h"
 #include "Attendant.h"
-#include <string>
 #include "Constants.h"
 
 class RequestAdministrator {

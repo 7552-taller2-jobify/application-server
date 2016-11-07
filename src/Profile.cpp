@@ -78,8 +78,8 @@ void LoginInformation::setPassword(std::string new_password) {
 }
 
 std::string LoginInformation::createJsonFile() {
-    std::string email = "{\n\t\"email\": \"" + this->email + "\",\n",
-    password = "\t\"password\": \"" + this->password + "\"\n}";
+    std::string email = "{\"email\":\"" + this->email + "\",",
+    password = "\"password\":\"" + this->password + "\"}";
     return email + password;
 }
 
@@ -177,15 +177,15 @@ std::string Personal::createJsonFile() {
     oss << this->device_id;
     std::string id_parsed = oss.str();
 
-    std::string id = "{\n\t\"device_id\": " + id_parsed + ",\n",
-    first_name = "\t\"first_name\": \"" + this->first_name + "\",\n",
-    last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
-    email = "\t\"email\": \"" + this->email + "\",\n",
-    gender = "\t\"gender\": \"" + this->gender + "\",\n",
-    birthday = "\t\"birthday\": \"" + this->birthday + "\",\n",
-    address_1 = "\t\"address\": {\n\t\t\"lat\": \"" + this->address[0] + "\",\n",
-    address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t},\n",
-    city = "\t\"city\": \"" + this->city + "\"\n}";
+    std::string id = "{\"device_id\":" + id_parsed + ",",
+    first_name = "\"first_name\":\"" + this->first_name + "\",",
+    last_name = "\"last_name\":\"" + this->last_name + "\",",
+    email = "\"email\":\"" + this->email + "\",",
+    gender = "\"gender\":\"" + this->gender + "\",",
+    birthday = "\"birthday\":\"" + this->birthday + "\",",
+    address_1 = "\"address\":{\"lat\":\"" + this->address[0] + "\",",
+    address_2 = "\"lon\":\"" + this->address[1] + "\"},",
+    city = "\"city\":\"" + this->city + "\"}";
     return id + first_name + last_name + email + gender + birthday + address_1 + address_2 + city;
 }
 
@@ -212,7 +212,7 @@ void Summary::setSummary(std::string new_summary) {
 }
 
 std::string Summary::createJsonFile() {
-    return "{\n\t\"summary\": \"" + this->summary + "\"\n}";
+    return "{\"summary\":\"" + this->summary + "\"}";
 }
 
 
@@ -293,20 +293,20 @@ Expertise::~Expertise() {
 }
 
 std::string Expertise::createJsonFile() {
-    std::string result = "{\n\t\"expertises\":\n\t[";
+    std::string result = "{\"expertises\":[";
     int last = this->number_of_expertises - 1;
     for (int i = 0; i < this->number_of_expertises; i++) {
-        result += "{\n\t\t\"company\": \"" + this->company[i] + "\",\n\t\t"
-                + "\"position\": \"" + this->position[i] + "\",\n\t\t"
-                + "\"from\": \"" + this->from[i] + "\",\n\t\t"
-                + "\"to\": \"" + this->to[i] + "\",\n\t\t"
-                + "\"expertise\": \"" + this->expertise[i] + "\",\n\t\t"
-                + "\"category\": \"" + this->category[i] + "\"\n\t}";
+        result += "{\"company\":\"" + this->company[i] + "\","
+                + "\"position\":\"" + this->position[i] + "\","
+                + "\"from\":\"" + this->from[i] + "\","
+                + "\"to\":\"" + this->to[i] + "\","
+                + "\"expertise\":\"" + this->expertise[i] + "\","
+                + "\"category\":\"" + this->category[i] + "\"}";
         if (i != last) {
-            result += ",\n\t";
+            result += ",";
         }
     }
-    result += "]\n}";
+    result += "]}";
     return result;
 }
 
@@ -319,7 +319,7 @@ void Skills::getOwnInfo(const rapidjson::Document &document) {
     for (rapidjson::SizeType i = 0; i < this->number_of_skills; i++) {
         for (rapidjson::SizeType j = 0; j < document["every_skill"][i]["skills"].Size(); j++) {
             if (j != 0) {
-                this->skills[i] += ", ";
+                this->skills[i] += ",";
             }
             this->skills[i] += document["every_skill"][i]["skills"][j].GetString();
         }
@@ -334,10 +334,10 @@ std::string Skills::parseSkills(int index) {
     std::string item, aux;
     while (getline(ss, item, ',')) {
         item.erase(remove(item.begin(), item.end(), ' '), item.end());
-        aux = "\"" + item + "\", ";
+        aux = "\"" + item + "\",";
         parsed_skills += aux;
     }
-    parsed_skills = parsed_skills.substr(0, parsed_skills.length() - 2);
+    parsed_skills = parsed_skills.substr(0, parsed_skills.length() - 1);
     return parsed_skills;
 }
 
@@ -358,16 +358,16 @@ void Skills::setCategory(std::string new_category, int index) {
 }
 
 std::string Skills::createJsonFile() {
-    std::string result = "{\n\t\"every_skill\":\n\t[";
+    std::string result = "{\"every_skill\":[";
     int last = this->number_of_skills - 1;
     for (int i = 0; i < this->number_of_skills; i++) {
-        result += "{\n\t\t\"skills\": [" + this->parseSkills(i) + "],\n\t\t"
-                + "\"category\": \"" + this->category[i] + "\"\n\t}";
+        result += "{\"skills\":[" + this->parseSkills(i) + "],"
+                + "\"category\":\"" + this->category[i] + "\"}";
         if (i != last) {
-            result += ",\n\t";
+            result += ",";
         }
     }
-    result += "]\n}";
+    result += "]}";
     return result;
 }
 
@@ -386,7 +386,7 @@ void Picture::setPicture(std::string new_picture) {
 }
 
 std::string Picture::createJsonFile() {
-    return "{\n\t\"picture\": \"" + this->picture + "\"\n}";
+    return "{\"picture\":\"" + this->picture + "\"}";
 }
 
 
@@ -438,14 +438,14 @@ void Contacts::getOwnInfo(const rapidjson::Document &document) {
 }
 
 std::string Contacts::createJsonFile() {
-    std::string result = "{\n\t\"" + this->contacts_name + "\": [";
+    std::string result = "{\"" + this->contacts_name + "\":[";
     for (int i = 0; i < this->contacts.size(); i++) {
         result += "\"" + this->contacts.at(i) + "\"";
         if (i != (this->contacts.size() - 1)) {
             result += ",";
         }
     }
-    return result + "]\n}";
+    return result + "]}";
 }
 
 
@@ -505,15 +505,15 @@ void Solicitudes::removeSolicitude(struct Solicitude solicitude_to_remove) {
 }
 
 std::string Solicitudes::createJsonFile() {
-    std::string result = "{\n\t\"solicitudes\":\n\t[";
+    std::string result = "{\"solicitudes\":[";
     for (int i = 0; i < this->solicitudes.size(); i++) {
-        result += "{\n\t\t\"date\": \"" + this->solicitudes.at(i).date + "\"," +
-                    "\n\t\t\"mail\": \"" + this->solicitudes.at(i).mail + "\"\n\t}";
+        result += "{\"date\":\"" + this->solicitudes.at(i).date + "\"," +
+                    "\"mail\":\"" + this->solicitudes.at(i).mail + "\"}";
         if (i != (this->solicitudes.size() - 1)) {
-            result += ",\n\t";
+            result += ",";
         }
     }
-    return result + "]\n}";
+    return result + "]}";
 }
 
 
@@ -558,14 +558,14 @@ void Conversation::addMessage(struct ChatMessage message_to_add) {
 }
 
 std::string Conversation::createJsonFile() {
-    std::string result = "{\n\t\"conversation\":\n\t[";
+    std::string result = "{\"conversation\":[";
     for (int i = 0; i < this->messages.size(); i++) {
-        result += "{\n\t\t\"date\": \"" + this->messages.at(i).date + "\"," +
-                    "\n\t\t\"sender\": \"" + this->messages.at(i).sender + "\"," +
-                    "\n\t\t\"message\": \"" + this->messages.at(i).message + "\"\n\t}";
+        result += "{\"date\":\"" + this->messages.at(i).date + "\"," +
+                    "\"sender\":\"" + this->messages.at(i).sender + "\"," +
+                    "\"message\":\"" + this->messages.at(i).message + "\"}";
         if (i != (this->messages.size() - 1)) {
-            result += ",\n\t";
+            result += ",";
         }
     }
-    return result + "]\n}";
+    return result + "]}";
 }

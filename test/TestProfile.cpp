@@ -238,9 +238,9 @@ TEST_F(TestProfile, testUpdateJsonExpertise) {
 
 
 TEST_F(TestProfile, testSkillsWellCreated) {
-    ASSERT_EQ(skills->getSkills(0), "java, c, UML");
+    ASSERT_EQ(skills->getSkills(0), "java,c,UML");
     ASSERT_EQ(skills->getCategory(0), "software");
-    ASSERT_EQ(skills->getSkills(1), "moto, auto");
+    ASSERT_EQ(skills->getSkills(1), "moto,auto");
     ASSERT_EQ(skills->getCategory(1), "licencia manejo");
 }
 
@@ -259,9 +259,9 @@ TEST_F(TestProfile, testUpdateJsonSkills) {
     skills->updateJson(skills_output);
     Skills *skills_modified = new Skills();
     skills_modified->getProfileInfo(skills_output);
-    ASSERT_EQ(skills_modified->getSkills(0), "Nueva_skill_1, Nueva_skill_2");
+    ASSERT_EQ(skills_modified->getSkills(0), "Nueva_skill_1,Nueva_skill_2");
     ASSERT_EQ(skills_modified->getCategory(0), "software");
-    ASSERT_EQ(skills_modified->getSkills(1), "moto, auto");
+    ASSERT_EQ(skills_modified->getSkills(1), "moto,auto");
     ASSERT_EQ(skills_modified->getCategory(1), "licencia manejo");
 }
 
@@ -411,7 +411,7 @@ TEST_F(TestProfile, testUpdateJsonSolicitudes) {
 
 
 TEST_F(TestProfile, testConversationWellCreated) {
-    ASSERT_EQ(conversation->getConversationMessageAt(0), 
+    ASSERT_EQ(conversation->getConversationMessageAt(0),
                                     "20-03-2016T12:34:00.000Z,smpiano@gmail.com,Hola, cómo andás?");
     ASSERT_EQ(conversation->getConversationMessageAt(1),
                                     "20-03-2016T12:35:01.234Z,facundo.sanchez.galindo@gmail.com,Todo bien, vos?");
@@ -423,7 +423,7 @@ TEST_F(TestProfile, testAddConversationMessage) {
     conversation_message.sender = "smpiano@gmail.com";
     conversation_message.message = "Todo tranqui.";
     conversation->addMessage(conversation_message);
-    ASSERT_EQ(conversation->getConversationMessageAt(0), 
+    ASSERT_EQ(conversation->getConversationMessageAt(0),
                                     "20-03-2016T12:34:00.000Z,smpiano@gmail.com,Hola, cómo andás?");
     ASSERT_EQ(conversation->getConversationMessageAt(1),
                                     "20-03-2016T12:35:01.234Z,facundo.sanchez.galindo@gmail.com,Todo bien, vos?");
@@ -440,9 +440,9 @@ TEST_F(TestProfile, testUpdateJsonConversation) {
     conversation->updateJson(conversation_output);
     Conversation *conversation_modified = new Conversation();
     conversation_modified->getProfileInfo(conversation_output);
-    ASSERT_EQ(conversation_modified->getConversationMessageAt(0), 
+    ASSERT_EQ(conversation_modified->getConversationMessageAt(0),
                                     "20-03-2016T12:34:00.000Z,smpiano@gmail.com,Hola, cómo andás?");
-    ASSERT_EQ(conversation_modified->getConversationMessageAt(1), 
+    ASSERT_EQ(conversation_modified->getConversationMessageAt(1),
                                     "20-03-2016T12:35:01.234Z,facundo.sanchez.galindo@gmail.com,Todo bien, vos?");
     ASSERT_EQ(conversation_modified->getConversationMessageAt(2),
                                     "20-03-2016T12:37:20.040Z,smpiano@gmail.com,Todo tranqui.");

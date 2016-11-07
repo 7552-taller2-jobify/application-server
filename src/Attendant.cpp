@@ -1,6 +1,8 @@
 // "Copyright 2016 <Jobify>"
 
 #include "Attendant.h"
+#include <string>
+#include <map>
 
 Attendant::Attendant() {}
 
@@ -34,7 +36,6 @@ Login::Login() {
 Login::~Login() {}
 
 Response* Login::post(struct Message operation) {
-    
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     LoginInformation *loginInformation = new LoginInformation();
     if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
@@ -44,9 +45,9 @@ Response* Login::post(struct Message operation) {
     } else {
         loginInformation->loadJson(operation.body.c_str());
     }
-        
+
     Response* response = new Response();;
-    if (dbAdministrator->existsClient(loginInformation->getEmail())){
+    if (dbAdministrator->existsClient(loginInformation->getEmail())) {
         response->setContent(dbAdministrator->getDataOfClient(loginInformation));
         response->setStatus(200);
     } else {
@@ -64,7 +65,6 @@ Register::Register() {
 Register::~Register() {}
 
 Response* Register::post(struct Message operation) {
- 
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     Personal *personal = new Personal();
 
@@ -72,7 +72,7 @@ Response* Register::post(struct Message operation) {
         // cargar datos de facebook
         personal->setFirstName("");
         personal->setLastName("");
-        personal->setGender("");      
+        personal->setGender("");
         personal->setBirthday("");
         personal->setPassword("");
         personal->setCity("");

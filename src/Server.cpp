@@ -44,7 +44,6 @@ void Server::start() {
     struct mg_mgr mgr;  // Mongoose event manager
     struct mg_connection *nc;  // Callback function (event handler) prototype
     mg_mgr_init(&mgr, this);  // Initialize Mongoose manager
-    // nc = mg_bind(&mgr, s_http_port, ev_handler);
     // Create listening connection
     nc = mg_bind(&mgr, s_http_port, ev_handler);
     if (nc == NULL) {

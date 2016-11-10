@@ -30,6 +30,6 @@ set(TEST_FILES ${CMAKE_BINARY_DIR}/test)
 
 file(GLOB ALLFILES ${SOURCE_FILES}/*.h ${SOURCE_FILES}/*.cpp ${TEST_FILES}/*.cpp)
 
-set(CPPLINT_COMMAND ${CMAKE_BINARY_DIR}/cpplint.py --linelength=120 --extensions=h,cpp --root=application-server/src ${ALLFILES})
+set(CPPLINT_COMMAND ${CMAKE_BINARY_DIR}/cpplint.py --linelength=120 --extensions=h,cpp --root=src ${ALLFILES})
 
 execute_process(COMMAND ${CPPLINT_COMMAND})

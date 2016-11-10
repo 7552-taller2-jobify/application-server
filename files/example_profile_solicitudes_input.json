@@ -1,0 +1,11 @@
+{
+    "solicitudes":
+    [{
+	    "date": "01-01-2010T12:34:00.000Z",
+	    "mail": "smpiano@gmail.com"
+    },
+    {
+	    "date": "03-01-2010T12:34:00.000Z",
+	    "mail": "facundo.sanchez.galindo@gmail.com"
+    }]
+}

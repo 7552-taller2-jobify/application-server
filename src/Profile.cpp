@@ -41,6 +41,19 @@ void Profile::getProfileInfo(std::string json_file) {
     }
 }
 
+std::string Profile::getItemByIndex(std::string *items, int index) {
+    if (index < items->length()) {
+        return items[index];
+    }
+    return "";
+}
+
+void Profile::setItem(std::string *items, int index, std::string new_item) {
+    if (index < items->length()) {
+        items[index] = new_item;
+    }
+}
+
 
 
 void LoginInformation::getOwnInfo(const rapidjson::Document &document) {
@@ -65,14 +78,15 @@ void LoginInformation::setPassword(std::string new_password) {
 }
 
 std::string LoginInformation::createJsonFile() {
-    std::string email = "{\n\t\"email\": \"" + this->email + "\",\n",
-    password = "\t\"password\": \"" + this->password + "\"\n}";
+    std::string email = "{\"email\":\"" + this->email + "\",",
+    password = "\"password\":\"" + this->password + "\"}";
     return email + password;
 }
 
 
 
 void Personal::getOwnInfo(const rapidjson::Document &document) {
+    std::cout<<"Inicio carga Objeto Personal"<<std::endl;
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
     this->email = document["email"].GetString();
@@ -82,6 +96,11 @@ void Personal::getOwnInfo(const rapidjson::Document &document) {
     this->address[1] = document["address"]["lon"].GetString();
     this->city = document["city"].GetString();
     this->device_id = document["device_id"].GetDouble();
+    std::cout<<"Fin carga Objeto Personal"<<std::endl;
+}
+
+bool Personal::isNull(std::string field) {
+    return (std::strcmp(field.c_str(), "") == 0);
 }
 
 double Personal::getDeviceId() {
@@ -149,21 +168,33 @@ void Personal::setCity(std::string new_city) {
     this->city = new_city;
 }
 
+void Personal::setPassword(std::string password) {
+    this->password = password;
+}
+
 std::string Personal::createJsonFile() {
     std::ostringstream oss;
     oss << this->device_id;
     std::string id_parsed = oss.str();
 
-    std::string id = "{\n\t\"device_id\": " + id_parsed + ",\n",
-    first_name = "\t\"first_name\": \"" + this->first_name + "\",\n",
-    last_name = "\t\"last_name\": \"" + this->last_name + "\",\n",
-    email = "\t\"email\": \"" + this->email + "\",\n",
-    gender = "\t\"gender\": \"" + this->gender + "\",\n",
-    birthday = "\t\"birthday\": \"" + this->birthday + "\",\n",
-    address_1 = "\t\"address\": {\n\t\t\"lat\": \"" + this->address[0] + "\",\n",
-    address_2 = "\t\t\"lon\": \"" + this->address[1] + "\"\n\t},\n",
-    city = "\t\"city\": \"" + this->city + "\"\n}";
+    std::string id = "{\"device_id\":" + id_parsed + ",",
+    first_name = "\"first_name\":\"" + this->first_name + "\",",
+    last_name = "\"last_name\":\"" + this->last_name + "\",",
+    email = "\"email\":\"" + this->email + "\",",
+    gender = "\"gender\":\"" + this->gender + "\",",
+    birthday = "\"birthday\":\"" + this->birthday + "\",",
+    address_1 = "\"address\":{\"lat\":\"" + this->address[0] + "\",",
+    address_2 = "\"lon\":\"" + this->address[1] + "\"},",
+    city = "\"city\":\"" + this->city + "\"}";
     return id + first_name + last_name + email + gender + birthday + address_1 + address_2 + city;
+}
+
+bool Personal::emptyFields() {
+    if ((isNull(first_name)) || (isNull(last_name)) || (isNull(email)) || (isNull(gender)) || (isNull(birthday))
+                || (isNull(address[0])) || (isNull(address[1])) || (isNull(city))) {
+        return true;
+    }
+    return false;
 }
 
 
@@ -181,7 +212,7 @@ void Summary::setSummary(std::string new_summary) {
 }
 
 std::string Summary::createJsonFile() {
-    return "{\n\t\"summary\": \"" + this->summary + "\"\n}";
+    return "{\"summary\":\"" + this->summary + "\"}";
 }
 
 
@@ -204,65 +235,52 @@ void Expertise::getOwnInfo(const rapidjson::Document &document) {
     }
 }
 
-std::string Expertise::getItemByIndex(std::string *items, int index) {
-    if (index < items->length()) {
-        return items[index];
-    }
-    return "";
-}
-
 std::string Expertise::getCompany(int index) {
-    return getItemByIndex(this->company, index);
+    return this->getItemByIndex(this->company, index);
 }
 
 std::string Expertise::getPosition(int index) {
-    return getItemByIndex(this->position, index);
+    return this->getItemByIndex(this->position, index);
 }
 
 std::string Expertise::getFrom(int index) {
-    return getItemByIndex(this->from, index);
+    return this->getItemByIndex(this->from, index);
 }
 
 std::string Expertise::getTo(int index) {
-    return getItemByIndex(this->to, index);
+    return this->getItemByIndex(this->to, index);
 }
 
 std::string Expertise::getExpertise(int index) {
-    return getItemByIndex(this->expertise, index);
+    return this->getItemByIndex(this->expertise, index);
 }
 
 std::string Expertise::getCategory(int index) {
-    return getItemByIndex(this->category, index);
-}
-
-void Expertise::setItem(std::string *items, int index, std::string new_item) {
-    if (index < items->length()) {
-        items[index] = new_item;
-    }
+    return this->getItemByIndex(this->category, index);
 }
 
 void Expertise::setCompany(std::string new_company, int index) {
-    setItem(this->company, index, new_company);
+    this->setItem(this->company, index, new_company);
 }
 
 void Expertise::setPosition(std::string new_position, int index) {
-    setItem(this->position, index, new_position);
+    this->setItem(this->position, index, new_position);
 }
 
 void Expertise::setFrom(std::string new_from, int index) {
-    setItem(this->from, index, new_from);
+    this->setItem(this->from, index, new_from);
 }
 
 void Expertise::setTo(std::string new_to, int index) {
-    setItem(this->to, index, new_to);
+    this->setItem(this->to, index, new_to);
 }
 
 void Expertise::setExpertise(std::string new_expertise, int index) {
-    setItem(this->expertise, index, new_expertise);
+    this->setItem(this->expertise, index, new_expertise);
 }
 
 void Expertise::setCategory(std::string new_category, int index) {
-    setItem(this->category, index, new_category);
+    this->setItem(this->category, index, new_category);
 }
 
 Expertise::~Expertise() {
@@ -275,59 +293,82 @@ Expertise::~Expertise() {
 }
 
 std::string Expertise::createJsonFile() {
-    std::string result = "{\n\t\"expertises\":\n\t[";
+    std::string result = "{\"expertises\":[";
     int last = this->number_of_expertises - 1;
     for (int i = 0; i < this->number_of_expertises; i++) {
-        result += "{\n\t\t\"company\": \"" + this->company[i] + "\",\n\t\t"
-                + "\"position\": \"" + this->position[i] + "\",\n\t\t"
-                + "\"from\": \"" + this->from[i] + "\",\n\t\t"
-                + "\"to\": \"" + this->to[i] + "\",\n\t\t"
-                + "\"expertise\": \"" + this->expertise[i] + "\",\n\t\t"
-                + "\"category\": \"" + this->category[i] + "\"\n\t}";
+        result += "{\"company\":\"" + this->company[i] + "\","
+                + "\"position\":\"" + this->position[i] + "\","
+                + "\"from\":\"" + this->from[i] + "\","
+                + "\"to\":\"" + this->to[i] + "\","
+                + "\"expertise\":\"" + this->expertise[i] + "\","
+                + "\"category\":\"" + this->category[i] + "\"}";
         if (i != last) {
-            result += ",\n\t";
+            result += ",";
         }
     }
-    result += "]\n}";
+    result += "]}";
     return result;
 }
 
 
 
 void Skills::getOwnInfo(const rapidjson::Document &document) {
-    for (rapidjson::SizeType i = 0; i < document["skills"].Size(); i++) {
-        if (i != 0) {
-            this->skills += ", ";
+    this->number_of_skills = document["every_skill"].Size();
+    this->skills = new std::string[this->number_of_skills];
+    this->category = new std::string[this->number_of_skills];
+    for (rapidjson::SizeType i = 0; i < this->number_of_skills; i++) {
+        for (rapidjson::SizeType j = 0; j < document["every_skill"][i]["skills"].Size(); j++) {
+            if (j != 0) {
+                this->skills[i] += ",";
+            }
+            this->skills[i] += document["every_skill"][i]["skills"][j].GetString();
         }
-        this->skills += document["skills"][i].GetString();
+        this->category[i] = document["every_skill"][i]["category"].GetString();
     }
 }
 
-std::string Skills::parseSkills() {
+std::string Skills::parseSkills(int index) {
     std::string parsed_skills;
     std::stringstream ss;
-    ss.str(this->skills);
+    ss.str(this->skills[index]);
     std::string item, aux;
     while (getline(ss, item, ',')) {
         item.erase(remove(item.begin(), item.end(), ' '), item.end());
-        aux = "\"" + item + "\", ";
+        aux = "\"" + item + "\",";
         parsed_skills += aux;
     }
-    parsed_skills = parsed_skills.substr(0, parsed_skills.length() - 2);
-    parsed_skills += "]\n}";
+    parsed_skills = parsed_skills.substr(0, parsed_skills.length() - 1);
     return parsed_skills;
 }
 
-std::string Skills::getSkills() {
-    return this->skills;
+std::string Skills::getSkills(int index) {
+    return this->getItemByIndex(this->skills, index);
 }
 
-void Skills::setSkills(std::string new_skills) {
-    this->skills = new_skills;
+std::string Skills::getCategory(int index) {
+    return this->getItemByIndex(this->category, index);
+}
+
+void Skills::setSkills(std::string new_skills, int index) {
+    this->setItem(this->skills, index, new_skills);
+}
+
+void Skills::setCategory(std::string new_category, int index) {
+    this->setItem(this->category, index, new_category);
 }
 
 std::string Skills::createJsonFile() {
-    return "{\n\t\"skills\": [" + this->parseSkills();
+    std::string result = "{\"every_skill\":[";
+    int last = this->number_of_skills - 1;
+    for (int i = 0; i < this->number_of_skills; i++) {
+        result += "{\"skills\":[" + this->parseSkills(i) + "],"
+                + "\"category\":\"" + this->category[i] + "\"}";
+        if (i != last) {
+            result += ",";
+        }
+    }
+    result += "]}";
+    return result;
 }
 
 
@@ -345,5 +386,186 @@ void Picture::setPicture(std::string new_picture) {
 }
 
 std::string Picture::createJsonFile() {
-    return "{\n\t\"picture\": \"" + this->picture + "\"\n}";
+    return "{\"picture\":\"" + this->picture + "\"}";
+}
+
+
+
+Contacts::~Contacts() {}
+
+std::string Contacts::getContactAt(int index) {
+    if (this->contacts.size() > index) {
+        return this->contacts.at(index);
+    }
+    return "";
+}
+
+int Contacts::search(std::string contact) {
+    int index = 0;
+    while ((this->contacts.size() > index)) {
+        std::string aux_contact = this->contacts.at(index);
+        int comparison = std::strcmp(aux_contact.c_str(), contact.c_str());
+        if (comparison > 0) {
+            return -1;
+        }
+        if (comparison == 0) {
+            return index;
+        }
+        index++;
+    }
+    return -1;
+}
+
+void Contacts::addContact(std::string contact_to_add) {
+    int index = this->search(contact_to_add);
+    if (index == -1) {
+        this->contacts.push_back(contact_to_add);
+        std::sort(this->contacts.begin(), this->contacts.end(), std::less<std::string>());
+    }
+}
+
+void Contacts::removeContact(std::string contact_to_remove) {
+    int index = this->search(contact_to_remove);
+    if (index != -1) {
+        this->contacts.erase(this->contacts.begin() + index);
+    }
+}
+
+void Contacts::getOwnInfo(const rapidjson::Document &document) {
+    for (rapidjson::SizeType i = 0; i < document[this->contacts_name.c_str()].Size(); i++) {
+        this->addContact(document[this->contacts_name.c_str()][i].GetString());
+    }
+}
+
+std::string Contacts::createJsonFile() {
+    std::string result = "{\"" + this->contacts_name + "\":[";
+    for (int i = 0; i < this->contacts.size(); i++) {
+        result += "\"" + this->contacts.at(i) + "\"";
+        if (i != (this->contacts.size() - 1)) {
+            result += ",";
+        }
+    }
+    return result + "]}";
+}
+
+
+
+void Solicitudes::getOwnInfo(const rapidjson::Document &document) {
+    for (rapidjson::SizeType i = 0; i < document["solicitudes"].Size(); i++) {
+        struct Solicitude solicitude;
+        solicitude.date = document["solicitudes"][i]["date"].GetString();
+        solicitude.mail = document["solicitudes"][i]["mail"].GetString();
+        this->addSolicitude(solicitude);
+    }
+}
+
+std::string Solicitudes::getDateAt(int index) {
+    if (this->solicitudes.size() > index) {
+        return this->solicitudes.at(index).date;
+    }
+    return "";
+}
+
+std::string Solicitudes::getMailAt(int index) {
+    if (this->solicitudes.size() > index) {
+        return this->solicitudes.at(index).mail;
+    }
+    return "";
+}
+
+int Solicitudes::search(struct Solicitude solicitude) {
+    int index = 0;
+    while ((this->solicitudes.size() > index)) {
+        struct Solicitude aux_solicitude = this->solicitudes.at(index);
+        int comparison = std::strcmp(aux_solicitude.mail.c_str(), solicitude.mail.c_str());
+        if (comparison == 0) {
+            return index;
+        }
+        index++;
+    }
+    return -1;
+}
+
+std::string Solicitudes::getSolicitudeAt(int index) {
+    return (this->getDateAt(index) + "," + this->getMailAt(index));
+}
+
+void Solicitudes::addSolicitude(struct Solicitude solicitude_to_add) {
+    int index = this->search(solicitude_to_add);
+    if (index == -1) {
+        this->solicitudes.push_back(solicitude_to_add);
+    }
+}
+
+void Solicitudes::removeSolicitude(struct Solicitude solicitude_to_remove) {
+    int index = this->search(solicitude_to_remove);
+    if (index != -1) {
+        this->solicitudes.erase(this->solicitudes.begin() + index);
+    }
+}
+
+std::string Solicitudes::createJsonFile() {
+    std::string result = "{\"solicitudes\":[";
+    for (int i = 0; i < this->solicitudes.size(); i++) {
+        result += "{\"date\":\"" + this->solicitudes.at(i).date + "\"," +
+                    "\"mail\":\"" + this->solicitudes.at(i).mail + "\"}";
+        if (i != (this->solicitudes.size() - 1)) {
+            result += ",";
+        }
+    }
+    return result + "]}";
+}
+
+
+
+void Conversation::getOwnInfo(const rapidjson::Document &document) {
+    for (rapidjson::SizeType i = 0; i < document["conversation"].Size(); i++) {
+        struct ChatMessage message;
+        message.date = document["conversation"][i]["date"].GetString();
+        message.sender = document["conversation"][i]["sender"].GetString();
+        message.message = document["conversation"][i]["message"].GetString();
+        this->addMessage(message);
+    }
+}
+
+std::string Conversation::getDateAt(int index) {
+    if (this->messages.size() > index) {
+        return this->messages.at(index).date;
+    }
+    return "";
+}
+
+std::string Conversation::getSenderAt(int index) {
+    if (this->messages.size() > index) {
+        return this->messages.at(index).sender;
+    }
+    return "";
+}
+
+std::string Conversation::getMessageAt(int index) {
+    if (this->messages.size() > index) {
+        return this->messages.at(index).message;
+    }
+    return "";
+}
+
+std::string Conversation::getConversationMessageAt(int index) {
+    return (this->getDateAt(index) + "," + this->getSenderAt(index) + "," + this->getMessageAt(index));
+}
+
+void Conversation::addMessage(struct ChatMessage message_to_add) {
+    this->messages.push_back(message_to_add);
+}
+
+std::string Conversation::createJsonFile() {
+    std::string result = "{\"conversation\":[";
+    for (int i = 0; i < this->messages.size(); i++) {
+        result += "{\"date\":\"" + this->messages.at(i).date + "\"," +
+                    "\"sender\":\"" + this->messages.at(i).sender + "\"," +
+                    "\"message\":\"" + this->messages.at(i).message + "\"}";
+        if (i != (this->messages.size() - 1)) {
+            result += ",";
+        }
+    }
+    return result + "]}";
 }

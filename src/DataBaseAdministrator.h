@@ -8,16 +8,16 @@
 #include "DataBase.h"
 #include "Profile.h"
 #include "Logger.h"
+#include "Constants.h"
+#include "UserService.h"
 
 class DataBaseAdministrator {
     public:
         DataBaseAdministrator();
         ~DataBaseAdministrator();
-        bool existsClient(Profile *loginInformation);
-        std::string getDataOfClient(Profile *loginInformation);
-        void addClient(Profile *loginInformation, Profile* personal);	
-
-
+        bool existsClient(std::string email);
+        std::string getDataOfClient(LoginInformation *loginInformation);
+        int addClient(Personal* personal, struct Message operation);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

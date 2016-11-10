@@ -2,9 +2,7 @@
 
 #include "RequestParse.h"
 
-RequestParse::RequestParse() {
-    // TODO Auto-generated constructor stub
-}
+RequestParse::RequestParse() {}
 
 Message* RequestParse::parseRequest(struct http_message* hm) {
     std::string uri;
@@ -28,11 +26,15 @@ Message* RequestParse::parseRequest(struct http_message* hm) {
     message->uri = uri;
     message->body = body;
     message->verb = verb;
+    message->params = "";
+
+    for (size_t i = 0; i < hm->query_string.len; i++) {
+        message->params += hm->query_string.p[i];
+    }
+    // message->params = hm->query_string;
+    std::cout<<message->params<<std::endl;
 
     return message;
-
 }
 
-RequestParse::~RequestParse() {
-    // TODO Auto-generated destructor stub
-}
+RequestParse::~RequestParse() {}

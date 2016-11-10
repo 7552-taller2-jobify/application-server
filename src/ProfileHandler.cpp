@@ -10,12 +10,22 @@ ProfileHandler::ProfileHandler() {
     profiles["EXPERTISE_.*"] = new Expertise();
     profiles["SKILLS_.*"] = new Skills();
     profiles["PICTURE_.*"] = new Picture();
+    profiles["FRIENDS_.*"] = new Friends();
+    profiles["OWN_RECOMMENDATIONS_.*"] = new OwnRecommendations();
+    profiles["OTHERS_RECOMMENDATIONS_.*"] = new OthersRecommendations();
+    profiles["SOLICITUDES_.*"] = new Solicitudes();
+    profiles["CONVERSATION_.*"] = new Conversation();
     profiles[".*@.*"] = new LoginInformation();
-    beginings[0] = "PERSONAL_";
-    beginings[1] = "SUMMARY_";
-    beginings[2] = "EXPERTISE_";
-    beginings[3] = "SKILLS_";
-    beginings[4] = "PICTURE_";
+    this->beginings.push_back("PERSONAL_");
+    this->beginings.push_back("SUMMARY_");
+    this->beginings.push_back("EXPERTISE_");
+    this->beginings.push_back("SKILLS_");
+    this->beginings.push_back("PICTURE_");
+    this->beginings.push_back("FRIENDS_");
+    this->beginings.push_back("OWN_RECOMMENDATIONS_");
+    this->beginings.push_back("OTHERS_RECOMMENDATIONS_");
+    this->beginings.push_back("SOLICITUDES_");
+    this->beginings.push_back("CONVERSATION_");
 }
 
 ProfileHandler::~ProfileHandler() {}
@@ -34,14 +44,14 @@ Profile* ProfileHandler::find(std::string key_to_match) {
 }
 
 bool ProfileHandler::checkBegining(std::string key_to_match) {
-    for (int i = 0; i < ((sizeof(beginings)/sizeof(*beginings)) - 1); i++) {
+    for (int i = 0; i < beginings.size(); i++) {
         int length;
-        if (strlen(beginings[i].c_str()) > strlen(key_to_match.c_str())) {
+        if (strlen(beginings.at(i).c_str()) > strlen(key_to_match.c_str())) {
             length = strlen(key_to_match.c_str());
         } else {
-            length = strlen(beginings[i].c_str());
+            length = strlen(beginings.at(i).c_str());
         }
-        if (strncmp(key_to_match.c_str(), beginings[i].c_str(), length - 1) == 0) {
+        if (strncmp(key_to_match.c_str(), beginings.at(i).c_str(), length - 1) == 0) {
             return true;
         }
     }

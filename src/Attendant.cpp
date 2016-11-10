@@ -1,9 +1,10 @@
 // "Copyright 2016 <Jobify>"
 
 #include "Attendant.h"
+#include <string>
+#include <map>
 
-Attendant::Attendant() {
-}
+Attendant::Attendant() {}
 
 Attendant::~Attendant() {}
 
@@ -37,16 +38,22 @@ Login::~Login() {}
 Response* Login::post(struct Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     LoginInformation *loginInformation = new LoginInformation();
-    loginInformation->loadJson(operation.body.c_str());
-    
-    Response* response = NULL;
+    if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
+        // cargar datos de facebook
+        loginInformation->setEmail("");
+        loginInformation->setPassword("");
+    } else {
+        loginInformation->loadJson(operation.body.c_str());
+    }
 
-    if (dbAdministrator->existsClient(loginInformation)){
-        // Falta contemplar mas chequeos         
-        response = new Response();
+    Response* response = new Response();;
+    if (dbAdministrator->existsClient(loginInformation->getEmail())) {
         response->setContent(dbAdministrator->getDataOfClient(loginInformation));
         response->setStatus(200);
-    }   
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
 
     return response;
 }
@@ -58,25 +65,40 @@ Register::Register() {
 Register::~Register() {}
 
 Response* Register::post(struct Message operation) {
- 
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    Personal *personal = new Personal();
 
-    Profile *loginInformation = new LoginInformation();
-    // Contemplar errores
-    loginInformation->loadJson(operation.body.c_str());
-    Profile *personal = new Personal();
-    personal->loadJson(operation.body.c_str());
- 
-    Response* response = NULL;
+    if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
+        // cargar datos de facebook
+        personal->setFirstName("");
+        personal->setLastName("");
+        personal->setGender("");
+        personal->setBirthday("");
+        personal->setPassword("");
+        personal->setCity("");
+        personal->setAddress("", "");
+    } else {
+         personal->loadJson(operation.body.c_str());
+    }
 
-    dbAdministrator->addClient(loginInformation, personal);
-    
-    if (dbAdministrator->existsClient(loginInformation)){         
-        response = new Response();
-        response->setContent("{\n\t\"message\": \"Cliente was registered OK\"\n}");
-        response->setStatus(200);
-    }   
+    int success = dbAdministrator->addClient(personal, operation);
+    std::ostringstream s;
+    s << success;
+    std::string success_parsed = s.str();
 
+    Response* response = new Response();
+    if (success == 0) {
+        response->setContent("{\"registration\":\"OK\"}");
+        response->setStatus(201);
+    } else {
+            if (success == 1) {
+                response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client already exists.\"}");
+                response->setStatus(500);
+            } else {
+                response->setContent("{\"code\":" + success_parsed + ",\"message\":\"There are empty fields.\"}");
+                response->setStatus(500);
+            }
+    }
     return response;
 }
 

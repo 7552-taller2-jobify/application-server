@@ -11,6 +11,7 @@
 #include "Response.h"
 #include "DataBaseAdministrator.h"
 #include "DataBase.h"
+#include "RequestParse.h"
 
 typedef Response* (*function)(struct Message operation);
 
@@ -95,6 +96,8 @@ class ProfileSkills: public Attendant {
  public:
     ProfileSkills();
     ~ProfileSkills();
+    static Response* post(struct Message operation);
+    static Response* put(struct Message operation);
     static Response* get(struct Message operation);
 };
 

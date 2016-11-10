@@ -190,13 +190,33 @@ Response* ProfileExpertise::get(struct Message operation) {
 
 
 ProfileSkills::ProfileSkills() {
-    // methods->push_back("GET");
+    this->functions["POST"] = post;
+    this->functions["PUT"] = put;
+    this->functions["GET"] = get;
 }
 
 ProfileSkills::~ProfileSkills() {}
 
+Response* ProfileSkills::post(struct Message operation) {
+    RequestParse *rp = new RequestParse();
+    std::string mail = rp->extractEmail(operation.uri);
+    Skills *skills = new Skills();
+    skills->loadJson(operation.body);
+    std::string category = skills->getCategory(0);
+    std::cout<<category<<std::endl;
+    Response *response = new Response();
+    response->setStatus(201);
+    response->setContent("");
+    return response;
+    //  operation.body //  Tiene el Json
+}
+
+Response* ProfileSkills::put(struct Message operation) {
+
+}
+
 Response* ProfileSkills::get(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
+
 }
 
 

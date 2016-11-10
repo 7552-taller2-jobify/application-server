@@ -21,6 +21,9 @@ script:
   - cmake CMakeLists.txt
   - make
   - ./runTests
+  - cd /test
+  - chmod +x python_test.py
+  - python python_test.py
 
 notifications:
   slack: 7552-taller2-jobify:k32z7mkadyW1xTdrFsEqsiGX

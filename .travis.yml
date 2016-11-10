@@ -12,10 +12,11 @@ addons:
       - cmake-data
 
 before_install:
-  - sudo apt-get install libgtest-dev
+  - sudo apt-get install -y libgtest-dev
   - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
-  - "cd libs/leveldb-master && make && sudo cp --preserve=links out-static/libleveldb.* /usr/local/lib && sudo cp -r include/leveldb /usr/local/include/ && sudo ldconfig && cd ../.."
-  - "cd libs/curl-master && ./buildconf && ./configure && make && sudo make install && cd .. && cd .."
+  - "wget https://github.com/google/leveldb/archive/v1.19.tar.gz && tar -xzf v1.19.tar.gz && rm v1.19.tar.gz && mv leveldb-1.19 /tmp/leveldb && cd /tmp/leveldb && make && sudo cp --preserve=links out-static/libleveldb.* /usr/local/lib && sudo cp -r include/leveldb /usr/local/include && sudo ldconfig"
+  - "wget https://curl.haxx.se/download/curl-7.50.3.tar.gz && tar -xzf curl-7.50.3.tar.gz && rm curl-7.50.3.tar.gz && cd curl-7.50.3 && ./buildconf && ./configure && make && sudo make install && cd .. && cd .."
+  - "sudo apt-get install -y software-properties-common python-software-properties && sudo add-apt-repository -y ppa:ben-collins/libjwt && sudo apt-get update && sudo apt-get install -y libjwt-dev"
 
 script:
   - cmake CMakeLists.txt

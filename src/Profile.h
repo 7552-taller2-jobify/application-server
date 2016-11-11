@@ -48,7 +48,7 @@ class LoginInformation: public Profile {
 
 class Personal: public Profile {
  private:
-    double device_id;
+    std::string device_id;
     std::string first_name;
     std::string last_name;
     std::string email;
@@ -63,7 +63,7 @@ class Personal: public Profile {
  public:
     Personal() : Profile() {}
     ~Personal() {}
-    double getDeviceId();
+    std::string getDeviceId();
     std::string getFirstName();
     std::string getLastName();
     std::string getEmail();
@@ -71,7 +71,7 @@ class Personal: public Profile {
     std::string getBirthday();
     std::string* getAddress();
     std::string getCity();
-    void setDeviceId(double new_id);
+    void setDeviceId(std::string new_id);
     void setFirstName(std::string new_first_name);
     void setPassword(std::string password);
     void setLastName(std::string new_last_name);

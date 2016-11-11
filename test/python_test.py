@@ -6,20 +6,17 @@ from time import sleep
 import os, signal
 
 def start_server():
-    #os.chdir("..")
     call(["./Server"])
 
 def skills():
-    sleep(1)
     call(["curl", "-XPOST", "http://127.0.0.1:8000/users/test@gmail.com/perfil/skills", "-H", "'Content-Type: application/json'", "-d", "{\"every_skill\":[{\"skills\":[\"java\",\"c\",\"UML\"],\"category\":\"software\"}]}", "-v"])
 
 def login():
-    sleep(1)
     call(["curl", "-XPOST", "http://127.0.0.1:8000/users/login", "-H", "'Content-Type: application/json'", "-d", "{\"email\":\"test@gmail.com\",\"password\":\"test\"}", "-v"])
 
 def register():
     sleep(1)
-    call(["curl", "-XPOST", "http://127.0.0.1:8000/users/register", "-H", "'Content-Type: application/json'", "-d", "{\"email\":\"test@gmail.com\",\"password\":\"test\",\"device_id\":1234567890,\"first_name\":\"test\",\"last_name\":\"T\",\"gender\":\"M\",\"birthday\":\"01/01/2000\",\"address\":{\"lat\":\"123456789\",\"lon\":\"12345678\"},\"city\":\"lalala\"}", "-v"])
+    call(["curl", "-XPOST", "http://127.0.0.1:8000/users/register", "-H", "'Content-Type: application/json'", "-d", "{\"email\":\"tet@gmail.com\",\"password\":\"test\",\"device_id\":\"1234567890\",\"first_name\":\"test\",\"last_name\":\"T\",\"gender\":\"M\",\"birthday\":\"01/01/2000\",\"address\":{\"lat\":\"123456789\",\"lon\":\"12345678\"},\"city\":\"lalala\"}", "-v"])
     login()
     skills()
 

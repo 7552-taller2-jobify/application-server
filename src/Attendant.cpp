@@ -208,7 +208,6 @@ Response* ProfileSkills::post(struct Message operation) {
     response->setStatus(201);
     response->setContent("");
     return response;
-    //  operation.body //  Tiene el Json
 }
 
 Response* ProfileSkills::put(struct Message operation) {

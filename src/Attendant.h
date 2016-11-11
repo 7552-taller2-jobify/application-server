@@ -11,6 +11,10 @@
 #include "Response.h"
 #include "DataBaseAdministrator.h"
 #include "DataBase.h"
+#include "Request.h"
+#include "Mail.h"
+#include "FirebaseService.h"
+#include "SharedService.h"
 
 typedef Response* (*function)(struct Message operation);
 
@@ -104,5 +108,23 @@ class ProfilePhoto: public Attendant {
     ~ProfilePhoto();
     static Response* get(struct Message operation);
 };
-
+class Facebook: public Attendant {
+ public:
+    Facebook();
+    ~Facebook();
+    static Response* get(struct Message operation);
+    static Response* post(struct Message operation);
+};
+class Firebase: public Attendant {
+ public:
+    Firebase();
+    ~Firebase();
+    static Response* post(struct Message operation);
+};
+class Category: public Attendant {
+ public:
+    Category();
+    ~Category();
+    static Response* post(struct Message operation);
+};
 #endif  // ATTENDANT_H_

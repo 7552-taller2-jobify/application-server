@@ -9,7 +9,22 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
     return size * nmemb;
 }
 
-Request::Request() {}
+Request::Request(){
+    slist1 = NULL;
+}
+
+void Request::SetContentJson(){
+  
+  slist1 = curl_slist_append(slist1, "Authorization:key=AIzaSyAkvyuxBXTzeLiz9wkE2WrAsfyk0ylkQOk");
+  slist1 = curl_slist_append(slist1, "Accept: application/json");
+  slist1 = curl_slist_append(slist1, "Content-Type: application/json");
+ // headers = curl_slist_append(headers, "charsets: utf-8"); 
+}
+
+void Request::SetAuthorization(std::string authorization){
+  std::string value = "Authorization:" + authorization;
+  slist1 = curl_slist_append(slist1, value.c_str() );
+}
 
 Response*  Request::Execute(const std::string url) {
     curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -91,39 +106,39 @@ static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *userp) {
     return 0;                          /* no more data left to deliver */
 }
 
-Response* Request::ExecutePost(std::string url, std::string body) {
-    std::stringstream out;
-    CURLcode ret;
-    struct curl_slist *slist1;
+Response* Request::ExecutePost(std::string url, std::string body){
+	
+  std::stringstream out;
+  CURLcode ret;
 
-    slist1 = NULL;
-    slist1 = curl_slist_append(slist1, "Content-Type: application/json");
+  slist1 = curl_slist_append(slist1, "Content-Type: application/json");
 
-    curl = curl_easy_init();
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
-    curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.38.0");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist1);
-    curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
+  curl = curl_easy_init();
+  curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
+  curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.38.0");
+  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist1);
+  curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
+  curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+  curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
 
-    // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-    // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
-    ret = curl_easy_perform(curl);
+	//curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+    //curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
+  ret = curl_easy_perform(curl);
+  
+  long http_code = 0;
+  curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
 
-    long http_code = 0;
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
-
-    // curl_slist_free_all(slist1);
-    // slist1 = NULL;
-
-    Response* response = new Response();
-    response->setContent(out.str());
-    response->setStatus(http_code);
-
-    return response;
+  
+  //curl_slist_free_all(slist1);
+  //slist1 = NULL;
+  
+  Response* response = new Response();
+  response->setContent(out.str());
+  response->setStatus( http_code);
+  
+  return response;
 }
 
 Request::~Request() {

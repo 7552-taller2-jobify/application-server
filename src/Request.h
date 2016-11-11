@@ -8,14 +8,18 @@
 
 using namespace std;
 
-class Request {
- private:
-    void* curl;
+class Request{
+private:
+		void* curl;
+		struct curl_slist *slist1;
+	
 
- public:
-    Request();
-    Response* Execute(string url);
-    Response* ExecutePost(string url, string body);
-    ~Request();
+public:
+		Request();
+		Response* Execute(string url);
+		Response* ExecutePost(string url, string body);
+		void SetContentJson();
+		void SetAuthorization(std::string authorization);
+		~Request();
 };
 #endif // REQUEST_H_

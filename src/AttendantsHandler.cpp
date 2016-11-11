@@ -16,6 +16,9 @@ AttendantsHandler::AttendantsHandler() {
     attendants["ProfileExpertise"] = new ProfileExpertise();
     attendants["ProfileSkills"] = new ProfileSkills();
     attendants["ProfilePhoto"] = new ProfilePhoto();
+    attendants["Facebook"] = new Facebook();
+    attendants["Firebase"] = new Firebase();
+    attendants["Category"] = new Category();
 
     this->url_mapper = new URLMapper();
 }

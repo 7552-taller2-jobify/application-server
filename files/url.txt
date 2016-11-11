@@ -19,3 +19,6 @@
 /users/.*@.*/perfil/expertise/position Login
 /users/.*@.*/perfil/expertise/position/.* Login
 /users/.*@.*/perfil/skills/category/.* Login
+/users/facebook/* Facebook
+/firebase/notification/* Firebase
+/category Category

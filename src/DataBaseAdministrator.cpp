@@ -53,3 +53,33 @@ int DataBaseAdministrator::addClient(Personal *personal, struct Message operatio
     }
     return 0;
 }
+
+// Returns 0 if success, 1 if error,
+int DataBaseAdministrator::uploadPersonal(std::string email, Personal *upload_personal){
+    if (this->existsClient(email)) {
+        std::string actual_personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
+        Personal *actual_personal = new Personal();
+        actual_personal->loadJson(actual_personal_parser);
+        
+        actual_personal->setFirstName(upload_personal->getFirstName());
+        actual_personal->setLastName(upload_personal->getLastName());
+        actual_personal->setGender(upload_personal->getGender());
+        actual_personal->setBirthday(upload_personal->getBirthday());
+        actual_personal->setCity(upload_personal->getCity());
+        actual_personal->setAddress(upload_personal->getAddress()[0], upload_personal->getAddress()[1]);
+        
+        DataBase::getInstance().erase("PERSONAL_" + email);
+        DataBase::getInstance().put("PERSONAL_" + email, actual_personal->createJsonFile());
+        return 0;
+    }
+    return 1;
+}
+
+std::string DataBaseAdministrator::getPersonal(std::string email){
+    std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
+    Personal *personal = new Personal();
+    personal->loadJson(personal_parser);
+
+    UserService *userService = new UserService();
+    return userService->getPersonal(personal);
+}

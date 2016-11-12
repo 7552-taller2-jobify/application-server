@@ -154,15 +154,54 @@ Response* Reject::get(struct Message operation) {
 
 
 ProfilePersonal::ProfilePersonal() {
-    // methods->push_back("GET");
+    this->functions["PUT"] = put;
+    this->functions["GET"] = get;
 }
 
 ProfilePersonal::~ProfilePersonal() {}
 
 Response* ProfilePersonal::get(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+
+    Response* response = new Response();;
+    if (dbAdministrator->existsClient(email)) {
+        response->setContent(dbAdministrator->getPersonal(email));
+        response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+
+    return response;
 }
 
+Response* ProfilePersonal::put(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    
+    Personal *personal = new Personal();
+    personal->loadJson(operation.body);
+
+    int success = dbAdministrator->uploadPersonal(email, personal);
+
+    std::ostringstream s;
+    s << success;
+    std::string success_parsed = s.str();
+    
+    Response* response = new Response();
+    if (success == 0) {
+        response->setContent("");
+        response->setStatus(200);
+    } else if (success == 1) {
+        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setStatus(500);
+    }
+
+    return response;
+}
 
 
 ProfileSummary::ProfileSummary() {

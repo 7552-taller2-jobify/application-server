@@ -76,6 +76,7 @@ class ProfilePersonal: public Attendant {
     ProfilePersonal();
     ~ProfilePersonal();
     static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 class ProfileSummary: public Attendant {

@@ -46,8 +46,9 @@ Response* Login::post(struct Message operation) {
         loginInformation->loadJson(operation.body.c_str());
     }
 
-    Response* response = new Response();;
-    if (dbAdministrator->existsClient(loginInformation->getEmail())) {
+    Response* response = new Response();
+    bool rigthCredential = dbAdministrator->rigthClient(loginInformation);
+    if (rigthCredential) {
         response->setContent(dbAdministrator->getDataOfClient(loginInformation));
         response->setStatus(200);
     } else {
@@ -67,6 +68,7 @@ Register::~Register() {}
 Response* Register::post(struct Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     Personal *personal = new Personal();
+    LoginInformation *loginInformation = new LoginInformation();
 
     if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
         // cargar datos de facebook
@@ -79,9 +81,10 @@ Response* Register::post(struct Message operation) {
         personal->setAddress("", "");
     } else {
          personal->loadJson(operation.body.c_str());
+         loginInformation->loadJson(operation.body.c_str());
     }
 
-    int success = dbAdministrator->addClient(personal, operation);
+    int success = dbAdministrator->addClient(personal, loginInformation, operation);
     std::ostringstream s;
     s << success;
     std::string success_parsed = s.str();
@@ -91,13 +94,13 @@ Response* Register::post(struct Message operation) {
         response->setContent("{\"registration\":\"OK\"}");
         response->setStatus(201);
     } else {
-            if (success == 1) {
-                response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client already exists.\"}");
-                response->setStatus(500);
-            } else {
-                response->setContent("{\"code\":" + success_parsed + ",\"message\":\"There are empty fields.\"}");
-                response->setStatus(500);
-            }
+        if (success == 1) {
+            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client already exists.\"}");
+            response->setStatus(500);
+        } else {
+            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"There are empty fields.\"}");
+            response->setStatus(500);
+        }
     }
     return response;
 }

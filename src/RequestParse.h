@@ -7,6 +7,7 @@
 #include "Logger.h"
 #include <iostream>
 #include <string>
+#include <vector>
 #include <sstream>
 
 class RequestParse {
@@ -20,6 +21,10 @@ class RequestParse {
     Message* parseRequest(struct http_message* hm);
 
     virtual ~RequestParse();
+
+    std::string extractEmail(std::string uri);
+
+    std::vector<std::string> split(std::string uri, std::string separator);
 };
 
 #endif // REQUESTPARSE_H_

@@ -157,15 +157,57 @@ Response* Reject::get(struct Message operation) {
 
 
 ProfilePersonal::ProfilePersonal() {
-    // methods->push_back("GET");
+    this->functions["PUT"] = put;
+    this->functions["GET"] = get;
 }
 
 ProfilePersonal::~ProfilePersonal() {}
 
 Response* ProfilePersonal::get(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER); 
+
+    Response* response = new Response();;
+    if (dbAdministrator->rigthClient(email, token)) {
+        response->setContent(dbAdministrator->getPersonal(email));
+        response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+
+    return response;
 }
 
+Response* ProfilePersonal::put(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    
+    Personal *personal = new Personal();
+    personal->loadJson(operation.body);
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER); 
+    int success = dbAdministrator->uploadPersonal(email, token, personal);
+
+    std::ostringstream s;
+    s << success;
+    std::string success_parsed = s.str();
+    
+    Response* response = new Response();
+    if (success == 0) {
+        response->setContent("");
+        response->setStatus(200);
+    } else if (success == 1) {
+        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setStatus(500);
+    }
+
+    return response;
+}
 
 
 ProfileSummary::ProfileSummary() {
@@ -193,13 +235,32 @@ Response* ProfileExpertise::get(struct Message operation) {
 
 
 ProfileSkills::ProfileSkills() {
-    // methods->push_back("GET");
+    this->functions["POST"] = post;
+    this->functions["PUT"] = put;
+    this->functions["GET"] = get;
 }
 
 ProfileSkills::~ProfileSkills() {}
 
+Response* ProfileSkills::post(struct Message operation) {
+    RequestParse *rp = new RequestParse();
+    std::string mail = rp->extractEmail(operation.uri);
+    Skills *skills = new Skills();
+    skills->loadJson(operation.body);
+    std::string category = skills->getCategory(0);
+    std::cout<<category<<std::endl;
+    Response *response = new Response();
+    response->setStatus(201);
+    response->setContent("");
+    return response;
+}
+
+Response* ProfileSkills::put(struct Message operation) {
+
+}
+
 Response* ProfileSkills::get(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
+
 }
 
 

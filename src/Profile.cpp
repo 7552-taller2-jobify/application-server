@@ -54,8 +54,6 @@ void Profile::setItem(std::string *items, int index, std::string new_item) {
     }
 }
 
-
-
 void LoginInformation::getOwnInfo(const rapidjson::Document &document) {
     this->email = document["email"].GetString();
     this->password = document["password"].GetString();
@@ -87,15 +85,28 @@ std::string LoginInformation::createJsonFile() {
 
 void Personal::getOwnInfo(const rapidjson::Document &document) {
     std::cout<<"Inicio carga Objeto Personal"<<std::endl;
+    
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
-    this->email = document["email"].GetString();
+
+    if (document.HasMember("email") && document["email"].IsString()) {
+        this->email = document["email"].GetString();
+    } else {
+        this->email = "";
+    }
+
     this->gender = document["gender"].GetString();
     this->birthday = document["birthday"].GetString();
     this->address[0] = document["address"]["lat"].GetString();
     this->address[1] = document["address"]["lon"].GetString();
     this->city = document["city"].GetString();
-    this->device_id = document["device_id"].GetDouble();
+
+    if (document.HasMember("device_id") && document["device_id"].IsString()) {
+        this->device_id = document["device_id"].GetString();
+    } else {
+        this->device_id = "";
+    }
+
     std::cout<<"Fin carga Objeto Personal"<<std::endl;
 }
 
@@ -103,7 +114,7 @@ bool Personal::isNull(std::string field) {
     return (std::strcmp(field.c_str(), "") == 0);
 }
 
-double Personal::getDeviceId() {
+std::string Personal::getDeviceId() {
     return this->device_id;
 }
 
@@ -135,7 +146,7 @@ std::string Personal::getCity() {
     return this->city;
 }
 
-void Personal::setDeviceId(double new_id) {
+void Personal::setDeviceId(std::string new_id) {
     this->device_id = new_id;
 }
 
@@ -173,11 +184,7 @@ void Personal::setPassword(std::string password) {
 }
 
 std::string Personal::createJsonFile() {
-    std::ostringstream oss;
-    oss << this->device_id;
-    std::string id_parsed = oss.str();
-
-    std::string id = "{\"device_id\":" + id_parsed + ",",
+    std::string id = "{\"device_id\":\"" + this->device_id + "\",",
     first_name = "\"first_name\":\"" + this->first_name + "\",",
     last_name = "\"last_name\":\"" + this->last_name + "\",",
     email = "\"email\":\"" + this->email + "\",",

@@ -244,4 +244,21 @@ class Conversation: public Profile {
     std::string createJsonFile();
 };
 
+class Credentials: public Profile {
+ private:
+    std::string token;
+    int incremental_number;
+    void getOwnInfo(const rapidjson::Document &document);
+
+ public:
+    Credentials() : Profile() {}
+    ~Credentials() {}
+    std::string getToken();
+    int getIncrementalNumber();
+    void setToken(std::string token);
+    void setIncrementalNumber(int incremental_number);
+    void increaseIncrementalNumber(int increase);
+    std::string createJsonFile();
+};
+
 #endif  // PROFILE_H_

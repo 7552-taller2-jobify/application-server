@@ -576,3 +576,36 @@ std::string Conversation::createJsonFile() {
     }
     return result + "]}";
 }
+
+void Credentials::getOwnInfo(const rapidjson::Document &document) {
+    this->token = document["token"].GetString();
+    this->incremental_number = document["incremental_number"].GetInt();
+}
+
+std::string Credentials::getToken() {
+    return this->token;
+}
+
+int Credentials::getIncrementalNumber() {
+    return this->incremental_number;
+}
+
+void Credentials::setToken(std::string token){
+    this->token = token;
+}
+void Credentials::setIncrementalNumber(int incremental_number){
+    this->incremental_number = incremental_number;
+}
+
+void Credentials::increaseIncrementalNumber(int increase){
+    this->incremental_number += increase;
+}
+
+std::string Credentials::createJsonFile() {
+    std::ostringstream s;
+    s << this->incremental_number;
+    std::string incremental_number_parsed = s.str();
+
+    return "{\"token\":\"" + this->token + "\"," +
+            "\"incremental_number\":" + incremental_number_parsed + "}";
+}

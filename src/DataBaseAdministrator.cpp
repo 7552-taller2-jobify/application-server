@@ -20,9 +20,11 @@ bool DataBaseAdministrator::rigthClient(LoginInformation *loginInformation){
     std::string password = loginInformation->getPassword();     
     bool existsClient = this->existsClient(email);
     if (existsClient) {
-        std::string token_stored = DataBase::getInstance().get(email);
-        std::string token_calculated = this->auth->encode(email, password);
-        bool rigthCredentials = strcmp(token_stored.c_str(), token_calculated.c_str()) == 0;
+        std::string credentials_parser = DataBase::getInstance().get(email);
+        Credentials *credentials = new Credentials();
+        credentials->loadJson(credentials_parser);
+        std::string token_calculated = this->auth->encode(email, password, credentials->getIncrementalNumber());
+        bool rigthCredentials = strcmp(credentials->getToken().c_str(), token_calculated.c_str()) == 0;
         if (rigthCredentials) {
             return true;
         }
@@ -33,12 +35,17 @@ bool DataBaseAdministrator::rigthClient(LoginInformation *loginInformation){
 bool DataBaseAdministrator::rigthClient(std::string email, std::string token){     
     bool existsClient = this->existsClient(email);
     if (existsClient) {
-        std::string token_stored = DataBase::getInstance().get(email);
+        std::cout << "exists client" << std::endl;        
+        std::string credentials_parser = DataBase::getInstance().get(email);
+        Credentials *credentials = new Credentials();
+        credentials->loadJson(credentials_parser);
+        std::string token_stored = credentials->getToken();
         bool rigthCredentials = strcmp(token_stored.c_str(), token.c_str()) == 0;
-        if (rigthCredentials) {
+        if (rigthCredentials) { 
             return true;
         }
     }
+    std::cout << "not exists client" << std::endl;
     return false;
 }
 
@@ -58,7 +65,11 @@ std::string DataBaseAdministrator::getDataOfClient(LoginInformation *loginInform
     } else {
         picture->setPicture("");
     }
-    std::string token = DataBase::getInstance().get(email);
+    std::string credentials_parser =  DataBase::getInstance().get(email);
+    Credentials *credentials = new Credentials();
+    credentials->loadJson(credentials_parser);
+
+    std::string token = credentials->getToken();
     UserService *userService = new UserService();
     std::string loginInformation_parser = userService->loginInformation(personal, picture, token);
     return loginInformation_parser;
@@ -72,15 +83,22 @@ int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *login
     if (this->existsClient(email)) {
         return 1;
     }
-
-    if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
-        DataBase::getInstance().put("PERSONAL_" + email, personal->createJsonFile());
-    } else if (personal->emptyFields()) {
+    if (personal->emptyFields()) {
         return 2;
     }
-    std::string token = this->auth->encode(email, password);
-    DataBase::getInstance().put(email, token);
-    DataBase::getInstance().put("PERSONAL_" + email, personal->createJsonFile());
+    bool hasLoginFacebook = strcmp(operation.params.c_str(), "app=facebook") == 0;
+    if (hasLoginFacebook) {
+        DataBase::getInstance().put("PERSONAL_" + email, personal->createJsonFile());
+    } else {
+        int incremental_number = 0;
+        std::string token = this->auth->encode(email, password, incremental_number);
+        Credentials *credentials = new Credentials();
+        credentials->setToken(token);
+        credentials->setIncrementalNumber(incremental_number);
+        std::string credentials_parser = credentials->createJsonFile();
+        DataBase::getInstance().put(email, credentials_parser);
+        DataBase::getInstance().put("PERSONAL_" + email, personal->createJsonFile());
+    }
     return 0;
 }
 

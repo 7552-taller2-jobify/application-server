@@ -12,14 +12,15 @@
 #include <string>
 #include "jwt.h"  // Include JWT API definitions
 #include "Constants.h"
+#include "Profile.h"
  
 class Authentication {
  private:
     jwt* myJWT;
  public:
     Authentication();
-    std::string encode(std::string email, std::string password);
-    bool isDecode(std::string token);
+    std::string encode(std::string email, std::string password, int numeroIncremental);
+    bool decode(std::string token, LoginInformation *loginInformation, Credentials *credentials);
     virtual ~Authentication();
 };
 

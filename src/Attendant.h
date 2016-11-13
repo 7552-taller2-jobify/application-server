@@ -12,6 +12,7 @@
 #include "DataBaseAdministrator.h"
 #include "DataBase.h"
 #include "RequestParse.h"
+#include "Authentication.h"
 
 typedef Response* (*function)(struct Message operation);
 
@@ -33,6 +34,14 @@ class Login: public Attendant {
     ~Login();
     static Response* get(struct Message operation);
     static Response* post(struct Message operation);
+};
+
+class Logout: public Attendant {
+ public:
+    Logout();
+    ~Logout();
+    static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 class Register: public Attendant {

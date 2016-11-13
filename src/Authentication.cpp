@@ -54,15 +54,16 @@ Authentication::Authentication() {
 }
 
 
-std::string Authentication::encode(std::string email, std::string password) {
+std::string Authentication::encode(std::string email, std::string password, int numeroIncremental) {
     // Seteo textEncode en grant de jwt, con metodo    jwt_add_grant(jwt, "unGrant", "valor_grant")
 //    unsigned char key256[33] = "012345678901234567890123456789XY";
         
     jwt_new(&this->myJWT);
     jwt_set_alg(this->myJWT, JWT_ALG_HS256, (const unsigned char *) SECRET, SECRET_LEN);
 
-    jwt_add_grant(this->myJWT, "mail", email.c_str());
+    jwt_add_grant(this->myJWT, "email", email.c_str());
     jwt_add_grant(this->myJWT, "password", password.c_str());
+    jwt_add_grant_int(this->myJWT, "incremental_number", numeroIncremental);    
     
     std::string token = jwt_encode_str(this->myJWT);
     jwt_free(this->myJWT);
@@ -70,16 +71,21 @@ std::string Authentication::encode(std::string email, std::string password) {
     return token;
 }
 
-bool Authentication::isDecode(std::string token) {
+bool Authentication::decode(std::string token, LoginInformation *loginInformation, Credentials *credentials) {
     
-    
+    jwt_new(&this->myJWT);
     int ret = jwt_decode(&this->myJWT, token.c_str(),(const unsigned char *)SECRET, SECRET_LEN);
     
     if (ret == 0){
         std::cout<<"TRUE"<< std::endl;
+        loginInformation->setEmail(jwt_get_grant(this->myJWT, "email"));
+        loginInformation->setPassword(jwt_get_grant(this->myJWT, "password"));
+        credentials->setToken(token);
+        credentials->setIncrementalNumber(jwt_get_grant_int(this->myJWT, "incremental_number"));
     } else {
         std::cout<<"FALSE"<< std::endl;
     }
+    jwt_free(this->myJWT);
     return ret == 0;
 }
 

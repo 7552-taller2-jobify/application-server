@@ -45,16 +45,13 @@ bool DataBaseAdministrator::rigthClient(std::string email, std::string token){
 std::string DataBaseAdministrator::getDataOfClient(LoginInformation *loginInformation) {
     std::string email = loginInformation->getEmail();
     std::string password = loginInformation->getPassword();
-
     std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
     std::cout << "personal ok" << std::endl;
     std::string picture_parser =  DataBase::getInstance().get("PICTURE_" + email);
-
     std::cout << "picture ok" << std::endl;
     std::cout << picture_parser << std::endl;
     Personal *personal = new Personal();
     personal->loadJson(personal_parser);
-
     Picture *picture = new Picture();
     if (strcmp(picture_parser.c_str(), "") != 0) {
         picture->loadJson(picture_parser);
@@ -93,8 +90,7 @@ int DataBaseAdministrator::uploadPersonal(std::string email, std::string token, 
     if (rigthCredential) {
         std::string actual_personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
         Personal *actual_personal = new Personal();
-        actual_personal->loadJson(actual_personal_parser);
-        
+        actual_personal->loadJson(actual_personal_parser);        
         actual_personal->setFirstName(upload_personal->getFirstName());
         actual_personal->setLastName(upload_personal->getLastName());
         actual_personal->setGender(upload_personal->getGender());
@@ -113,7 +109,23 @@ std::string DataBaseAdministrator::getPersonal(std::string email){
     std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
     Personal *personal = new Personal();
     personal->loadJson(personal_parser);
-
     UserService *userService = new UserService();
-    return userService->getPersonal(personal);
+    std::string personal_parser_modify = userService->getPersonal(personal);
+    return personal_parser_modify;
+}
+
+// Returns 0 if success, 1 if credential invalid,
+int DataBaseAdministrator::uploadSummary(std::string email, std::string token, Summary *upload_summary){
+    bool rigthCredential = this->rigthClient(email, token);
+    if (rigthCredential) {
+        DataBase::getInstance().erase("SUMMARY_" + email);
+        DataBase::getInstance().put("SUMMARY_" + email, upload_summary->createJsonFile());
+        return 0;
+    }
+    return 1;
+}
+
+std::string DataBaseAdministrator::getSummary(std::string email){
+    std::string summary_parser = DataBase::getInstance().get("SUMMARY_" + email);
+    return summary_parser;
 }

@@ -23,8 +23,10 @@ class DataBaseAdministrator {
     bool rigthClient(LoginInformation *li);
     std::string getDataOfClient(LoginInformation *loginInformation);
     std::string getPersonal(std::string email);
+    std::string getSummary(std::string email);
     int addClient(Personal* personal, LoginInformation *loginInformation, struct Message operation);
     int uploadPersonal(std::string email, std::string token, Personal *personal);
+    int uploadSummary(std::string email, std::string token, Summary *summary);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

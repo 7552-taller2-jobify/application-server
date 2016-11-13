@@ -211,16 +211,57 @@ Response* ProfilePersonal::put(struct Message operation) {
 
 
 ProfileSummary::ProfileSummary() {
-    // methods->push_back("GET");
+    this->functions["PUT"] = put;
+    this->functions["GET"] = get;
 }
 
 ProfileSummary::~ProfileSummary() {}
 
 Response* ProfileSummary::get(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER); 
+
+    Response* response = new Response();;
+    if (dbAdministrator->rigthClient(email, token)) {
+        response->setContent(dbAdministrator->getSummary(email));
+        response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+
+    return response;
 }
 
+Response* ProfileSummary::put(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    
+    Summary *summary = new Summary();
+    summary->loadJson(operation.body);
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER); 
+    int success = dbAdministrator->uploadSummary(email, token, summary);
 
+    std::ostringstream s;
+    s << success;
+    std::string success_parsed = s.str();
+    
+    Response* response = new Response();
+    if (success == 0) {
+        response->setContent("");
+        response->setStatus(200);
+    } else if (success == 1) {
+        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setStatus(500);
+    }
+
+    return response;
+}
 
 ProfileExpertise::ProfileExpertise() {
     // methods->push_back("GET");

@@ -84,6 +84,7 @@ class ProfileSummary: public Attendant {
     ProfileSummary();
     ~ProfileSummary();
     static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 class ProfileExpertise: public Attendant {

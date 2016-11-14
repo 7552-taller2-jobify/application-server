@@ -27,6 +27,7 @@ before_install:
 script:
   - cmake CMakeLists.txt
   - make
+  - ./Server
   - ./runTests
   - chmod +x test/python_test.py
   - python test/python_test.py

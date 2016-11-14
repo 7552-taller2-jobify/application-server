@@ -17,9 +17,10 @@
 typedef Response* (*function)(struct Message operation);
 
 class Attendant {
+ private:
+    bool isMethodSupported(std::string a_method);
  protected:
     std::map<std::string, function> functions;
-    bool isMethodSupported(std::string a_method);
  public:
     Attendant();
     virtual ~Attendant();

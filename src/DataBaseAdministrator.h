@@ -21,7 +21,7 @@ class DataBaseAdministrator {
     bool existsClient(std::string email);
     bool rigthClient(std::string email, std::string token);     
     bool rigthClient(LoginInformation *li);
-    std::string getDataOfClient(LoginInformation *loginInformation);
+    std::string getPersonalLogin(std::string email);
     std::string getPersonal(std::string email);
     std::string getSummary(std::string email);
     int addClient(Personal* personal, LoginInformation *loginInformation, struct Message operation);

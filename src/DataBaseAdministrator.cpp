@@ -49,18 +49,14 @@ bool DataBaseAdministrator::rigthClient(std::string email, std::string token){
     return false;
 }
 
-std::string DataBaseAdministrator::getDataOfClient(LoginInformation *loginInformation) {
-    std::string email = loginInformation->getEmail();
-    std::string password = loginInformation->getPassword();
+std::string DataBaseAdministrator::getPersonalLogin(std::string email) {
     std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
-    std::cout << "personal ok" << std::endl;
     std::string picture_parser =  DataBase::getInstance().get("PICTURE_" + email);
-    std::cout << "picture ok" << std::endl;
-    std::cout << picture_parser << std::endl;
     Personal *personal = new Personal();
     personal->loadJson(personal_parser);
     Picture *picture = new Picture();
-    if (strcmp(picture_parser.c_str(), "") != 0) {
+    bool hasPicture = strcmp(picture_parser.c_str(), "") != 0;
+    if (hasPicture) {
         picture->loadJson(picture_parser);
     } else {
         picture->setPicture("");
@@ -68,7 +64,6 @@ std::string DataBaseAdministrator::getDataOfClient(LoginInformation *loginInform
     std::string credentials_parser =  DataBase::getInstance().get(email);
     Credentials *credentials = new Credentials();
     credentials->loadJson(credentials_parser);
-
     std::string token = credentials->getToken();
     UserService *userService = new UserService();
     std::string loginInformation_parser = userService->loginInformation(personal, picture, token);

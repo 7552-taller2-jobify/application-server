@@ -2,14 +2,18 @@
 #validacion
 if [ ! -e "$PWD/dev/run" ]; then echo "Tenes que correrlo desde la raiz del proyecto."; exit 2; fi;
 
-#borrando arhcivos de config
-echo -e "==> Limpio archivos [ 'CMakeCache.txt', 'cmake_install.cmake' ] y directorio [ 'CMakeFiles' ]"
-sudo find $PWD \( -name CMakeCache.txt -or -name cmake_install.cmake \) -exec rm {} \;
-sudo find $PWD -name CMakeFiles -exec rm -rf {} \+
+if [ $(find $PWD \( -name CMakeCache.txt -or -name cmake_install.cmake \) | wc -l) -ne 0 ]; then
+	#borrando arhcivos de config
+	echo -e "==> Limpio archivos [ 'CMakeCache.txt', 'cmake_install.cmake' ] y directorio [ 'CMakeFiles' ]"
+	sudo find $PWD \( -name CMakeCache.txt -or -name cmake_install.cmake \) -exec rm {} \;
+	sudo find $PWD -name CMakeFiles -exec rm -rf {} \+
+fi
 
-#borrando db generada
-echo -e "==> Limpio base de datos en caso de existir [ 'db/', 'log.txt' ]\n"
-sudo rm -rf $PWD/db $PWD/log.txt;
+if [ -e "$PWD/db" -o -e "$PWD/log.txt" ]; then
+	#borrando db generada
+	echo -e "==> Limpio base de datos en caso de existir [ 'db/', 'log.txt' ]\n"
+	sudo rm -rf $PWD/db $PWD/log.txt;
+fi
 
 #levantando contenedor
 docker run -it -v "$PWD":"/usr/src/app" -p 8000:8000 7552taller2jobify/application-server $*

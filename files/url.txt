@@ -1,4 +1,5 @@
 /users/login Login
+/users/.*@.*/logout Logout
 /users/register Register
 /users/.*@.*/recovery_pass RecoveryPass
 /users/.*@.*/contact Contact

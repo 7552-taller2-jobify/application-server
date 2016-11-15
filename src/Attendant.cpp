@@ -38,23 +38,69 @@ Login::~Login() {}
 Response* Login::post(struct Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     LoginInformation *loginInformation = new LoginInformation();
-    if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
+    bool hasLoginFacebook = strcmp(operation.params.c_str(), "app=facebook") == 0;
+    if (hasLoginFacebook) {
         // cargar datos de facebook
         loginInformation->setEmail("");
         loginInformation->setPassword("");
     } else {
         loginInformation->loadJson(operation.body.c_str());
     }
-
-    Response* response = new Response();;
-    if (dbAdministrator->existsClient(loginInformation->getEmail())) {
-        response->setContent(dbAdministrator->getDataOfClient(loginInformation));
+    Response* response = new Response();
+    std::string email = loginInformation->getEmail();
+    bool rigthCredential = dbAdministrator->rigthClient(loginInformation);
+    if (rigthCredential) {
+        response->setContent(dbAdministrator->getPersonalLogin(email));
         response->setStatus(200);
+        Logger::getInstance().log(info, "The client " + email +" was logged.");
     } else {
        response->setContent("{\"message\":\"Invalid credentials.\"}");
        response->setStatus(401);
+       Logger::getInstance().log(warn, "The client " + email +" was not logged.");
     }
+    return response;
+}
 
+Logout::Logout() {
+    this->functions["PUT"] = put;
+}
+
+Logout::~Logout() {}
+
+Response* Logout::put(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER); 
+    Response* response = new Response();
+    bool rigthClient = dbAdministrator->rigthClient(email, token);
+    if (rigthClient) {
+        std::cout<< "right client"<<std::endl;
+        Authentication *auth = new Authentication();
+        LoginInformation *loginInformation = new LoginInformation();
+        Credentials *credentials = new Credentials();
+        bool rightDecode = auth->decode(token, loginInformation, credentials);
+        if (rightDecode) {
+            std::cout<< "right decode"<<std::endl;
+            credentials->increaseIncrementalNumber(1);
+            std::string email = loginInformation->getEmail();
+            std::string password = loginInformation->getPassword();
+            int incremental_number = credentials->getIncrementalNumber();
+            std::string new_token = auth->encode(email, password, incremental_number);
+            credentials->setToken(new_token);
+            std::string new_credentials_parser = credentials->createJsonFile();
+            DataBase::getInstance().erase(email);
+            DataBase::getInstance().put(email, new_credentials_parser);
+            response->setContent("");
+            response->setStatus(200);
+            return response;
+            Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was logged out.");
+        }
+    }
+    response->setContent("{\"message\":\"Invalid credentials.\"}");
+    response->setStatus(401);
+    Logger::getInstance().log(warn, "The client " + email +" was not logged out.");
     return response;
 }
 
@@ -67,8 +113,9 @@ Register::~Register() {}
 Response* Register::post(struct Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     Personal *personal = new Personal();
-
-    if (strcmp(operation.params.c_str(), "app=facebook") == 0) {
+    LoginInformation *loginInformation = new LoginInformation();
+    bool hasLoginFacebook = strcmp(operation.params.c_str(), "app=facebook") == 0;
+    if (hasLoginFacebook) {
         // cargar datos de facebook
         personal->setFirstName("");
         personal->setLastName("");
@@ -79,25 +126,26 @@ Response* Register::post(struct Message operation) {
         personal->setAddress("", "");
     } else {
          personal->loadJson(operation.body.c_str());
+         loginInformation->loadJson(operation.body.c_str());
     }
-
-    int success = dbAdministrator->addClient(personal, operation);
+    int success = dbAdministrator->addClient(personal, loginInformation, operation);
     std::ostringstream s;
     s << success;
     std::string success_parsed = s.str();
-
     Response* response = new Response();
     if (success == 0) {
         response->setContent("{\"registration\":\"OK\"}");
         response->setStatus(201);
+        Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was register.");
     } else {
-            if (success == 1) {
-                response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client already exists.\"}");
-                response->setStatus(500);
-            } else {
-                response->setContent("{\"code\":" + success_parsed + ",\"message\":\"There are empty fields.\"}");
-                response->setStatus(500);
-            }
+        if (success == 1) {
+            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client already exists.\"}");
+            response->setStatus(500);
+        } else {
+            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"There are empty fields.\"}");
+            response->setStatus(500);
+        }
+        Logger::getInstance().log(warn, "The client " + loginInformation->getEmail() +" was not register.");
     }
     return response;
 }
@@ -154,28 +202,101 @@ Response* Reject::get(struct Message operation) {
 
 
 ProfilePersonal::ProfilePersonal() {
-    // methods->push_back("GET");
+    this->functions["PUT"] = put;
+    this->functions["GET"] = get;
 }
 
 ProfilePersonal::~ProfilePersonal() {}
 
 Response* ProfilePersonal::get(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER); 
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    if (rightCredentials) {
+        response->setContent(dbAdministrator->getPersonal(email));
+        response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+    return response;
+}
+
+Response* ProfilePersonal::put(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    Personal *personal = new Personal();
+    personal->loadJson(operation.body);
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER); 
+    int success = dbAdministrator->uploadPersonal(email, token, personal);
+    std::ostringstream s;
+    s << success;
+    std::string success_parsed = s.str();
+    Response* response = new Response();
+    if (success == 0) {
+        response->setContent("");
+        response->setStatus(200);
+    } else if (success == 1) {
+        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setStatus(500);
+    }
+    return response;
 }
 
 
-
 ProfileSummary::ProfileSummary() {
-    // methods->push_back("GET");
+    this->functions["PUT"] = put;
+    this->functions["GET"] = get;
 }
 
 ProfileSummary::~ProfileSummary() {}
 
 Response* ProfileSummary::get(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER); 
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    if (rightCredentials) {
+        response->setContent(dbAdministrator->getSummary(email));
+        response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+    return response;
 }
 
-
+Response* ProfileSummary::put(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    Summary *summary = new Summary();
+    summary->loadJson(operation.body);
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER); 
+    int success = dbAdministrator->uploadSummary(email, token, summary);
+    std::ostringstream s;
+    s << success;
+    std::string success_parsed = s.str();
+    Response* response = new Response();
+    if (success == 0) {
+        response->setContent("");
+        response->setStatus(200);
+    } else if (success == 1) {
+        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setStatus(500);
+    }
+    return response;
+}
 
 ProfileExpertise::ProfileExpertise() {
     // methods->push_back("GET");

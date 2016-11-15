@@ -10,14 +10,23 @@
 #include "Logger.h"
 #include "Constants.h"
 #include "UserService.h"
+#include "Authentication.h"
 
 class DataBaseAdministrator {
-    public:
-        DataBaseAdministrator();
-        ~DataBaseAdministrator();
-        bool existsClient(std::string email);
-        std::string getDataOfClient(LoginInformation *loginInformation);
-        int addClient(Personal* personal, struct Message operation);
+ private:
+    Authentication *auth;
+ public:
+    DataBaseAdministrator();
+    ~DataBaseAdministrator();
+    bool existsClient(std::string email);
+    bool rigthClient(std::string email, std::string token);     
+    bool rigthClient(LoginInformation *li);
+    std::string getPersonalLogin(std::string email);
+    std::string getPersonal(std::string email);
+    std::string getSummary(std::string email);
+    int addClient(Personal* personal, LoginInformation *loginInformation, struct Message operation);
+    int uploadPersonal(std::string email, std::string token, Personal *personal);
+    int uploadSummary(std::string email, std::string token, Summary *summary);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

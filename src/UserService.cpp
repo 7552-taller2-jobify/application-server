@@ -14,6 +14,16 @@ std::string UserService::loginInformation(Personal *personal, Picture *picture, 
             "\"metadata\":{\"token\":\"" + token + "\"}}");
 }
 
+std::string UserService::getPersonal(Personal *personal) {
+
+    return ("{\"first_name\":\"" + personal->getFirstName() + "\"," +
+            "\"last_name\":\"" + personal->getLastName() + "\"," +
+            "\"email\":\"" + personal->getEmail() + "\"," +
+            "\"birthday\":\"" + personal->getBirthday() + "\"," +
+            "\"gender\":\"" + personal->getGender() + "\"," +
+            "\"city\":\"" + personal->getCity() + "\"" + "}");
+}
+
 /*std::string UserService::loginInformation(Personal *personal, Picture *picture, str::string token) {
     return ("{\"first_name\": \"" + personal->getFirstName() + "\"," +
             "\"last_name\": \"" + personal->getLastName() + "\"," +

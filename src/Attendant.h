@@ -12,13 +12,15 @@
 #include "DataBaseAdministrator.h"
 #include "DataBase.h"
 #include "RequestParse.h"
+#include "Authentication.h"
 
 typedef Response* (*function)(struct Message operation);
 
 class Attendant {
+ private:
+    bool isMethodSupported(std::string a_method);
  protected:
     std::map<std::string, function> functions;
-    bool isMethodSupported(std::string a_method);
  public:
     Attendant();
     virtual ~Attendant();
@@ -33,6 +35,14 @@ class Login: public Attendant {
     ~Login();
     static Response* get(struct Message operation);
     static Response* post(struct Message operation);
+};
+
+class Logout: public Attendant {
+ public:
+    Logout();
+    ~Logout();
+    static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 class Register: public Attendant {
@@ -76,6 +86,7 @@ class ProfilePersonal: public Attendant {
     ProfilePersonal();
     ~ProfilePersonal();
     static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 class ProfileSummary: public Attendant {
@@ -83,6 +94,7 @@ class ProfileSummary: public Attendant {
     ProfileSummary();
     ~ProfileSummary();
     static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 class ProfileExpertise: public Attendant {

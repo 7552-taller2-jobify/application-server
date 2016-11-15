@@ -11,12 +11,11 @@
 /users/.*@.*/perfil/skills ProfileSkills
 /users/.*@.*/perfil/picture ProfilePhoto
 /users/search Login
-/users/.*@.*/contact Login
 /users/.*@.*/reject Login
 /users/.*@.*/vote Login
 /users/pop Login
 /users/.*@.*/chat Login
 /users/.*@.*/perfil/contacts Login
-/users/.*@.*/perfil/expertise/position Login
-/users/.*@.*/perfil/expertise/position/.* Login
-/users/.*@.*/perfil/skills/category/.* Login
+/users/.*@.*/perfil/expertise/position ProfileExpertise
+/users/.*@.*/perfil/expertise/position/.* ProfileExpertise
+/users/.*@.*/perfil/skills/category/.* ProfileSkills

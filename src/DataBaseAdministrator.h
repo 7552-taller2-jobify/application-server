@@ -24,9 +24,17 @@ class DataBaseAdministrator {
     std::string getPersonalLogin(std::string email);
     std::string getPersonal(std::string email);
     std::string getSummary(std::string email);
+    std::string getExpertise(std::string email);
+    std::string getSkills(std::string email);
+    std::string getPicture(std::string email);
+    std::string getSolicitudes(std::string email);
     int addClient(Personal* personal, LoginInformation *loginInformation, struct Message operation);
     int uploadPersonal(std::string email, std::string token, Personal *personal);
     int uploadSummary(std::string email, std::string token, Summary *summary);
+    int uploadExpertise(std::string email, std::string token, Expertise *expertise);
+    int uploadSkills(std::string email, std::string token, Skills *skills);
+    int uploadPicture(std::string email, std::string token, Picture *picture);
+    int addSolicitude(std::string email, std::string token, struct Solicitude new_solicitude);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

@@ -5,6 +5,7 @@ from time import sleep
 import os, signal
 import requests
 import unittest
+import urllib
 
 class testApplicationServer(unittest.TestCase):
     def test_01_RegisterEmptyFields(self):
@@ -87,13 +88,111 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
-    def test_14_LogoutUnsuccessfully(self):
+    def test_14_ModifyExpertiseSuccessfully(self):
+        body = {"expertises":[{"company": "Lalala","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "Lololo","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/expertise/position', params=params, json=body)
+        self.assertEqual(200, reply.status_code)
+
+    def test_15_ModifyExpertiseUnsuccsessfully(self):
+        body = {"expertises":[{"company": "Lalala","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "Lololo","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/expertise/position', params=params, json=body)
+        self.assertEqual(500, reply.status_code)
+        self.assertEqual("Don't upload.", reply.json()["message"])
+
+    def test_16_GetExpertiseSuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/expertise', params=params)
+        self.assertEqual(200, reply.status_code)
+
+    def test_17_GetExpertiseUnsuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/expertise', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+    def test_18_ModifySkillsSuccessfully(self):
+        body = {"every_skill":[{"skills": ["java","c","UML"],"category": "software"},{"skills": ["moto","auto"],"category": "licencia_manejo"}]}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/skills/category', params=params, json=body)
+        self.assertEqual(200, reply.status_code)
+
+    def test_19_ModifySkillsUnsuccsessfully(self):
+        body = {"every_skill":[{"skills": ["java","c","UML"],"category": "software"},{"skills": ["moto","auto"],"category": "licencia_manejo"}]}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/skills/category', params=params, json=body)
+        self.assertEqual(500, reply.status_code)
+        self.assertEqual("Don't upload.", reply.json()["message"])
+
+    def test_20_GetSkillsSuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/skills', params=params)
+        self.assertEqual(200, reply.status_code)
+
+    def test_21_GetSkillsUnsuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/skills', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+    def test_22_ModifyPictureSuccessfully(self):
+        body = {"picture": "asdf1234asdf"}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/picture', params=params, json=body)
+        self.assertEqual(200, reply.status_code)
+
+    def test_23_ModifyPictureUnsuccsessfully(self):
+        body = {"picture": "asdf1234asdf"}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/picture', params=params, json=body)
+        self.assertEqual(500, reply.status_code)
+        self.assertEqual("Don't upload.", reply.json()["message"])
+
+    def test_24_GetPictureSuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/picture', params=params)
+        self.assertEqual(200, reply.status_code)
+
+    def test_25_GetPictureUnsuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/picture', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+    def test_26_PostContactSuccessfully(self):
+        params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
+        print params
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/contact', params=params)
+        self.assertEqual(201, reply.status_code)
+
+    def test_27_PostContactUnsuccsessfully(self):
+        params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
+        print params
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/contact', params=params)
+        self.assertEqual(500, reply.status_code)
+        self.assertEqual("Don't posted.", reply.json()["message"])
+
+    def test_28_GetContactSuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/contact', params=params)
+        self.assertEqual(200, reply.status_code)
+
+    def test_29_GetContactUnsuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/contact', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+
+
+    def test_40_LogoutUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
         reply = requests.put('http://localhost:8000/users/test@yahoo.com/logout', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
-    def test_15_LogoutSuccessfully(self):
+    def test_41_LogoutSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.put('http://localhost:8000/users/test@yahoo.com/logout', params=params)
         self.assertEqual(200, reply.status_code)

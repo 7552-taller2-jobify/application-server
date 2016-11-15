@@ -4,6 +4,7 @@
 #define ATTENDANT_H_
 
 #include <map>
+#include <curl/curl.h>
 #include <iostream> //TODO borrar
 #include "Constants.h"
 #include "Logger.h"
@@ -64,6 +65,7 @@ class Contact: public Attendant {
  public:
     Contact();
     ~Contact();
+    static Response* post(struct Message operation);
     static Response* get(struct Message operation);
 };
 
@@ -71,14 +73,14 @@ class Accept: public Attendant {
  public:
     Accept();
     ~Accept();
-    static Response* get(struct Message operation);
+    static Response* post(struct Message operation);
 };
 
 class Reject: public Attendant {
  public:
     Reject();
     ~Reject();
-    static Response* get(struct Message operation);
+    static Response* erase(struct Message operation);
 };
 
 class ProfilePersonal: public Attendant {
@@ -101,6 +103,7 @@ class ProfileExpertise: public Attendant {
  public:
     ProfileExpertise();
     ~ProfileExpertise();
+    static Response* put(struct Message operation);
     static Response* get(struct Message operation);
 };
 
@@ -118,6 +121,7 @@ class ProfilePhoto: public Attendant {
     ProfilePhoto();
     ~ProfilePhoto();
     static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 #endif  // ATTENDANT_H_

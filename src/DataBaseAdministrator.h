@@ -43,6 +43,7 @@ class DataBaseAdministrator {
     std::string getOthersRecommendations(std::string email);
     void vote(std::string email, std::string email_to_vote);
     void unvote(std::string email, std::string email_to_unvote);
+    std::string getMostPopularUsers();
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

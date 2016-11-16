@@ -748,3 +748,31 @@ Response* ProfileOthersRecommendations::get(struct Message operation) {
     delete dbAdministrator;
     return response;
 }
+
+
+
+MostPopularUsers::MostPopularUsers() {
+    this->functions["GET"] = get;
+}
+
+MostPopularUsers::~MostPopularUsers() {}
+
+Response* MostPopularUsers::get(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    if (rightCredentials) {
+        response->setContent(dbAdministrator->getMostPopularUsers());
+        response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+    delete dbAdministrator;
+    return response;
+}

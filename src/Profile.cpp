@@ -459,6 +459,9 @@ std::string Contacts::createJsonFile() {
     return result + "]}";
 }
 
+int Contacts::getNumberOfContacts() {
+    this->contacts.size();
+}
 
 
 void Solicitudes::getOwnInfo(const rapidjson::Document &document) {

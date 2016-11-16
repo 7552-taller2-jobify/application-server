@@ -255,17 +255,19 @@ std::string DataBaseAdministrator::getFriends(std::string email) {
 }
 
 std::string DataBaseAdministrator::getOwnRecommendations(std::string email) {
-    if (DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email) == "") {
-        DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, "{\"own_recommendations\":[]}");
+    std::string own_recommendation_email = ("OWN_RECOMMENDATIONS_" + email);
+    if (DataBase::getInstance().get(own_recommendation_email) == "") {
+        DataBase::getInstance().put(own_recommendation_email, "{\"own_recommendations\":[]}");
     }
-    return DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email);
+    return DataBase::getInstance().get(own_recommendation_email);
 }
 
 std::string DataBaseAdministrator::getOthersRecommendations(std::string email) {
-    if (DataBase::getInstance().get("OTHERS_RECOMMENDATIONS_" + email) == "") {
-        DataBase::getInstance().put("OTHERS_RECOMMENDATIONS_" + email, "{\"others_recommendations\":[]}");
+    std::string others_recommendation_email = ("OTHERS_RECOMMENDATIONS_" + email);
+    if (DataBase::getInstance().get(others_recommendation_email) == "") {
+        DataBase::getInstance().put(others_recommendation_email, "{\"others_recommendations\":[]}");
     }
-    return DataBase::getInstance().get("OTHERS_RECOMMENDATIONS_" + email);
+    return DataBase::getInstance().get(others_recommendation_email);
 }
 
 void DataBaseAdministrator::vote(std::string email, std::string email_to_vote) {
@@ -302,4 +304,11 @@ void DataBaseAdministrator::unvote(std::string email, std::string email_to_unvot
     DataBase::getInstance().erase(others_recommendation_email);
     DataBase::getInstance().put(others_recommendation_email, others_recommendations->createJsonFile());
     delete others_recommendations;
+}
+
+std::string DataBaseAdministrator::getMostPopularUsers() {
+    if (DataBase::getInstance().get("OTHERS_RECOMMENDATIONS_") == "") {
+        DataBase::getInstance().put("OTHERS_RECOMMENDATIONS_", "{\"others_recommendations\":[]}");
+    }
+    return DataBase::getInstance().get("OTHERS_RECOMMENDATIONS_");
 }

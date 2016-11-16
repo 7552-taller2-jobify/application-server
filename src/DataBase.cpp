@@ -53,3 +53,27 @@ void DataBase::erase(std::string key) {
                 " could not be deleted.");
     }
 }
+
+
+
+
+std::vector<struct PopularUser> DataBase::SearchRange(std::string start, std::string end) {
+    //struct PopularUser *users = new struct PopularUser[MAX_POPULAR_USERS];
+    int less_votes = -1;
+    std::vector<struct PopularUser> users;
+    const leveldb::Slice& start_slice = leveldb::Slice(start);
+    const leveldb::Slice& end_slice = leveldb::Slice(end);
+    leveldb::Iterator *db_iterator = this->db->NewIterator(leveldb::ReadOptions());
+    bool condition = (db_iterator->Valid() && (strcmp(db_iterator->key().ToString().c_str(), end.c_str()) <= 0));
+    for (db_iterator->Seek(start_slice); condition; db_iterator->Next()) {          
+        if (!db_iterator->value().empty()) {
+            struct PopularUser user;
+            user.email = db_iterator->key().ToString();
+            //user.votes = db_iterator->value().ToString();
+            //Habria que hacer un get de la DB, levantar un OthersRecommendations y sacar la cantidad de elementos.
+            users.push_back(user);
+        }
+    }
+    delete db_iterator;
+    return users;
+}

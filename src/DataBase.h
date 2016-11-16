@@ -5,8 +5,10 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 #include "leveldb/db.h"
 #include "Logger.h"
+#include "Constants.h"
 
 const char PATH_DB[] = "./db";
 
@@ -28,6 +30,7 @@ class DataBase {
     std::string get(std::string key);
     void put(std::string key, std::string value);
     void erase(std::string key);
+    std::vector<struct PopularUser> SearchRange(std::string start, std::string end);
 };
 
 #endif  // DATABASE_H_

@@ -154,4 +154,11 @@ class ProfileOthersRecommendations: public Attendant {
     static Response* get(struct Message operation);
 };
 
+class MostPopularUsers: public Attendant {
+ public:
+    MostPopularUsers();
+    ~MostPopularUsers();
+    static Response* get(struct Message operation);
+};
+
 #endif  // ATTENDANT_H_

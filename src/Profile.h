@@ -172,6 +172,7 @@ class Contacts: public Profile {
     std::string createJsonFile();
     int addContact(std::string contact_to_add);
     int removeContact(std::string contact_to_remove);
+    int getNumberOfContacts();
 };
 
 class Friends: public Contacts {

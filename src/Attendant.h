@@ -4,8 +4,9 @@
 #define ATTENDANT_H_
 
 #include <map>
+#include <string>
 #include <curl/curl.h>
-#include <iostream> //TODO borrar
+#include <iostream>  // TODO borrar
 #include "Constants.h"
 #include "Logger.h"
 #include "Profile.h"

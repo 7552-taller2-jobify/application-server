@@ -39,10 +39,10 @@ class DataBaseAdministrator {
     int addFriend(std::string email, struct Solicitude solicitude_to_delete);
     int removeSolicitude(std::string email, struct Solicitude solicitude_to_delete);
     std::string getFriends(std::string email);
-    void vote(std::string email, std::string email_to_vote);
-    void unvote(std::string email, std::string email_to_unvote);
     std::string getOwnRecommendations(std::string email);
     std::string getOthersRecommendations(std::string email);
+    void vote(std::string email, std::string email_to_vote);
+    void unvote(std::string email, std::string email_to_unvote);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

@@ -3,6 +3,8 @@
 #include "Profile.h"
 #include <string>
 #include <iostream>
+#include <algorithm>
+#include <functional>
 
 Profile::Profile() {}
 
@@ -84,8 +86,8 @@ std::string LoginInformation::createJsonFile() {
 
 
 void Personal::getOwnInfo(const rapidjson::Document &document) {
-    std::cout<<"Inicio carga Objeto Personal"<<std::endl;
-    
+    std::cout << "Inicio carga Objeto Personal" << std::endl;
+
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
 
@@ -107,7 +109,7 @@ void Personal::getOwnInfo(const rapidjson::Document &document) {
         this->device_id = "";
     }
 
-    std::cout<<"Fin carga Objeto Personal"<<std::endl;
+    std::cout << "Fin carga Objeto Personal" << std::endl;
 }
 
 bool Personal::isNull(std::string field) {
@@ -593,14 +595,14 @@ int Credentials::getIncrementalNumber() {
     return this->incremental_number;
 }
 
-void Credentials::setToken(std::string token){
+void Credentials::setToken(std::string token) {
     this->token = token;
 }
-void Credentials::setIncrementalNumber(int incremental_number){
+void Credentials::setIncrementalNumber(int incremental_number) {
     this->incremental_number = incremental_number;
 }
 
-void Credentials::increaseIncrementalNumber(int increase){
+void Credentials::increaseIncrementalNumber(int increase) {
     this->incremental_number += increase;
 }
 

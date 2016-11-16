@@ -14,7 +14,7 @@ Server::Server() {
 
 
 void ev_handler(struct mg_connection *c, int ev, void *p) {
-    RequestAdministrator* requestAdministrator = new RequestAdministrator(c,ev,(struct http_message *)p);
+    RequestAdministrator* requestAdministrator = new RequestAdministrator(c, ev, (struct http_message *) p);
     requestAdministrator->handle();
 }
 
@@ -37,9 +37,8 @@ void Server::start() {
 	std::cout<< "Http code: " << responseGet->getStatus() << " - content: "<< responseGet->getContent() << std::endl;
 	std::cout<< "----------------------fin get--------------------------" << std::endl;
 	std::cout<< "----------------------FIN TEST CURL SHARED--------------------------" << std::endl;
-   
    */
-   
+
     this->IsOnLine = true;
     struct mg_mgr mgr;  // Mongoose event manager
     struct mg_connection *nc;  // Callback function (event handler) prototype

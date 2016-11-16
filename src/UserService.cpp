@@ -1,12 +1,12 @@
 // "Copyright 2016 <Jobify>"
 
 #include "UserService.h"
+#include <string>
 
 UserService::UserService() {}
 
 std::string UserService::loginInformation(Personal *personal, Picture *picture, std::string token) {
-
-    std::cout<<"POR RETORNAR LOGIN INFORMATION"<<std::endl;
+    std::cout << "POR RETORNAR LOGIN INFORMATION" << std::endl;
     return ("{\"profile\":{\"first_name\":\"" + personal->getFirstName() + "\"," +
             "\"last_name\":\"" + personal->getLastName() + "\"," +
             "\"email\":\"" + personal->getEmail() + "\"," +
@@ -15,7 +15,6 @@ std::string UserService::loginInformation(Personal *personal, Picture *picture, 
 }
 
 std::string UserService::getPersonal(Personal *personal) {
-
     return ("{\"first_name\":\"" + personal->getFirstName() + "\"," +
             "\"last_name\":\"" + personal->getLastName() + "\"," +
             "\"email\":\"" + personal->getEmail() + "\"," +

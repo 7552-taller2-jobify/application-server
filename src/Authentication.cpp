@@ -1,18 +1,20 @@
+// "Copyright 2016 <Jobify>"
+
 #include "Authentication.h"
 #include <iostream>
+#include <string>
 
 /* Constant time to make tests consistent. */
-#define TS_CONST	1475980545L
+#define TS_CONST    1475980545L
 
 Authentication::Authentication() {}
-
 
 std::string Authentication::encode(std::string email, std::string password, int numeroIncremental) {
     jwt_new(&this->myJWT);
     jwt_set_alg(this->myJWT, JWT_ALG_HS256, (const unsigned char *) SECRET, SECRET_LEN);
     jwt_add_grant(this->myJWT, "email", email.c_str());
     jwt_add_grant(this->myJWT, "password", password.c_str());
-    jwt_add_grant_int(this->myJWT, "incremental_number", numeroIncremental);    
+    jwt_add_grant_int(this->myJWT, "incremental_number", numeroIncremental);
     std::string token = jwt_encode_str(this->myJWT);
     jwt_free(this->myJWT);
     return token;
@@ -20,7 +22,7 @@ std::string Authentication::encode(std::string email, std::string password, int 
 
 bool Authentication::decode(std::string token, LoginInformation *loginInformation, Credentials *credentials) {
     jwt_new(&this->myJWT);
-    int ret = jwt_decode(&this->myJWT, token.c_str(),(const unsigned char *)SECRET, SECRET_LEN);
+    int ret = jwt_decode(&this->myJWT, token.c_str(), (const unsigned char *)SECRET, SECRET_LEN);
     bool rightDecode = ret == 0;
     if (rightDecode){
         std::string email = jwt_get_grant(this->myJWT, "email");

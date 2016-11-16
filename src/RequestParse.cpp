@@ -1,6 +1,8 @@
 // "Copyright 2016 <Jobify>"
 
 #include "RequestParse.h"
+#include <string>
+#include <vector>
 
 RequestParse::RequestParse() {}
 
@@ -32,7 +34,7 @@ Message* RequestParse::parseRequest(struct http_message* hm) {
         message->params += hm->query_string.p[i];
     }
     // message->params = hm->query_string;
-    std::cout<<message->params<<std::endl;
+    std::cout << message->params << std::endl;
 
     return message;
 }
@@ -46,14 +48,12 @@ std::string RequestParse::extractEmail(std::string uri) {
 std::vector<std::string> RequestParse::split(std::string uri, std::string separator) {
     std::vector<std::string> tokens;
     size_t prev = 0, pos = 0;
-    do
-    {
+    do {
         pos = uri.find(separator, prev);
         if (pos == std::string::npos) pos = uri.length();
         std::string token = uri.substr(prev, pos-prev);
         if (!token.empty()) tokens.push_back(token);
         prev = pos + separator.length();
-    }
-    while (pos < uri.length() && prev < uri.length());
+    } while (pos < uri.length() && prev < uri.length());
     return tokens;
 }

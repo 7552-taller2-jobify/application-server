@@ -17,7 +17,7 @@ bool DataBaseAdministrator::existsClient(std::string email) {
 
 bool DataBaseAdministrator::rigthClient(LoginInformation *loginInformation) {
     std::string email = loginInformation->getEmail();
-    std::string password = loginInformation->getPassword();     
+    std::string password = loginInformation->getPassword();
     bool existsClient = this->existsClient(email);
     if (existsClient) {
         std::string credentials_parser = DataBase::getInstance().get(email);
@@ -32,16 +32,16 @@ bool DataBaseAdministrator::rigthClient(LoginInformation *loginInformation) {
     return false;
 }
 
-bool DataBaseAdministrator::rigthClient(std::string email, std::string token) {     
+bool DataBaseAdministrator::rigthClient(std::string email, std::string token) {
     bool existsClient = this->existsClient(email);
     if (existsClient) {
-        std::cout << "exists client" << std::endl;        
+        std::cout << "exists client" << std::endl;
         std::string credentials_parser = DataBase::getInstance().get(email);
         Credentials *credentials = new Credentials();
         credentials->loadJson(credentials_parser);
         std::string token_stored = credentials->getToken();
         bool rigthCredentials = strcmp(token_stored.c_str(), token.c_str()) == 0;
-        if (rigthCredentials) { 
+        if (rigthCredentials) {
             return true;
         }
     }
@@ -103,14 +103,14 @@ int DataBaseAdministrator::uploadPersonal(std::string email, std::string token, 
     if (rigthCredential) {
         std::string actual_personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
         Personal *actual_personal = new Personal();
-        actual_personal->loadJson(actual_personal_parser);        
+        actual_personal->loadJson(actual_personal_parser);
         actual_personal->setFirstName(upload_personal->getFirstName());
         actual_personal->setLastName(upload_personal->getLastName());
         actual_personal->setGender(upload_personal->getGender());
         actual_personal->setBirthday(upload_personal->getBirthday());
         actual_personal->setCity(upload_personal->getCity());
         actual_personal->setAddress(upload_personal->getAddress()[0], upload_personal->getAddress()[1]);
-        
+
         DataBase::getInstance().erase("PERSONAL_" + email);
         DataBase::getInstance().put("PERSONAL_" + email, actual_personal->createJsonFile());
         return 0;
@@ -138,7 +138,7 @@ int DataBaseAdministrator::uploadSummary(std::string email, std::string token, S
     return 1;
 }
 
-std::string DataBaseAdministrator::getSummary(std::string email){
+std::string DataBaseAdministrator::getSummary(std::string email) {
     std::string summary_parser = DataBase::getInstance().get("SUMMARY_" + email);
     return summary_parser;
 }
@@ -254,30 +254,6 @@ std::string DataBaseAdministrator::getFriends(std::string email) {
     return DataBase::getInstance().get("FRIENDS_" + email);
 }
 
-void DataBaseAdministrator::vote(std::string email, std::string email_to_vote) {
-    OwnRecommendations *own_recommendations = new OwnRecommendations();
-    if (DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email) == "") {
-        DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, "{\"own_recommendations\":[]}");
-    }
-    own_recommendations->loadJson(DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email));
-    own_recommendations->addContact(email_to_vote);
-    DataBase::getInstance().erase("OWN_RECOMMENDATIONS_" + email);
-    DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, own_recommendations->createJsonFile());
-    delete own_recommendations;
-}
-
-void DataBaseAdministrator::unvote(std::string email, std::string email_to_unvote) {
-    OwnRecommendations *own_recommendations = new OwnRecommendations();
-    if (DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email) == "") {
-        DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, "{\"own_recommendations\":[]}");
-    }
-    own_recommendations->loadJson(DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email));
-    own_recommendations->removeContact(email_to_unvote);
-    DataBase::getInstance().erase("OWN_RECOMMENDATIONS_" + email);
-    DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, own_recommendations->createJsonFile());
-    delete own_recommendations;
-}
-
 std::string DataBaseAdministrator::getOwnRecommendations(std::string email) {
     if (DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email) == "") {
         DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, "{\"own_recommendations\":[]}");
@@ -290,4 +266,40 @@ std::string DataBaseAdministrator::getOthersRecommendations(std::string email) {
         DataBase::getInstance().put("OTHERS_RECOMMENDATIONS_" + email, "{\"others_recommendations\":[]}");
     }
     return DataBase::getInstance().get("OTHERS_RECOMMENDATIONS_" + email);
+}
+
+void DataBaseAdministrator::vote(std::string email, std::string email_to_vote) {
+    OwnRecommendations *own_recommendations = new OwnRecommendations();
+    own_recommendations->loadJson(this->getOwnRecommendations(email));
+    own_recommendations->addContact(email_to_vote);
+    std::string own_recommendation_email = ("OWN_RECOMMENDATIONS_" + email);
+    DataBase::getInstance().erase(own_recommendation_email);
+    DataBase::getInstance().put(own_recommendation_email, own_recommendations->createJsonFile());
+    delete own_recommendations;
+
+    OthersRecommendations *others_recommendations = new OthersRecommendations();
+    others_recommendations->loadJson(this->getOthersRecommendations(email_to_vote));
+    others_recommendations->addContact(email);
+    std::string others_recommendation_email = ("OTHERS_RECOMMENDATIONS_" + email_to_vote);
+    DataBase::getInstance().erase(others_recommendation_email);
+    DataBase::getInstance().put(others_recommendation_email, others_recommendations->createJsonFile());
+    delete others_recommendations;
+}
+
+void DataBaseAdministrator::unvote(std::string email, std::string email_to_unvote) {
+    OwnRecommendations *own_recommendations = new OwnRecommendations();
+    own_recommendations->loadJson(this->getOwnRecommendations(email));
+    own_recommendations->removeContact(email_to_unvote);
+    std::string own_recommendation_email = ("OWN_RECOMMENDATIONS_" + email);
+    DataBase::getInstance().erase(own_recommendation_email);
+    DataBase::getInstance().put(own_recommendation_email, own_recommendations->createJsonFile());
+    delete own_recommendations;
+
+    OthersRecommendations *others_recommendations = new OthersRecommendations();
+    others_recommendations->loadJson(this->getOthersRecommendations(email_to_unvote));
+    others_recommendations->removeContact(email);
+    std::string others_recommendation_email = ("OTHERS_RECOMMENDATIONS_" + email_to_unvote);
+    DataBase::getInstance().erase(others_recommendation_email);
+    DataBase::getInstance().put(others_recommendation_email, others_recommendations->createJsonFile());
+    delete others_recommendations;
 }

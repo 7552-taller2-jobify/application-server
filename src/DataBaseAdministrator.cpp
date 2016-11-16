@@ -209,3 +209,40 @@ int DataBaseAdministrator::addSolicitude(std::string email, std::string token, s
 std::string DataBaseAdministrator::getSolicitudes(std::string email) {
     return DataBase::getInstance().get("SOLICITUDES_" + email);
 }
+
+// Returns -1 if there is no solicitude, other if success
+int DataBaseAdministrator::addFriend(std::string email, std::string token, struct Solicitude solicitude_to_delete) {
+    Solicitudes *solicitudes = new Solicitudes();
+    if (DataBase::getInstance().get("SOLICITUDES_" + email) == "") {
+        DataBase::getInstance().put("SOLICITUDES_" + email, "{\"solicitudes\":[]}");
+    }
+    solicitudes->loadJson(DataBase::getInstance().get("SOLICITUDES_" + email));
+    DataBase::getInstance().erase("SOLICITUDES_" + email);
+    int return_code = solicitudes->removeSolicitude(solicitude_to_delete);
+    DataBase::getInstance().put("SOLICITUDES_" + email, solicitudes->createJsonFile());
+    delete solicitudes;
+    Friends *friends = new Friends();
+    if (DataBase::getInstance().get("FRIENDS_" + email) == "") {
+        DataBase::getInstance().put("FRIENDS_" + email, "{\"friends\":[]}");
+    }
+    friends->loadJson(DataBase::getInstance().get("FRIENDS_" + email));
+    DataBase::getInstance().erase("FRIENDS_" + email);
+    friends->addContact(solicitude_to_delete.mail);
+    DataBase::getInstance().put("FRIENDS_" + email, friends->createJsonFile());
+    delete friends;
+    return return_code;
+}
+
+// Returns -1 if there is no solicitude, other if success
+int DataBaseAdministrator::removeSolicitude(std::string email, std::string token, struct Solicitude solicitude_to_delete) {
+    Solicitudes *solicitudes = new Solicitudes();
+    if (DataBase::getInstance().get("SOLICITUDES_" + email) == "") {
+        DataBase::getInstance().put("SOLICITUDES_" + email, "{\"solicitudes\":[]}");
+    }
+    solicitudes->loadJson(DataBase::getInstance().get("SOLICITUDES_" + email));
+    DataBase::getInstance().erase("SOLICITUDES_" + email);
+    int return_code = solicitudes->removeSolicitude(solicitude_to_delete);
+    DataBase::getInstance().put("SOLICITUDES_" + email, solicitudes->createJsonFile());
+    delete solicitudes;
+    return return_code;
+}

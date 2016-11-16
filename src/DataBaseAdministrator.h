@@ -15,6 +15,7 @@
 class DataBaseAdministrator {
  private:
     Authentication *auth;
+
  public:
     DataBaseAdministrator();
     ~DataBaseAdministrator();
@@ -35,6 +36,8 @@ class DataBaseAdministrator {
     int uploadSkills(std::string email, std::string token, Skills *skills);
     int uploadPicture(std::string email, std::string token, Picture *picture);
     int addSolicitude(std::string email, std::string token, struct Solicitude new_solicitude);
+    int addFriend(std::string email, std::string token, struct Solicitude solicitude_to_delete);
+    int removeSolicitude(std::string email, std::string token, struct Solicitude solicitude_to_delete);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

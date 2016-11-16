@@ -10,10 +10,14 @@ Attendant::~Attendant() {}
 
 Response* Attendant::attend(struct Message operation) {
     Response* response = NULL;
-    if (this->isMethodSupported(operation.verb)) {
-         response = this->functions[operation.verb](operation);
+    if (strcmp(operation.verb.c_str(), "DELETE") == 0) {
+        response = this->functions["ERASE"](operation);
     } else {
-        Logger::getInstance().log(error, "Does not exist the request " + operation.verb + ".");
+        if (this->isMethodSupported(operation.verb)) {
+            response = this->functions[operation.verb](operation);
+        } else {
+            Logger::getInstance().log(error, "Does not exist the request " + operation.verb + ".");
+        }
     }
     return response;
 }
@@ -235,7 +239,43 @@ Accept::Accept() {
 Accept::~Accept() {}
 
 Response* Accept::post(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    int pos_date = operation.params.find("date=");
+    int pos_email = operation.params.find("&email=");
+    int pos_token = operation.params.find("&token=");
+    std::string date = operation.params.substr(pos_date + 5, pos_email - 5);
+    std::string contact_email = operation.params.substr(pos_email + 7, pos_token - 12 - date.length());
+    std::string token = operation.params.substr(pos_token + 7);
+    CURL *curl = curl_easy_init();
+    int number[3];
+    date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
+    contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
+    struct Solicitude solicitude;
+    solicitude.date = date;
+    solicitude.mail = contact_email;
+    bool rigthCredential = dbAdministrator->rigthClient(email, token);
+    Response* response = new Response();
+    if (rigthCredential) {
+        int success = dbAdministrator->addFriend(email, token, solicitude);
+        delete dbAdministrator;
+        std::ostringstream s;
+        s << success;
+        std::string success_parsed = s.str();
+        if (success >= 0) {
+            response->setContent("");
+            response->setStatus(201);
+        } else if (success == -1) {
+            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"User did not send solicitude.\"}");
+            response->setStatus(500);
+        }
+    } else {
+        response->setContent("{\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+    }
+    return response;
 }
 
 
@@ -247,7 +287,43 @@ Reject::Reject() {
 Reject::~Reject() {}
 
 Response* Reject::erase(struct Message operation) {
-    std::cout << "Hola\n" << std::endl;
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    int pos_date = operation.params.find("date=");
+    int pos_email = operation.params.find("&email=");
+    int pos_token = operation.params.find("&token=");
+    std::string date = operation.params.substr(pos_date + 5, pos_email - 5);
+    std::string contact_email = operation.params.substr(pos_email + 7, pos_token - 12 - date.length());
+    std::string token = operation.params.substr(pos_token + 7);
+    CURL *curl = curl_easy_init();
+    int number[3];
+    date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
+    contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
+    struct Solicitude solicitude;
+    solicitude.date = date;
+    solicitude.mail = contact_email;
+    bool rigthCredential = dbAdministrator->rigthClient(email, token);
+    Response* response = new Response();
+    if (rigthCredential) {
+        int success = dbAdministrator->removeSolicitude(email, token, solicitude);
+        delete dbAdministrator;
+        std::ostringstream s;
+        s << success;
+        std::string success_parsed = s.str();
+        if (success >= 0) {
+            response->setContent("");
+            response->setStatus(201);
+        } else if (success == -1) {
+            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"User did not send solicitude.\"}");
+            response->setStatus(500);
+        }
+    } else {
+        response->setContent("{\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+    }
+    return response;
 }
 
 

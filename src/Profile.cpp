@@ -431,11 +431,12 @@ void Contacts::addContact(std::string contact_to_add) {
     }
 }
 
-void Contacts::removeContact(std::string contact_to_remove) {
+int Contacts::removeContact(std::string contact_to_remove) {
     int index = this->search(contact_to_remove);
     if (index != -1) {
         this->contacts.erase(this->contacts.begin() + index);
     }
+    return index;
 }
 
 void Contacts::getOwnInfo(const rapidjson::Document &document) {
@@ -504,11 +505,12 @@ void Solicitudes::addSolicitude(struct Solicitude solicitude_to_add) {
     }
 }
 
-void Solicitudes::removeSolicitude(struct Solicitude solicitude_to_remove) {
+int Solicitudes::removeSolicitude(struct Solicitude solicitude_to_remove) {
     int index = this->search(solicitude_to_remove);
     if (index != -1) {
         this->solicitudes.erase(this->solicitudes.begin() + index);
     }
+    return index;
 }
 
 std::string Solicitudes::createJsonFile() {

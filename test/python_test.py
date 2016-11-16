@@ -162,13 +162,11 @@ class testApplicationServer(unittest.TestCase):
 
     def test_26_PostContactSuccessfully(self):
         params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
-        print params
         reply = requests.post('http://localhost:8000/users/test@yahoo.com/contact', params=params)
         self.assertEqual(201, reply.status_code)
 
     def test_27_PostContactUnsuccsessfully(self):
         params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
-        print params
         reply = requests.post('http://localhost:8000/users/test@yahoo.com/contact', params=params)
         self.assertEqual(500, reply.status_code)
         self.assertEqual("Don't posted.", reply.json()["message"])
@@ -181,6 +179,42 @@ class testApplicationServer(unittest.TestCase):
     def test_29_GetContactUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/contact', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+    def test_30_PostAcceptContactSuccessfully(self):
+        params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/accept', params=params)
+        self.assertEqual(201, reply.status_code)
+
+    def test_31_PostAcceptContactWithoutSolicitude(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/accept', params=params)
+        self.assertEqual(500, reply.status_code)
+        self.assertEqual("User did not send solicitude.", reply.json()["message"])
+
+    def test_32_PostAcceptContactUnsuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/accept', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+    def test_33_DeleteRejectContactSuccessfully(self):
+        params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/contact', params=params)
+        params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
+        reply = requests.delete('http://localhost:8000/users/test@yahoo.com/reject', params=params)
+        self.assertEqual(201, reply.status_code)
+
+    def test_34_DeleteRejectContactWithoutSolicitude(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.delete('http://localhost:8000/users/test@yahoo.com/reject', params=params)
+        self.assertEqual(500, reply.status_code)
+        self.assertEqual("User did not send solicitude.", reply.json()["message"])
+
+    def test_35_DeleteRejectContactUnsuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.delete('http://localhost:8000/users/test@yahoo.com/reject', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 

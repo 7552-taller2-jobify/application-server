@@ -171,7 +171,7 @@ class Contacts: public Profile {
     std::string getContactAt(int index);
     std::string createJsonFile();
     void addContact(std::string contact_to_add);
-    void removeContact(std::string contact_to_remove);
+    int removeContact(std::string contact_to_remove);
 };
 
 class Friends: public Contacts {
@@ -217,7 +217,7 @@ class Solicitudes: public Profile {
     ~Solicitudes() {}
     std::string getSolicitudeAt(int index);
     void addSolicitude(struct Solicitude solicitude_to_add);
-    void removeSolicitude(struct Solicitude solicitude_to_remove);
+    int removeSolicitude(struct Solicitude solicitude_to_remove);
     std::string createJsonFile();
 };
 

@@ -170,7 +170,7 @@ class Contacts: public Profile {
     virtual ~Contacts();
     std::string getContactAt(int index);
     std::string createJsonFile();
-    void addContact(std::string contact_to_add);
+    int addContact(std::string contact_to_add);
     int removeContact(std::string contact_to_remove);
 };
 

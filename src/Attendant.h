@@ -124,4 +124,33 @@ class ProfilePhoto: public Attendant {
     static Response* put(struct Message operation);
 };
 
+class ProfileFriends: public Attendant {
+ public:
+    ProfileFriends();
+    ~ProfileFriends();
+    static Response* get(struct Message operation);
+};
+
+class Vote: public Attendant {
+ public:
+    Vote();
+    ~Vote();
+    static Response* post(struct Message operation);
+    static Response* erase(struct Message operation);
+};
+
+class ProfileOwnRecommendations: public Attendant {
+ public:
+    ProfileOwnRecommendations();
+    ~ProfileOwnRecommendations();
+    static Response* get(struct Message operation);
+};
+
+class ProfileOthersRecommendations: public Attendant {
+ public:
+    ProfileOthersRecommendations();
+    ~ProfileOthersRecommendations();
+    static Response* get(struct Message operation);
+};
+
 #endif  // ATTENDANT_H_

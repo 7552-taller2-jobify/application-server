@@ -204,7 +204,7 @@ class testApplicationServer(unittest.TestCase):
         reply = requests.post('http://localhost:8000/users/test@yahoo.com/contact', params=params)
         params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
         reply = requests.delete('http://localhost:8000/users/test@yahoo.com/reject', params=params)
-        self.assertEqual(201, reply.status_code)
+        self.assertEqual(204, reply.status_code)
 
     def test_34_DeleteRejectContactWithoutSolicitude(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
@@ -218,15 +218,70 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
+    def test_36_GetFriendsSuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/contacts', params=params)
+        self.assertEqual(200, reply.status_code)
+
+    def test_37_GetFriendsUnsuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/contacts', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+    def test_38_PutVoteContactSuccessfully(self):
+        params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("email", "contact@gmail.com")}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/vote', params=params)
+        self.assertEqual(201, reply.status_code)
+
+    def test_39_PutUnVoteContactSuccessfully(self):
+        params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("email", "contact@gmail.com")}
+        reply = requests.delete('http://localhost:8000/users/test@yahoo.com/vote', params=params)
+        self.assertEqual(204, reply.status_code)
+
+    def test_40_PutVoteContactUnsuccessfully(self):
+        params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"),("email", "contact@gmail.com")}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/vote', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+    def test_40_PutUnVoteContactUnsuccessfully(self):
+        params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"),("email", "contact@gmail.com")}
+        reply = requests.delete('http://localhost:8000/users/test@yahoo.com/vote', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+    def test_41_GetOwnRecommendationsSuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/own_recommendations', params=params)
+        self.assertEqual(200, reply.status_code)
+
+    def test_42_GetOwnRecommendationsUnsuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/own_recommendations', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
+
+    def test_43_GetOwnRecommendationsSuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/others_recommendations', params=params)
+        self.assertEqual(200, reply.status_code)
+
+    def test_44_GetOwnRecommendationsUnsuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/others_recommendations', params=params)
+        self.assertEqual(401, reply.status_code)
+        self.assertEqual("Invalid credentials.", reply.json()["message"])
 
 
-    def test_40_LogoutUnsuccessfully(self):
+
+    def test_45_LogoutUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
         reply = requests.put('http://localhost:8000/users/test@yahoo.com/logout', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
-    def test_41_LogoutSuccessfully(self):
+    def test_46_LogoutSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.put('http://localhost:8000/users/test@yahoo.com/logout', params=params)
         self.assertEqual(200, reply.status_code)

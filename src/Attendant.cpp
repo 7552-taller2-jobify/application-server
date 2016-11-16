@@ -259,7 +259,7 @@ Response* Accept::post(struct Message operation) {
     bool rigthCredential = dbAdministrator->rigthClient(email, token);
     Response* response = new Response();
     if (rigthCredential) {
-        int success = dbAdministrator->addFriend(email, token, solicitude);
+        int success = dbAdministrator->addFriend(email, solicitude);
         delete dbAdministrator;
         std::ostringstream s;
         s << success;
@@ -307,14 +307,14 @@ Response* Reject::erase(struct Message operation) {
     bool rigthCredential = dbAdministrator->rigthClient(email, token);
     Response* response = new Response();
     if (rigthCredential) {
-        int success = dbAdministrator->removeSolicitude(email, token, solicitude);
+        int success = dbAdministrator->removeSolicitude(email, solicitude);
         delete dbAdministrator;
         std::ostringstream s;
         s << success;
         std::string success_parsed = s.str();
         if (success >= 0) {
             response->setContent("");
-            response->setStatus(201);
+            response->setStatus(204);
         } else if (success == -1) {
             response->setContent("{\"code\":" + success_parsed + ",\"message\":\"User did not send solicitude.\"}");
             response->setStatus(500);
@@ -602,5 +602,150 @@ Response* ProfilePhoto::put(struct Message operation) {
         response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
         response->setStatus(500);
     }
+    return response;
+}
+
+
+
+ProfileFriends::ProfileFriends() {
+    this->functions["GET"] = get;
+}
+
+ProfileFriends::~ProfileFriends() {}
+
+Response* ProfileFriends::get(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    if (rightCredentials) {
+        response->setContent(dbAdministrator->getFriends(email));
+        response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+    delete dbAdministrator;
+    return response;
+}
+
+
+
+Vote::Vote() {
+    this->functions["POST"] = post;
+    this->functions["ERASE"] = erase;
+}
+
+Vote::~Vote() {}
+
+Response* Vote::post(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    int pos_email = operation.params.find("email=");
+    int pos_token = operation.params.find("&token=");
+    std::string email_to_vote = operation.params.substr(pos_email + 6, pos_token - 6);
+    std::string token = operation.params.substr(pos_token + 7);
+    CURL *curl = curl_easy_init();
+    int number[3];
+    email_to_vote = curl_easy_unescape(curl, email_to_vote.c_str(), email_to_vote.length(), number);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    if (rightCredentials) {
+        dbAdministrator->vote(email, email_to_vote);
+        response->setContent("");
+        response->setStatus(201);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+    delete dbAdministrator;
+    return response;
+}
+
+Response* Vote::erase(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    int pos_email = operation.params.find("email=");
+    int pos_token = operation.params.find("&token=");
+    std::string email_to_unvote = operation.params.substr(pos_email + 6, pos_token - 6);
+    std::string token = operation.params.substr(pos_token + 7);
+    CURL *curl = curl_easy_init();
+    int number[3];
+    email_to_unvote = curl_easy_unescape(curl, email_to_unvote.c_str(), email_to_unvote.length(), number);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    if (rightCredentials) {
+        dbAdministrator->unvote(email, email_to_unvote);
+        response->setContent("");
+        response->setStatus(204);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+    delete dbAdministrator;
+    return response;
+}
+
+
+
+ProfileOwnRecommendations::ProfileOwnRecommendations() {
+    this->functions["GET"] = get;
+}
+
+ProfileOwnRecommendations::~ProfileOwnRecommendations() {}
+
+Response* ProfileOwnRecommendations::get(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    if (rightCredentials) {
+        response->setContent(dbAdministrator->getOwnRecommendations(email));
+        response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+    delete dbAdministrator;
+    return response;
+}
+
+
+
+ProfileOthersRecommendations::ProfileOthersRecommendations() {
+    this->functions["GET"] = get;
+}
+
+ProfileOthersRecommendations::~ProfileOthersRecommendations() {}
+
+Response* ProfileOthersRecommendations::get(struct Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    if (rightCredentials) {
+        response->setContent(dbAdministrator->getOthersRecommendations(email));
+        response->setStatus(200);
+    } else {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+    }
+    delete dbAdministrator;
     return response;
 }

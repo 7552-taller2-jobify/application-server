@@ -423,12 +423,13 @@ int Contacts::search(std::string contact) {
     return -1;
 }
 
-void Contacts::addContact(std::string contact_to_add) {
+int Contacts::addContact(std::string contact_to_add) {
     int index = this->search(contact_to_add);
     if (index == -1) {
         this->contacts.push_back(contact_to_add);
         std::sort(this->contacts.begin(), this->contacts.end(), std::less<std::string>());
     }
+    return index;
 }
 
 int Contacts::removeContact(std::string contact_to_remove) {

@@ -17,6 +17,10 @@ AttendantsHandler::AttendantsHandler() {
     attendants["ProfileExpertise"] = new ProfileExpertise();
     attendants["ProfileSkills"] = new ProfileSkills();
     attendants["ProfilePhoto"] = new ProfilePhoto();
+    attendants["ProfileFriends"] = new ProfileFriends();
+    attendants["Vote"] = new Vote();
+    attendants["ProfileOwnRecommendations"] = new ProfileOwnRecommendations();
+    attendants["ProfileOthersRecommendations"] = new ProfileOthersRecommendations();
 
     this->url_mapper = new URLMapper();
 }

@@ -97,7 +97,7 @@ int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *login
     return 0;
 }
 
-// Returns 0 if success, 1 if credential invalid,
+// Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadPersonal(std::string email, std::string token, Personal *upload_personal) {
     bool rigthCredential = this->rigthClient(email, token);
     if (rigthCredential) {
@@ -127,7 +127,7 @@ std::string DataBaseAdministrator::getPersonal(std::string email) {
     return personal_parser_modify;
 }
 
-// Returns 0 if success, 1 if credential invalid,
+// Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadSummary(std::string email, std::string token, Summary *upload_summary) {
     bool rigthCredential = this->rigthClient(email, token);
     if (rigthCredential) {
@@ -143,7 +143,7 @@ std::string DataBaseAdministrator::getSummary(std::string email){
     return summary_parser;
 }
 
-// Returns 0 if success, 1 if credential invalid,
+// Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadExpertise(std::string email, std::string token, Expertise *upload_expertise) {
     bool rigthCredential = this->rigthClient(email, token);
     if (rigthCredential) {
@@ -158,7 +158,7 @@ std::string DataBaseAdministrator::getExpertise(std::string email) {
     return DataBase::getInstance().get("EXPERTISE_" + email);
 }
 
-// Returns 0 if success, 1 if credential invalid,
+// Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadSkills(std::string email, std::string token, Skills *upload_skills) {
     bool rigthCredential = this->rigthClient(email, token);
     if (rigthCredential) {
@@ -173,7 +173,7 @@ std::string DataBaseAdministrator::getSkills(std::string email) {
     return DataBase::getInstance().get("SKILLS_" + email);
 }
 
-// Returns 0 if success, 1 if credential invalid,
+// Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadPicture(std::string email, std::string token, Picture *upload_picture) {
     bool rigthCredential = this->rigthClient(email, token);
     if (rigthCredential) {
@@ -188,7 +188,7 @@ std::string DataBaseAdministrator::getPicture(std::string email) {
     return DataBase::getInstance().get("PICTURE_" + email);
 }
 
-// Returns 0 if success, 1 if credential invalid,
+// Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::addSolicitude(std::string email, std::string token, struct Solicitude new_solicitude) {
     bool rigthCredential = this->rigthClient(email, token);
     if (rigthCredential) {
@@ -211,7 +211,7 @@ std::string DataBaseAdministrator::getSolicitudes(std::string email) {
 }
 
 // Returns -1 if there is no solicitude, other if success
-int DataBaseAdministrator::addFriend(std::string email, std::string token, struct Solicitude solicitude_to_delete) {
+int DataBaseAdministrator::addFriend(std::string email, struct Solicitude solicitude_to_delete) {
     Solicitudes *solicitudes = new Solicitudes();
     if (DataBase::getInstance().get("SOLICITUDES_" + email) == "") {
         DataBase::getInstance().put("SOLICITUDES_" + email, "{\"solicitudes\":[]}");
@@ -234,7 +234,7 @@ int DataBaseAdministrator::addFriend(std::string email, std::string token, struc
 }
 
 // Returns -1 if there is no solicitude, other if success
-int DataBaseAdministrator::removeSolicitude(std::string email, std::string token, struct Solicitude solicitude_to_delete) {
+int DataBaseAdministrator::removeSolicitude(std::string email, struct Solicitude solicitude_to_delete) {
     Solicitudes *solicitudes = new Solicitudes();
     if (DataBase::getInstance().get("SOLICITUDES_" + email) == "") {
         DataBase::getInstance().put("SOLICITUDES_" + email, "{\"solicitudes\":[]}");
@@ -245,4 +245,49 @@ int DataBaseAdministrator::removeSolicitude(std::string email, std::string token
     DataBase::getInstance().put("SOLICITUDES_" + email, solicitudes->createJsonFile());
     delete solicitudes;
     return return_code;
+}
+
+std::string DataBaseAdministrator::getFriends(std::string email) {
+    if (DataBase::getInstance().get("FRIENDS_" + email) == "") {
+        DataBase::getInstance().put("FRIENDS_" + email, "{\"friends\":[]}");
+    }
+    return DataBase::getInstance().get("FRIENDS_" + email);
+}
+
+void DataBaseAdministrator::vote(std::string email, std::string email_to_vote) {
+    OwnRecommendations *own_recommendations = new OwnRecommendations();
+    if (DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email) == "") {
+        DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, "{\"own_recommendations\":[]}");
+    }
+    own_recommendations->loadJson(DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email));
+    own_recommendations->addContact(email_to_vote);
+    DataBase::getInstance().erase("OWN_RECOMMENDATIONS_" + email);
+    DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, own_recommendations->createJsonFile());
+    delete own_recommendations;
+}
+
+void DataBaseAdministrator::unvote(std::string email, std::string email_to_unvote) {
+    OwnRecommendations *own_recommendations = new OwnRecommendations();
+    if (DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email) == "") {
+        DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, "{\"own_recommendations\":[]}");
+    }
+    own_recommendations->loadJson(DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email));
+    own_recommendations->removeContact(email_to_unvote);
+    DataBase::getInstance().erase("OWN_RECOMMENDATIONS_" + email);
+    DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, own_recommendations->createJsonFile());
+    delete own_recommendations;
+}
+
+std::string DataBaseAdministrator::getOwnRecommendations(std::string email) {
+    if (DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email) == "") {
+        DataBase::getInstance().put("OWN_RECOMMENDATIONS_" + email, "{\"own_recommendations\":[]}");
+    }
+    return DataBase::getInstance().get("OWN_RECOMMENDATIONS_" + email);
+}
+
+std::string DataBaseAdministrator::getOthersRecommendations(std::string email) {
+    if (DataBase::getInstance().get("OTHERS_RECOMMENDATIONS_" + email) == "") {
+        DataBase::getInstance().put("OTHERS_RECOMMENDATIONS_" + email, "{\"others_recommendations\":[]}");
+    }
+    return DataBase::getInstance().get("OTHERS_RECOMMENDATIONS_" + email);
 }

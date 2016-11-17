@@ -24,6 +24,14 @@ struct Message {
 struct PopularUser {
     std::string email;
     int votes;
+
+    bool operator<(const struct PopularUser &a) const {
+        return votes < a.votes;
+    }
+
+    bool operator>(const struct PopularUser &a) const {
+        return votes > a.votes;
+    }
 };
 
 #endif // CONSTANTS_H_

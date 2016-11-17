@@ -15,7 +15,7 @@ bool DataBaseAdministrator::existsClient(std::string email) {
     return (DataBase::getInstance().get(email) != "");
 }
 
-bool DataBaseAdministrator::rigthClient(LoginInformation *loginInformation) {
+bool DataBaseAdministrator::rightClient(LoginInformation *loginInformation) {
     std::string email = loginInformation->getEmail();
     std::string password = loginInformation->getPassword();
     bool existsClient = this->existsClient(email);
@@ -24,15 +24,15 @@ bool DataBaseAdministrator::rigthClient(LoginInformation *loginInformation) {
         Credentials *credentials = new Credentials();
         credentials->loadJson(credentials_parser);
         std::string token_calculated = this->auth->encode(email, password, credentials->getIncrementalNumber());
-        bool rigthCredentials = strcmp(credentials->getToken().c_str(), token_calculated.c_str()) == 0;
-        if (rigthCredentials) {
+        bool rightCredentials = strcmp(credentials->getToken().c_str(), token_calculated.c_str()) == 0;
+        if (rightCredentials) {
             return true;
         }
     }
     return false;
 }
 
-bool DataBaseAdministrator::rigthClient(std::string email, std::string token) {
+bool DataBaseAdministrator::rightClient(std::string email, std::string token) {
     bool existsClient = this->existsClient(email);
     if (existsClient) {
         std::cout << "exists client" << std::endl;
@@ -40,8 +40,8 @@ bool DataBaseAdministrator::rigthClient(std::string email, std::string token) {
         Credentials *credentials = new Credentials();
         credentials->loadJson(credentials_parser);
         std::string token_stored = credentials->getToken();
-        bool rigthCredentials = strcmp(token_stored.c_str(), token.c_str()) == 0;
-        if (rigthCredentials) {
+        bool rightCredentials = strcmp(token_stored.c_str(), token.c_str()) == 0;
+        if (rightCredentials) {
             return true;
         }
     }
@@ -99,8 +99,8 @@ int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *login
 
 // Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadPersonal(std::string email, std::string token, Personal *upload_personal) {
-    bool rigthCredential = this->rigthClient(email, token);
-    if (rigthCredential) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
         std::string actual_personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
         Personal *actual_personal = new Personal();
         actual_personal->loadJson(actual_personal_parser);
@@ -129,8 +129,8 @@ std::string DataBaseAdministrator::getPersonal(std::string email) {
 
 // Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadSummary(std::string email, std::string token, Summary *upload_summary) {
-    bool rigthCredential = this->rigthClient(email, token);
-    if (rigthCredential) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
         DataBase::getInstance().erase("SUMMARY_" + email);
         DataBase::getInstance().put("SUMMARY_" + email, upload_summary->createJsonFile());
         return 0;
@@ -145,8 +145,8 @@ std::string DataBaseAdministrator::getSummary(std::string email) {
 
 // Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadExpertise(std::string email, std::string token, Expertise *upload_expertise) {
-    bool rigthCredential = this->rigthClient(email, token);
-    if (rigthCredential) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
         DataBase::getInstance().erase("EXPERTISE_" + email);
         DataBase::getInstance().put("EXPERTISE_" + email, upload_expertise->createJsonFile());
         return 0;
@@ -160,8 +160,8 @@ std::string DataBaseAdministrator::getExpertise(std::string email) {
 
 // Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadSkills(std::string email, std::string token, Skills *upload_skills) {
-    bool rigthCredential = this->rigthClient(email, token);
-    if (rigthCredential) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
         DataBase::getInstance().erase("SKILLS_" + email);
         DataBase::getInstance().put("SKILLS_" + email, upload_skills->createJsonFile());
         return 0;
@@ -175,8 +175,8 @@ std::string DataBaseAdministrator::getSkills(std::string email) {
 
 // Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadPicture(std::string email, std::string token, Picture *upload_picture) {
-    bool rigthCredential = this->rigthClient(email, token);
-    if (rigthCredential) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
         DataBase::getInstance().erase("PICTURE_" + email);
         DataBase::getInstance().put("PICTURE_" + email, upload_picture->createJsonFile());
         return 0;
@@ -190,8 +190,8 @@ std::string DataBaseAdministrator::getPicture(std::string email) {
 
 // Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::addSolicitude(std::string email, std::string token, struct Solicitude new_solicitude) {
-    bool rigthCredential = this->rigthClient(email, token);
-    if (rigthCredential) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
         Solicitudes *solicitudes = new Solicitudes();
         if (DataBase::getInstance().get("SOLICITUDES_" + email) == "") {
             DataBase::getInstance().put("SOLICITUDES_" + email, "{\"solicitudes\":[]}");
@@ -306,9 +306,51 @@ void DataBaseAdministrator::unvote(std::string email, std::string email_to_unvot
     delete others_recommendations;
 }
 
-std::string DataBaseAdministrator::getMostPopularUsers() {
-    if (DataBase::getInstance().get("OTHERS_RECOMMENDATIONS_") == "") {
-        DataBase::getInstance().put("OTHERS_RECOMMENDATIONS_", "{\"others_recommendations\":[]}");
+std::vector<struct PopularUser> DataBaseAdministrator::searchRange(const std::string start, const std::string end) {
+    std::vector<struct PopularUser> users;
+    const leveldb::Slice& start_slice = leveldb::Slice(start);
+    const leveldb::Slice& end_slice = leveldb::Slice(end);
+    leveldb::Iterator *db_iterator = DataBase::getInstance().getIterator();
+    for (db_iterator->Seek(start_slice); (db_iterator->Valid() &&
+                            (strcmp(db_iterator->key().ToString().c_str(), end.c_str()) <= 0)); db_iterator->Next()) {     
+        if (!db_iterator->value().empty()) {
+            struct PopularUser user;
+            const std::string LABEL = "OTHERS_RECOMMENDATIONS_";
+            user.email = db_iterator->key().ToString().substr(LABEL.length());
+            OthersRecommendations *others_recommendations = new OthersRecommendations();
+            others_recommendations->loadJson(db_iterator->value().ToString());
+            user.votes = others_recommendations->getNumberOfContacts();
+            delete others_recommendations;
+            if (users.size() < MAX_POPULAR_USERS) {
+                users.push_back(user);
+                std::sort(users.begin(), users.end(), std::greater<struct PopularUser>());
+            } else {
+                if (users.back().votes < user.votes) {
+                    users.pop_back();
+                    users.push_back(user);
+                    std::sort(users.begin(), users.end(), std::greater<struct PopularUser>());
+                }
+            }
+        }
     }
-    return DataBase::getInstance().get("OTHERS_RECOMMENDATIONS_");
+    delete db_iterator;
+    return users;
+}
+
+std::string DataBaseAdministrator::getMostPopularUsers() {
+    std::string result = "{\"most_popular_users\":[";
+    const std::string begin = "OTHERS_RECOMMENDATIONS_";
+    const std::string end = "OTHERS_RECOMMENDATIONT_";
+    std::vector<struct PopularUser> users = this->searchRange(begin, end);
+    for (int i = 0; i < users.size(); i++) {
+        std::ostringstream s;
+        s << users.at(i).votes;
+        std::string votes_parsed = s.str();
+        result += ("{\"email\":\"" + users.at(i).email + "\",\"votes\":" + votes_parsed + "},");
+    }
+    if (users.size() > 0) {
+        result = result.substr(0, result.length() - 1);
+    }
+    result += "]}";
+    return result;
 }

@@ -15,13 +15,14 @@
 class DataBaseAdministrator {
  private:
     Authentication *auth;
+    std::vector<struct PopularUser> searchRange(const std::string start, const std::string end);
 
  public:
     DataBaseAdministrator();
     ~DataBaseAdministrator();
     bool existsClient(std::string email);
-    bool rigthClient(std::string email, std::string token);     
-    bool rigthClient(LoginInformation *li);
+    bool rightClient(std::string email, std::string token);     
+    bool rightClient(LoginInformation *li);
     std::string getPersonalLogin(std::string email);
     std::string getPersonal(std::string email);
     std::string getSummary(std::string email);

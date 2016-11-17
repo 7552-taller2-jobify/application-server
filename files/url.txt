@@ -17,6 +17,6 @@
 /users/.*@.*/perfil/skills/category/.* ProfileSkills
 /users/.*@.*/own_recommendations ProfileOwnRecommendations
 /users/.*@.*/others_recommendations ProfileOthersRecommendations
+/users/pop MostPopularUsers
 /users/search Login
-/users/pop Login
 /users/.*@.*/chat Login

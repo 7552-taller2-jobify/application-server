@@ -52,8 +52,8 @@ Response* Login::post(struct Message operation) {
     }
     Response* response = new Response();
     std::string email = loginInformation->getEmail();
-    bool rigthCredential = dbAdministrator->rigthClient(loginInformation);
-    if (rigthCredential) {
+    bool rightCredential = dbAdministrator->rightClient(loginInformation);
+    if (rightCredential) {
         response->setContent(dbAdministrator->getPersonalLogin(email));
         response->setStatus(200);
         Logger::getInstance().log(info, "The client " + email +" was logged.");
@@ -78,8 +78,8 @@ Response* Logout::put(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rigthClient = dbAdministrator->rigthClient(email, token);
-    if (rigthClient) {
+    bool rightClient = dbAdministrator->rightClient(email, token);
+    if (rightClient) {
         std::cout << "right client" << std::endl;
         Authentication *auth = new Authentication();
         LoginInformation *loginInformation = new LoginInformation();
@@ -218,7 +218,7 @@ Response* Contact::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getSolicitudes(email));
         response->setStatus(200);
@@ -256,9 +256,9 @@ Response* Accept::post(struct Message operation) {
     struct Solicitude solicitude;
     solicitude.date = date;
     solicitude.mail = contact_email;
-    bool rigthCredential = dbAdministrator->rigthClient(email, token);
+    bool rightCredential = dbAdministrator->rightClient(email, token);
     Response* response = new Response();
-    if (rigthCredential) {
+    if (rightCredential) {
         int success = dbAdministrator->addFriend(email, solicitude);
         delete dbAdministrator;
         std::ostringstream s;
@@ -304,9 +304,9 @@ Response* Reject::erase(struct Message operation) {
     struct Solicitude solicitude;
     solicitude.date = date;
     solicitude.mail = contact_email;
-    bool rigthCredential = dbAdministrator->rigthClient(email, token);
+    bool rightCredential = dbAdministrator->rightClient(email, token);
     Response* response = new Response();
-    if (rigthCredential) {
+    if (rightCredential) {
         int success = dbAdministrator->removeSolicitude(email, solicitude);
         delete dbAdministrator;
         std::ostringstream s;
@@ -342,7 +342,7 @@ Response* ProfilePersonal::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getPersonal(email));
         response->setStatus(200);
@@ -391,7 +391,7 @@ Response* ProfileSummary::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getSummary(email));
         response->setStatus(200);
@@ -467,7 +467,7 @@ Response* ProfileExpertise::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getExpertise(email));
         response->setStatus(200);
@@ -538,7 +538,7 @@ Response* ProfileSkills::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getSkills(email));
         response->setStatus(200);
@@ -567,7 +567,7 @@ Response* ProfilePhoto::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getPicture(email));
         response->setStatus(200);
@@ -620,7 +620,7 @@ Response* ProfileFriends::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getFriends(email));
         response->setStatus(200);
@@ -654,7 +654,7 @@ Response* Vote::post(struct Message operation) {
     int number[3];
     email_to_vote = curl_easy_unescape(curl, email_to_vote.c_str(), email_to_vote.length(), number);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         dbAdministrator->vote(email, email_to_vote);
         response->setContent("");
@@ -680,7 +680,7 @@ Response* Vote::erase(struct Message operation) {
     int number[3];
     email_to_unvote = curl_easy_unescape(curl, email_to_unvote.c_str(), email_to_unvote.length(), number);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         dbAdministrator->unvote(email, email_to_unvote);
         response->setContent("");
@@ -709,7 +709,7 @@ Response* ProfileOwnRecommendations::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getOwnRecommendations(email));
         response->setStatus(200);
@@ -737,7 +737,7 @@ Response* ProfileOthersRecommendations::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getOthersRecommendations(email));
         response->setStatus(200);
@@ -765,14 +765,16 @@ Response* MostPopularUsers::get(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rigthClient(email, token);
+        response->setContent(dbAdministrator->getMostPopularUsers());
+        response->setStatus(200);
+    /* bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
         response->setContent(dbAdministrator->getMostPopularUsers());
         response->setStatus(200);
     } else {
        response->setContent("{\"message\":\"Invalid credentials.\"}");
        response->setStatus(401);
-    }
+    } */
     delete dbAdministrator;
     return response;
 }

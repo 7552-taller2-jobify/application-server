@@ -48,7 +48,7 @@ class LoginInformation: public Profile {
 
 class Personal: public Profile {
  private:
-    double device_id;
+    std::string device_id;
     std::string first_name;
     std::string last_name;
     std::string email;
@@ -63,7 +63,7 @@ class Personal: public Profile {
  public:
     Personal() : Profile() {}
     ~Personal() {}
-    double getDeviceId();
+    std::string getDeviceId();
     std::string getFirstName();
     std::string getLastName();
     std::string getEmail();
@@ -71,7 +71,7 @@ class Personal: public Profile {
     std::string getBirthday();
     std::string* getAddress();
     std::string getCity();
-    void setDeviceId(double new_id);
+    void setDeviceId(std::string new_id);
     void setFirstName(std::string new_first_name);
     void setPassword(std::string password);
     void setLastName(std::string new_last_name);
@@ -170,8 +170,9 @@ class Contacts: public Profile {
     virtual ~Contacts();
     std::string getContactAt(int index);
     std::string createJsonFile();
-    void addContact(std::string contact_to_add);
-    void removeContact(std::string contact_to_remove);
+    int addContact(std::string contact_to_add);
+    int removeContact(std::string contact_to_remove);
+    int getNumberOfContacts();
 };
 
 class Friends: public Contacts {
@@ -217,7 +218,7 @@ class Solicitudes: public Profile {
     ~Solicitudes() {}
     std::string getSolicitudeAt(int index);
     void addSolicitude(struct Solicitude solicitude_to_add);
-    void removeSolicitude(struct Solicitude solicitude_to_remove);
+    int removeSolicitude(struct Solicitude solicitude_to_remove);
     std::string createJsonFile();
 };
 
@@ -241,6 +242,23 @@ class Conversation: public Profile {
     ~Conversation() {}
     std::string getConversationMessageAt(int index);
     void addMessage(struct ChatMessage message_to_add);
+    std::string createJsonFile();
+};
+
+class Credentials: public Profile {
+ private:
+    std::string token;
+    int incremental_number;
+    void getOwnInfo(const rapidjson::Document &document);
+
+ public:
+    Credentials() : Profile() {}
+    ~Credentials() {}
+    std::string getToken();
+    int getIncrementalNumber();
+    void setToken(std::string token);
+    void setIncrementalNumber(int incremental_number);
+    void increaseIncrementalNumber(int increase);
     std::string createJsonFile();
 };
 

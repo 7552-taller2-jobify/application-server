@@ -1,4 +1,5 @@
 /users/login Login
+/users/.*@.*/logout Logout
 /users/register Register
 /users/.*@.*/recovery_pass RecoveryPass
 /users/.*@.*/contact Contact
@@ -9,13 +10,16 @@
 /users/.*@.*/perfil/expertise ProfileExpertise
 /users/.*@.*/perfil/skills ProfileSkills
 /users/.*@.*/perfil/picture ProfilePhoto
+/users/.*@.*/vote Vote
+/users/.*@.*/perfil/contacts ProfileFriends
+/users/.*@.*/perfil/expertise/position ProfileExpertise
+/users/.*@.*/perfil/expertise/position/.* ProfileExpertise
+/users/.*@.*/perfil/skills/category/.* ProfileSkills
+/users/.*@.*/own_recommendations ProfileOwnRecommendations
+/users/.*@.*/others_recommendations ProfileOthersRecommendations
+/users/pop MostPopularUsers
 /users/search Login
-/users/.*@.*/contact Login
-/users/.*@.*/reject Login
-/users/.*@.*/vote Login
-/users/pop Login
 /users/.*@.*/chat Login
-/users/.*@.*/perfil/contacts Login
 /users/.*@.*/perfil/expertise/position Login
 /users/.*@.*/perfil/expertise/position/.* Login
 /users/.*@.*/perfil/skills/category/.* Login

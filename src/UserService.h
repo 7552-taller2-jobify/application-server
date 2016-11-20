@@ -11,6 +11,7 @@ class UserService {
     UserService();
     ~UserService();
     std::string loginInformation(Personal *personal, Picture *picture, std::string token);
+    std::string getPersonal(Personal *personal);
 };
 
 #endif  // USER_SERVICE_H_

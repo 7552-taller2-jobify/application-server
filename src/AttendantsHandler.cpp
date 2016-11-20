@@ -6,6 +6,7 @@
 
 AttendantsHandler::AttendantsHandler() {
     attendants["Login"] = new Login();
+    attendants["Logout"] = new Logout();
     attendants["Register"] = new Register();
     attendants["RecoveryPass"] = new RecoveryPass();
     attendants["Contact"] = new Contact();
@@ -21,11 +22,18 @@ AttendantsHandler::AttendantsHandler() {
     attendants["Category"] = new Category();
     attendants["Skill"] = new Skill();
     attendants["JobPositions"] = new JobPosition();
+    attendants["ProfileFriends"] = new ProfileFriends();
+    attendants["Vote"] = new Vote();
+    attendants["ProfileOwnRecommendations"] = new ProfileOwnRecommendations();
+    attendants["ProfileOthersRecommendations"] = new ProfileOthersRecommendations();
+    attendants["MostPopularUsers"] = new MostPopularUsers();
 
     this->url_mapper = new URLMapper();
 }
 
-AttendantsHandler::~AttendantsHandler() {}
+AttendantsHandler::~AttendantsHandler() {
+    delete this->url_mapper;
+}
 
 Attendant* AttendantsHandler::find(std::string uri) {
     std::string key_to_match = url_mapper->find(uri);

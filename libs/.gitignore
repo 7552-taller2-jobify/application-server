@@ -1,1 +1,5 @@
 cmake_install.cmake
+curl
+curl-master
+leveldb
+leveldb-master

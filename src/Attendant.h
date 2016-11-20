@@ -4,7 +4,9 @@
 #define ATTENDANT_H_
 
 #include <map>
-#include <iostream>
+#include <string>
+#include <curl/curl.h>
+#include <iostream>  // TODO borrar
 #include "Constants.h"
 #include "Logger.h"
 #include "Profile.h"
@@ -19,13 +21,16 @@
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/writer.h"
+#include "RequestParse.h"
+#include "Authentication.h"
 
 typedef Response* (*function)(struct Message operation);
 
 class Attendant {
+ private:
+    bool isMethodSupported(std::string a_method);
  protected:
     std::map<std::string, function> functions;
-    bool isMethodSupported(std::string a_method);
  public:
     Attendant();
     virtual ~Attendant();
@@ -40,6 +45,14 @@ class Login: public Attendant {
     ~Login();
     static Response* get(struct Message operation);
     static Response* post(struct Message operation);
+};
+
+class Logout: public Attendant {
+ public:
+    Logout();
+    ~Logout();
+    static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 class Register: public Attendant {
@@ -61,6 +74,7 @@ class Contact: public Attendant {
  public:
     Contact();
     ~Contact();
+    static Response* post(struct Message operation);
     static Response* get(struct Message operation);
 };
 
@@ -68,14 +82,14 @@ class Accept: public Attendant {
  public:
     Accept();
     ~Accept();
-    static Response* get(struct Message operation);
+    static Response* post(struct Message operation);
 };
 
 class Reject: public Attendant {
  public:
     Reject();
     ~Reject();
-    static Response* get(struct Message operation);
+    static Response* erase(struct Message operation);
 };
 
 class ProfilePersonal: public Attendant {
@@ -83,6 +97,7 @@ class ProfilePersonal: public Attendant {
     ProfilePersonal();
     ~ProfilePersonal();
     static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 class ProfileSummary: public Attendant {
@@ -90,12 +105,14 @@ class ProfileSummary: public Attendant {
     ProfileSummary();
     ~ProfileSummary();
     static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
 };
 
 class ProfileExpertise: public Attendant {
  public:
     ProfileExpertise();
     ~ProfileExpertise();
+    static Response* put(struct Message operation);
     static Response* get(struct Message operation);
 };
 
@@ -103,6 +120,8 @@ class ProfileSkills: public Attendant {
  public:
     ProfileSkills();
     ~ProfileSkills();
+    static Response* post(struct Message operation);
+    static Response* put(struct Message operation);
     static Response* get(struct Message operation);
 };
 
@@ -110,6 +129,43 @@ class ProfilePhoto: public Attendant {
  public:
     ProfilePhoto();
     ~ProfilePhoto();
+    static Response* get(struct Message operation);
+    static Response* put(struct Message operation);
+};
+
+class ProfileFriends: public Attendant {
+ public:
+    ProfileFriends();
+    ~ProfileFriends();
+    static Response* get(struct Message operation);
+};
+
+class Vote: public Attendant {
+ public:
+    Vote();
+    ~Vote();
+    static Response* post(struct Message operation);
+    static Response* erase(struct Message operation);
+};
+
+class ProfileOwnRecommendations: public Attendant {
+ public:
+    ProfileOwnRecommendations();
+    ~ProfileOwnRecommendations();
+    static Response* get(struct Message operation);
+};
+
+class ProfileOthersRecommendations: public Attendant {
+ public:
+    ProfileOthersRecommendations();
+    ~ProfileOthersRecommendations();
+    static Response* get(struct Message operation);
+};
+
+class MostPopularUsers: public Attendant {
+ public:
+    MostPopularUsers();
+    ~MostPopularUsers();
     static Response* get(struct Message operation);
 };
 class Facebook: public Attendant {

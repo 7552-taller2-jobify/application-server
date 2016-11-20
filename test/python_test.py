@@ -6,6 +6,7 @@ import os, signal
 import requests
 import unittest
 import urllib
+import json
 
 class testApplicationServer(unittest.TestCase):
     def test_01_RegisterEmptyFields(self):
@@ -21,6 +22,7 @@ class testApplicationServer(unittest.TestCase):
                 "address": { "lat": "123456789", "lon": "12345678" }, "city": "lalala" }
         reply = requests.post('http://localhost:8000/users/register', json=body)
         self.assertEqual(201, reply.status_code)
+        self.assertEqual("OK", json.loads(reply.content)["registration"])
     
     def test_03_RegisterClienExists(self):
         body = {"email": "test@yahoo.com", "password": "admin", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
@@ -33,6 +35,11 @@ class testApplicationServer(unittest.TestCase):
         body = {"email": "test@yahoo.com", "password": "admin"}
         reply = requests.post('http://localhost:8000/users/login', json=body)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual("", reply.json()["profile"]["picture"])
+        self.assertEqual("test", reply.json()["profile"]["first_name"])
+        self.assertEqual("T", reply.json()["profile"]["last_name"])
+        self.assertEqual("test@yahoo.com", reply.json()["profile"]["email"])
+        self.assertEqual("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4", reply.json()["metadata"]["token"])
 
     def test_05_LoginInvalidCredentials(self):
         body = {"email": "test@yahoo.com", "password": "a"}
@@ -57,6 +64,12 @@ class testApplicationServer(unittest.TestCase):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/personal', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual("New York", reply.json()["city"])
+        self.assertEqual("Donnal", reply.json()["first_name"])
+        self.assertEqual("Trump", reply.json()["last_name"])
+        self.assertEqual("M", reply.json()["gender"])
+        self.assertEqual("23/05/1960", reply.json()["birthday"])
+        self.assertEqual("test@yahoo.com", reply.json()["email"])
 
     def test_09_GetPersonalDataUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
@@ -81,6 +94,7 @@ class testApplicationServer(unittest.TestCase):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/summary', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual("Future president of the USA", reply.json()["summary"])
 
     def test_13_GetSummaryUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
@@ -105,6 +119,18 @@ class testApplicationServer(unittest.TestCase):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/expertise', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual("software", reply.json()["expertises"][0]["category"])
+        self.assertEqual("01/01/2010", reply.json()["expertises"][0]["from"])
+        self.assertEqual("Lalala", reply.json()["expertises"][0]["company"])
+        self.assertEqual("26/09/2016", reply.json()["expertises"][0]["to"])
+        self.assertEqual("aaer", reply.json()["expertises"][0]["expertise"])
+        self.assertEqual("Lider tecnico", reply.json()["expertises"][0]["position"])
+        self.assertEqual("hardware", reply.json()["expertises"][1]["category"])
+        self.assertEqual("02/02/2012", reply.json()["expertises"][1]["from"])
+        self.assertEqual("Lololo", reply.json()["expertises"][1]["company"])
+        self.assertEqual("02/02/2016", reply.json()["expertises"][1]["to"])
+        self.assertEqual("aaer", reply.json()["expertises"][1]["expertise"])
+        self.assertEqual("Especialista tecnico", reply.json()["expertises"][1]["position"])
 
     def test_17_GetExpertiseUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
@@ -129,6 +155,13 @@ class testApplicationServer(unittest.TestCase):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/skills', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual("java", reply.json()["every_skill"][0]["skills"][0])
+        self.assertEqual("c", reply.json()["every_skill"][0]["skills"][1])
+        self.assertEqual("UML", reply.json()["every_skill"][0]["skills"][2])
+        self.assertEqual("software", reply.json()["every_skill"][0]["category"])
+        self.assertEqual("moto", reply.json()["every_skill"][1]["skills"][0])
+        self.assertEqual("auto", reply.json()["every_skill"][1]["skills"][1])
+        self.assertEqual("licencia_manejo", reply.json()["every_skill"][1]["category"])
 
     def test_21_GetSkillsUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
@@ -153,6 +186,7 @@ class testApplicationServer(unittest.TestCase):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/picture', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual("asdf1234asdf", reply.json()["picture"])
 
     def test_25_GetPictureUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
@@ -175,6 +209,8 @@ class testApplicationServer(unittest.TestCase):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/contact', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual("03-01-2010T12:34:00.000Z", reply.json()["solicitudes"][0]["date"])
+        self.assertEqual("contact@gmail.com", reply.json()["solicitudes"][0]["mail"])
 
     def test_29_GetContactUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
@@ -222,6 +258,7 @@ class testApplicationServer(unittest.TestCase):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/contacts', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual([], reply.json()["solicitudes"])
 
     def test_37_GetFriendsUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
@@ -245,49 +282,57 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
-    def test_40_PutUnvoteContactUnsuccessfully(self):
+    def test_41_PutUnvoteContactUnsuccessfully(self):
         params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"),("email", "contact@gmail.com")}
         reply = requests.delete('http://localhost:8000/users/test@yahoo.com/vote', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
-    def test_41_GetOwnRecommendationsSuccessfully(self):
+    def test_42_GetOwnRecommendationsSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/own_recommendations', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual([], reply.json()["own_recommendations"])
 
-    def test_42_GetOwnRecommendationsUnsuccessfully(self):
+    def test_43_GetOwnRecommendationsUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/own_recommendations', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
-    def test_43_GetOwnRecommendationsSuccessfully(self):
+    def test_44_GetOwnRecommendationsSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/others_recommendations', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual([], reply.json()["others_recommendations"])
 
-    def test_44_GetOwnRecommendationsUnsuccessfully(self):
+    def test_45_GetOwnRecommendationsUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/others_recommendations', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
-    def test_45_GetMostPopularUsersSuccessfully(self):
+    def test_46_GetMostPopularUsersSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/pop', params=params)
         self.assertEqual(200, reply.status_code)
-        self.assertEqual([], reply.json()["most_popular_users"])
+        self.assertEqual(0, reply.json()["most_popular_users"][0]["votes"])
+        self.assertEqual("contact@gmail.com", reply.json()["most_popular_users"][0]["email"])
+        self.assertEqual(0, reply.json()["most_popular_users"][1]["votes"])
+        self.assertEqual("test@yahoo.com", reply.json()["most_popular_users"][1]["email"])
 
-    def test_46_GetMostPopularUsersAddingVotesSuccessfully(self):
+    def test_47_GetMostPopularUsersAddingVotesSuccessfully(self):
         params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("email", "contact@gmail.com")}
         reply = requests.post('http://localhost:8000/users/test@yahoo.com/vote', params=params)
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/pop', params=params)
         self.assertEqual(200, reply.status_code)
-        self.assertEqual(["{\"email\":\"contact@gmail.com\",\"votes\":1}"], reply.json()["most_popular_users"])
+        self.assertEqual("contact@gmail.com", reply.json()["most_popular_users"][0]["email"])
+        self.assertEqual(1, reply.json()["most_popular_users"][0]["votes"])
+        self.assertEqual("test@yahoo.com", reply.json()["most_popular_users"][1]["email"])
+        self.assertEqual(0, reply.json()["most_popular_users"][1]["votes"])
 
-#    def test_47_GetMostPopularUsersUnsuccessfully(self):
+#    def test_48_GetMostPopularUsersUnsuccessfully(self):
 #        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
 #        reply = requests.get('http://localhost:8000/users/pop', params=params)
 #        self.assertEqual(401, reply.status_code)
@@ -295,13 +340,13 @@ class testApplicationServer(unittest.TestCase):
 
 
 
-    def test_48_LogoutUnsuccessfully(self):
+    def test_49_LogoutUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
         reply = requests.delete('http://localhost:8000/users/test@yahoo.com/logout', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
-    def test_49_LogoutSuccessfully(self):
+    def test_50_LogoutSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.delete('http://localhost:8000/users/test@yahoo.com/logout', params=params)
         self.assertEqual(200, reply.status_code)

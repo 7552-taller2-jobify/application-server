@@ -1,20 +1,19 @@
+// "Copyright 2016 <Jobify>"
 #ifndef MAIL_H_
 #define MAIL_H_
-#include "curl/curl.h"
 #include <iostream>
 #include <sstream>
 #include "Response.h"
-
-using namespace std;
+#include "curl/curl.h"
 
 class Mail{
-private:
-		void* curl;
+ private:
+    void* curl;
 
-public:
-		Mail();
-		Response* Send();
-		~Mail();
+ public:
+    Mail();
+    Response* Send();
+    ~Mail();
 };
-#endif
+#endif  // MAIL_H_
 

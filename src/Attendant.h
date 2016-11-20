@@ -4,7 +4,7 @@
 #define ATTENDANT_H_
 
 #include <map>
-#include <iostream> //TODO borrar
+#include <iostream>
 #include "Constants.h"
 #include "Logger.h"
 #include "Profile.h"
@@ -15,6 +15,10 @@
 #include "Mail.h"
 #include "FirebaseService.h"
 #include "SharedService.h"
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/writer.h"
 
 typedef Response* (*function)(struct Message operation);
 
@@ -126,5 +130,20 @@ class Category: public Attendant {
     Category();
     ~Category();
     static Response* post(struct Message operation);
+    static Response* get(struct Message operation);
+};
+class Skill: public Attendant {
+ public:
+    Skill();
+    ~Skill();
+    static Response* post(struct Message operation);
+    static Response* get(struct Message operation);
+};
+class JobPosition: public Attendant {
+ public:
+    JobPosition();
+    ~JobPosition();
+    static Response* post(struct Message operation);
+    static Response* get(struct Message operation);
 };
 #endif  // ATTENDANT_H_

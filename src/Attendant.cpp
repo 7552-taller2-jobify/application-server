@@ -218,9 +218,7 @@ Facebook::Facebook() {
     this->functions["POST"] = post;
 }
 
-
 Facebook::~Facebook() {
-
 }
 void split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss;
@@ -238,72 +236,109 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
-Response* Facebook::get(struct Message operation) {    
+Response* Facebook::get(struct Message operation) {
     std::vector<std::string> urlVector = split(operation.uri, '/');
-    std::string token = urlVector[urlVector.size() -1] ;
-    
-    std::string url = "https://graph.facebook.com/v2.2/me?fields=id%2Cname%2Cemail%2Cabout%2Cbirthday%2Ceducation%2Cfirst_name&access_token=";
-    
+    std::string token = urlVector[urlVector.size() -1];
+
+    std::string urlFacebook = "https://graph.facebook.com/v2.2";
+    std::string query = "/me?fields=id%2Cname%2Cemail%2Cabout%2Cbirthday%2Ceducation%2Cfirst_name&access_token=";
+
     Request* request = new Request();
-    Response* facebookResponse = request->Execute( url + token);
+    Response* facebookResponse = request->Execute(urlFacebook + query + token);
     Response* response = new Response();
         response->setContent(facebookResponse->getContent());
-        response->setStatus(200);  
+        response->setStatus(200);
 
     return response;
 }
-//prueba envio mail
-Response* Facebook::post(struct Message operation) {    
+// prueba envio mail
+Response* Facebook::post(struct Message operation) {
     Mail* mail = new Mail();
 
     Response* response = new Response();
         response->setContent(mail->Send()->getContent());
-        response->setStatus(200);  
+        response->setStatus(200);
 
     return response;
 }
 
-//Para probar el envio de mensajeria desde un cliente
+// Para probar el envio de mensajeria desde un cliente
 Firebase::Firebase() {
     this->functions["POST"] = post;
 }
 
 Firebase::~Firebase() {
-
 }
-Response* Firebase::post(struct Message operation) {    
-    //std::string toTokenMAti ="eZrExMhfu-o:APA91bGJwLtfev7GkgvEEA-bS1aTFSvyupR7ieVGgMo2IqrUFgPlt-pPQtihviEp4n-aXMYNwvnNZEg6O_xX55fhi3MOwjpHOZbeSeQgCudSifFn37t-tn1bTq2c5F9oBm21m6v95Rsc";
-    //std::string toTokenFacu ="ciEaT_zMcQ8:APA91bEJxZCLBTgk1DKQJl0TxVIy-2BLmWWoEpJ7fo00nxjq13f9MxuNnDnQZZa8hqjdmz733wFoz4Vgaa4eqHgz8JwJWnKrBYC3e1YrGKeL-gRmyoEkxn8qJNZh4W9fL7_w-pB31bdi";
-    //token2 mati f0KndaMXQko:APA91bHP6ezwP07EuL67MzlJXVf19rsr4lI2J2CmcGrDXiXkQqL0g00sjtjJyYEwvpwaix9-FduRZbQ2FHQ-l9kKSC62kKyOZ-dYfmKmmrizGN1pOOONBkauVjyOjGvTFmxIXgsu3FTP
+Response* Firebase::post(struct Message operation) {
+    // std::string toTokenMAti
+    // "eZrExMhfu-o:APA91bGJwLtfev7GkgvEEA-bS1aTFSvyupR7ieVGgMo2IqrUFgPlt-pPQtihviEp4n-aXMYNwvnNZEg6O_xX55fhi3MOwjpHOZbeSeQgCudSifFn37t-tn1bTq2c5F9oBm21m6v95Rsc";
+    // std::string toTokenFacu
+    // "ciEaT_zMcQ8:APA91bEJxZCLBTgk1DKQJl0TxVIy-2BLmWWoEpJ7fo00nxjq13f9MxuNnDnQZZa8hqjdmz733wFoz4Vgaa4eqHgz8JwJWnKrBYC3e1YrGKeL-gRmyoEkxn8qJNZh4W9fL7_w-pB31bdi";
+    // token2 mati
+    // f0KndaMXQko:APA91bHP6ezwP07EuL67MzlJXVf19rsr4lI2J2CmcGrDXiXkQqL0g00sjtjJyYEwvpwaix9-FduRZbQ2FHQ-l9kKSC62kKyOZ-dYfmKmmrizGN1pOOONBkauVjyOjGvTFmxIXgsu3FTP
     std::vector<std::string> urlVector = split(operation.uri, '/');
-    std::string toToken = urlVector[urlVector.size() -1] ;
+    std::string toToken = urlVector[urlVector.size() -1];
 
     FirebaseService* firebaseService = new FirebaseService();
     Response* firebaseResponse = firebaseService->SendNotification(toToken, operation.body);
 
     Response* response = new Response();
         response->setContent(firebaseResponse->getContent());
-        response->setStatus(200);  
+        response->setStatus(200);
 
     return response;
 }
-//Para probar el enlace con el shared
+//  Para probar el enlace con el shared
 Category::Category() {
     this->functions["POST"] = post;
+    this->functions["GET"] = get;
 }
-
 Category::~Category() {
-
 }
-Response* Category::post(struct Message operation) {    
+Response* Category::post(struct Message operation) {
+    rapidjson::Document document;
+    rapidjson::ParseResult parseRes = document.Parse(operation.body.c_str());
+
     SharedService* shared = new SharedService();
-    
-    
-    Response* sharedResponse = shared->CreateCategory("categoria11111", "descripcion1");
+    return shared->createCategory(document["name"].GetString(), document["description"].GetString());
+}
+Response* Category::get(struct Message operation) {
+    SharedService* shared = new SharedService();
+    return shared->listCategories();
+}
+Skill::Skill() {
+    this->functions["POST"] = post;
+    this->functions["GET"] = get;
+}
+Skill::~Skill() {
+}
+Response* Skill::post(struct Message operation) {
+    rapidjson::Document document;
+    rapidjson::ParseResult parseRes = document.Parse(operation.body.c_str());
 
-    Response* response = new Response();
-        response->setContent(sharedResponse->getContent());
-        response->setStatus(200);  
+    SharedService* shared = new SharedService();
+    return shared->createSkill(document["name"].GetString(),
+        document["description"].GetString(), document["category"].GetString());
+}
+Response* Skill::get(struct Message operation) {
+    SharedService* shared = new SharedService();
+    return shared->listSkills();
+}
+JobPosition::JobPosition() {
+    this->functions["POST"] = post;
+    this->functions["GET"] = get;
+}
+JobPosition::~JobPosition() {
+}
+Response* JobPosition::post(struct Message operation) {
+    rapidjson::Document document;
+    rapidjson::ParseResult parseRes = document.Parse(operation.body.c_str());
 
-    return response;
+    SharedService* shared = new SharedService();
+    return shared->createJobPosition(document["name"].GetString(),
+        document["description"].GetString(), document["category"].GetString());
+}
+Response* JobPosition::get(struct Message operation) {
+    SharedService* shared = new SharedService();
+    return shared->listJobPositions();
 }

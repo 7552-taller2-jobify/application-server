@@ -21,4 +21,6 @@
 /users/.*@.*/perfil/skills/category/.* Login
 /users/facebook/* Facebook
 /firebase/notification/* Firebase
-/category Category
+/categories Category
+/skills Skill
+/job_positions JobPositions

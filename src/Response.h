@@ -9,7 +9,7 @@
 
 class Response {
  private:
-    long http_code;
+    int http_code;
     std::string content;
 
  public:
@@ -17,8 +17,8 @@ class Response {
     ~Response();
     std::string getContent();
     void setContent(std::string str);
-    void setStatus(long code);
-    long getStatus();
+    void setStatus(int code);
+    int getStatus();
 };
 
-#endif // RESPONSE_H_
+#endif  // RESPONSE_H_

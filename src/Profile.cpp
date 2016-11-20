@@ -468,7 +468,7 @@ void Solicitudes::getOwnInfo(const rapidjson::Document &document) {
     for (rapidjson::SizeType i = 0; i < document["solicitudes"].Size(); i++) {
         struct Solicitude solicitude;
         solicitude.date = document["solicitudes"][i]["date"].GetString();
-        solicitude.mail = document["solicitudes"][i]["mail"].GetString();
+        solicitude.email = document["solicitudes"][i]["email"].GetString();
         this->addSolicitude(solicitude);
     }
 }
@@ -480,9 +480,9 @@ std::string Solicitudes::getDateAt(int index) {
     return "";
 }
 
-std::string Solicitudes::getMailAt(int index) {
+std::string Solicitudes::getEmailAt(int index) {
     if (this->solicitudes.size() > index) {
-        return this->solicitudes.at(index).mail;
+        return this->solicitudes.at(index).email;
     }
     return "";
 }
@@ -491,7 +491,7 @@ int Solicitudes::search(struct Solicitude solicitude) {
     int index = 0;
     while ((this->solicitudes.size() > index)) {
         struct Solicitude aux_solicitude = this->solicitudes.at(index);
-        int comparison = std::strcmp(aux_solicitude.mail.c_str(), solicitude.mail.c_str());
+        int comparison = std::strcmp(aux_solicitude.email.c_str(), solicitude.email.c_str());
         if (comparison == 0) {
             return index;
         }
@@ -501,7 +501,7 @@ int Solicitudes::search(struct Solicitude solicitude) {
 }
 
 std::string Solicitudes::getSolicitudeAt(int index) {
-    return (this->getDateAt(index) + "," + this->getMailAt(index));
+    return (this->getDateAt(index) + "," + this->getEmailAt(index));
 }
 
 void Solicitudes::addSolicitude(struct Solicitude solicitude_to_add) {
@@ -523,7 +523,7 @@ std::string Solicitudes::createJsonFile() {
     std::string result = "{\"solicitudes\":[";
     for (int i = 0; i < this->solicitudes.size(); i++) {
         result += "{\"date\":\"" + this->solicitudes.at(i).date + "\"," +
-                    "\"mail\":\"" + this->solicitudes.at(i).mail + "\"}";
+                    "\"email\":\"" + this->solicitudes.at(i).email + "\"}";
         if (i != (this->solicitudes.size() - 1)) {
             result += ",";
         }

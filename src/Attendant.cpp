@@ -193,7 +193,7 @@ Response* Contact::post(Message operation) {
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
      Solicitude solicitude;
     solicitude.date = date;
-    solicitude.mail = contact_email;
+    solicitude.email = contact_email;
     int success = dbAdministrator->addSolicitude(email, token, solicitude);
     delete dbAdministrator;
     std::ostringstream s;
@@ -255,7 +255,7 @@ Response* Accept::post(Message operation) {
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
      Solicitude solicitude;
     solicitude.date = date;
-    solicitude.mail = contact_email;
+    solicitude.email = contact_email;
     bool rightCredential = dbAdministrator->rightClient(email, token);
     Response* response = new Response();
     if (rightCredential) {
@@ -303,7 +303,7 @@ Response* Reject::erase(Message operation) {
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
      Solicitude solicitude;
     solicitude.date = date;
-    solicitude.mail = contact_email;
+    solicitude.email = contact_email;
     bool rightCredential = dbAdministrator->rightClient(email, token);
     Response* response = new Response();
     if (rightCredential) {

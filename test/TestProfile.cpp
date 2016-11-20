@@ -381,7 +381,7 @@ TEST_F(TestProfile, testSolicitudesWellCreated) {
 TEST_F(TestProfile, testAddSolicitude) {
     struct Solicitude solicitude;
     solicitude.date = "28-10-2010T12:34:00.000Z";
-    solicitude.mail = "hernan@gmail.com";
+    solicitude.email = "hernan@gmail.com";
     solicitudes->addSolicitude(solicitude);
     ASSERT_EQ(solicitudes->getSolicitudeAt(0), "01-01-2010T12:34:00.000Z,smpiano@gmail.com");
     ASSERT_EQ(solicitudes->getSolicitudeAt(1), "03-01-2010T12:34:00.000Z,facundo.sanchez.galindo@gmail.com");
@@ -390,7 +390,7 @@ TEST_F(TestProfile, testAddSolicitude) {
 
 TEST_F(TestProfile, testRemoveSolicitude) {
     struct Solicitude solicitude;
-    solicitude.mail = "smpiano@gmail.com";
+    solicitude.email = "smpiano@gmail.com";
     solicitudes->removeSolicitude(solicitude);
     ASSERT_EQ(solicitudes->getSolicitudeAt(0), "03-01-2010T12:34:00.000Z,facundo.sanchez.galindo@gmail.com");
 }
@@ -398,7 +398,7 @@ TEST_F(TestProfile, testRemoveSolicitude) {
 TEST_F(TestProfile, testUpdateJsonSolicitudes) {
     struct Solicitude solicitude;
     solicitude.date = "28-10-2010T12:34:00.000Z";
-    solicitude.mail = "hernan@gmail.com";
+    solicitude.email = "hernan@gmail.com";
     solicitudes->addSolicitude(solicitude);
     solicitudes->updateJson(solicitudes_output);
     Solicitudes *solicitudes_modified = new Solicitudes();

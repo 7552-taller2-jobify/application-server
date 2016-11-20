@@ -201,7 +201,7 @@ class OthersRecommendations: public Contacts {
 
 struct Solicitude {
     std::string date;
-    std::string mail;
+    std::string email;
 };
 
 class Solicitudes: public Profile {
@@ -210,7 +210,7 @@ class Solicitudes: public Profile {
 
     void getOwnInfo(const rapidjson::Document &document);
     std::string getDateAt(int index);
-    std::string getMailAt(int index);
+    std::string getEmailAt(int index);
     int search(struct Solicitude solicitude);
 
  public:

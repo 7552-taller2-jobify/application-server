@@ -227,7 +227,7 @@ int DataBaseAdministrator::addFriend(std::string email, struct Solicitude solici
     }
     friends->loadJson(DataBase::getInstance().get("FRIENDS_" + email));
     DataBase::getInstance().erase("FRIENDS_" + email);
-    friends->addContact(solicitude_to_delete.mail);
+    friends->addContact(solicitude_to_delete.email);
     DataBase::getInstance().put("FRIENDS_" + email, friends->createJsonFile());
     delete friends;
     return return_code;

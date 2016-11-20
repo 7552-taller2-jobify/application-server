@@ -10,7 +10,7 @@ Attendant::Attendant() {}
 
 Attendant::~Attendant() {}
 
-Response* Attendant::attend(struct Message operation) {
+Response* Attendant::attend(Message operation) {
     Response* response = NULL;
     if (strcmp(operation.verb.c_str(), "DELETE") == 0) {
         response = this->functions["ERASE"](operation);
@@ -41,7 +41,7 @@ Login::Login() {
 
 Login::~Login() {}
 
-Response* Login::post(struct Message operation) {
+Response* Login::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     LoginInformation *loginInformation = new LoginInformation();
     bool hasLoginFacebook = strcmp(operation.params.c_str(), "app=facebook") == 0;
@@ -73,7 +73,7 @@ Logout::Logout() {
 
 Logout::~Logout() {}
 
-Response* Logout::put(struct Message operation) {
+Response* Logout::put(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -116,7 +116,7 @@ Register::Register() {
 
 Register::~Register() {}
 
-Response* Register::post(struct Message operation) {
+Response* Register::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     Personal *personal = new Personal();
     LoginInformation *loginInformation = new LoginInformation();
@@ -165,7 +165,7 @@ RecoveryPass::RecoveryPass() {
 
 RecoveryPass::~RecoveryPass() {}
 
-Response* RecoveryPass::get(struct Message operation) {
+Response* RecoveryPass::get(Message operation) {
     std::cout << "Chau\n" << std::endl;
 }
 
@@ -178,8 +178,8 @@ Contact::Contact() {
 
 Contact::~Contact() {}
 
-Response* Contact::post(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* Contact::post(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -193,7 +193,7 @@ Response* Contact::post(struct Message operation) {
     int number[3];
     date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-    struct Solicitude solicitude;
+     Solicitude solicitude;
     solicitude.date = date;
     solicitude.mail = contact_email;
     int success = dbAdministrator->addSolicitude(email, token, solicitude);
@@ -212,8 +212,8 @@ Response* Contact::post(struct Message operation) {
     return response;
 }
 
-Response* Contact::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* Contact::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -240,8 +240,8 @@ Accept::Accept() {
 
 Accept::~Accept() {}
 
-Response* Accept::post(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* Accept::post(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -255,7 +255,7 @@ Response* Accept::post(struct Message operation) {
     int number[3];
     date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-    struct Solicitude solicitude;
+     Solicitude solicitude;
     solicitude.date = date;
     solicitude.mail = contact_email;
     bool rightCredential = dbAdministrator->rightClient(email, token);
@@ -288,8 +288,8 @@ Reject::Reject() {
 
 Reject::~Reject() {}
 
-Response* Reject::erase(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* Reject::erase(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -303,7 +303,7 @@ Response* Reject::erase(struct Message operation) {
     int number[3];
     date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-    struct Solicitude solicitude;
+     Solicitude solicitude;
     solicitude.date = date;
     solicitude.mail = contact_email;
     bool rightCredential = dbAdministrator->rightClient(email, token);
@@ -329,7 +329,6 @@ Response* Reject::erase(struct Message operation) {
 }
 
 
-
 ProfilePersonal::ProfilePersonal() {
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
@@ -337,8 +336,8 @@ ProfilePersonal::ProfilePersonal() {
 
 ProfilePersonal::~ProfilePersonal() {}
 
-Response* ProfilePersonal::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfilePersonal::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     const int SIZE_NAME_PARAMETER = 6;
@@ -355,8 +354,8 @@ Response* ProfilePersonal::get(struct Message operation) {
     return response;
 }
 
-Response* ProfilePersonal::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfilePersonal::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     Personal *personal = new Personal();
@@ -386,8 +385,8 @@ ProfileSummary::ProfileSummary() {
 
 ProfileSummary::~ProfileSummary() {}
 
-Response* ProfileSummary::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileSummary::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     const int SIZE_NAME_PARAMETER = 6;
@@ -404,8 +403,8 @@ Response* ProfileSummary::get(struct Message operation) {
     return response;
 }
 
-Response* ProfileSummary::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileSummary::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     Summary *summary = new Summary();
@@ -436,8 +435,8 @@ ProfileExpertise::ProfileExpertise() {
 
 ProfileExpertise::~ProfileExpertise() {}
 
-Response* ProfileExpertise::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileExpertise::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -461,8 +460,8 @@ Response* ProfileExpertise::put(struct Message operation) {
     return response;
 }
 
-Response* ProfileExpertise::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileExpertise::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -491,7 +490,7 @@ ProfileSkills::ProfileSkills() {
 
 ProfileSkills::~ProfileSkills() {}
 
-Response* ProfileSkills::post(struct Message operation) {
+Response* ProfileSkills::post(Message operation) {
     RequestParse *rp = new RequestParse();
     std::string mail = rp->extractEmail(operation.uri);
     delete rp;
@@ -506,8 +505,8 @@ Response* ProfileSkills::post(struct Message operation) {
     return response;
 }
 
-Response* ProfileSkills::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileSkills::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -532,8 +531,8 @@ Response* ProfileSkills::put(struct Message operation) {
     return response;
 }
 
-Response* ProfileSkills::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileSkills::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -561,8 +560,8 @@ ProfilePhoto::ProfilePhoto() {
 
 ProfilePhoto::~ProfilePhoto() {}
 
-Response* ProfilePhoto::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfilePhoto::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -581,8 +580,8 @@ Response* ProfilePhoto::get(struct Message operation) {
     return response;
 }
 
-Response* ProfilePhoto::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfilePhoto::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -614,7 +613,7 @@ ProfileFriends::ProfileFriends() {
 
 ProfileFriends::~ProfileFriends() {}
 
-Response* ProfileFriends::get(struct Message operation) {
+Response* ProfileFriends::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -643,7 +642,7 @@ Vote::Vote() {
 
 Vote::~Vote() {}
 
-Response* Vote::post(struct Message operation) {
+Response* Vote::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -669,7 +668,7 @@ Response* Vote::post(struct Message operation) {
     return response;
 }
 
-Response* Vote::erase(struct Message operation) {
+Response* Vote::erase(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -703,7 +702,7 @@ ProfileOwnRecommendations::ProfileOwnRecommendations() {
 
 ProfileOwnRecommendations::~ProfileOwnRecommendations() {}
 
-Response* ProfileOwnRecommendations::get(struct Message operation) {
+Response* ProfileOwnRecommendations::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -731,7 +730,7 @@ ProfileOthersRecommendations::ProfileOthersRecommendations() {
 
 ProfileOthersRecommendations::~ProfileOthersRecommendations() {}
 
-Response* ProfileOthersRecommendations::get(struct Message operation) {
+Response* ProfileOthersRecommendations::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -759,7 +758,7 @@ MostPopularUsers::MostPopularUsers() {
 
 MostPopularUsers::~MostPopularUsers() {}
 
-Response* MostPopularUsers::get(struct Message operation) {
+Response* MostPopularUsers::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);

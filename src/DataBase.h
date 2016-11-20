@@ -5,8 +5,11 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 #include "leveldb/db.h"
 #include "Logger.h"
+#include "Constants.h"
 
 const char PATH_DB[] = "./db";
 
@@ -28,6 +31,7 @@ class DataBase {
     std::string get(std::string key);
     void put(std::string key, std::string value);
     void erase(std::string key);
+    leveldb::Iterator* getIterator();
 };
 
 #endif  // DATABASE_H_

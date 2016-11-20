@@ -78,7 +78,7 @@ class TestProfile : public ::testing::Test {
 };
 
 TEST_F(TestProfile, testPersonalWellCreated) {
-    ASSERT_EQ(personal->getDeviceId(), 1);
+    ASSERT_EQ(personal->getDeviceId(), "1");
     ASSERT_EQ(personal->getFirstName(), "Sergio Matías");
     ASSERT_EQ(personal->getLastName(), "Piano");
     ASSERT_EQ(personal->getEmail(), "smpiano@gmail.com");

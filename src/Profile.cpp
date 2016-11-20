@@ -3,6 +3,8 @@
 #include "Profile.h"
 #include <string>
 #include <iostream>
+#include <algorithm>
+#include <functional>
 
 Profile::Profile() {}
 
@@ -54,8 +56,6 @@ void Profile::setItem(std::string *items, int index, std::string new_item) {
     }
 }
 
-
-
 void LoginInformation::getOwnInfo(const rapidjson::Document &document) {
     this->email = document["email"].GetString();
     this->password = document["password"].GetString();
@@ -86,24 +86,37 @@ std::string LoginInformation::createJsonFile() {
 
 
 void Personal::getOwnInfo(const rapidjson::Document &document) {
-    std::cout<<"Inicio carga Objeto Personal"<<std::endl;
+    std::cout << "Inicio carga Objeto Personal" << std::endl;
+
     this->first_name = document["first_name"].GetString();
     this->last_name = document["last_name"].GetString();
-    this->email = document["email"].GetString();
+
+    if (document.HasMember("email") && document["email"].IsString()) {
+        this->email = document["email"].GetString();
+    } else {
+        this->email = "";
+    }
+
     this->gender = document["gender"].GetString();
     this->birthday = document["birthday"].GetString();
     this->address[0] = document["address"]["lat"].GetString();
     this->address[1] = document["address"]["lon"].GetString();
     this->city = document["city"].GetString();
-    this->device_id = document["device_id"].GetDouble();
-    std::cout<<"Fin carga Objeto Personal"<<std::endl;
+
+    if (document.HasMember("device_id") && document["device_id"].IsString()) {
+        this->device_id = document["device_id"].GetString();
+    } else {
+        this->device_id = "";
+    }
+
+    std::cout << "Fin carga Objeto Personal" << std::endl;
 }
 
 bool Personal::isNull(std::string field) {
     return (std::strcmp(field.c_str(), "") == 0);
 }
 
-double Personal::getDeviceId() {
+std::string Personal::getDeviceId() {
     return this->device_id;
 }
 
@@ -135,7 +148,7 @@ std::string Personal::getCity() {
     return this->city;
 }
 
-void Personal::setDeviceId(double new_id) {
+void Personal::setDeviceId(std::string new_id) {
     this->device_id = new_id;
 }
 
@@ -173,11 +186,7 @@ void Personal::setPassword(std::string password) {
 }
 
 std::string Personal::createJsonFile() {
-    std::ostringstream oss;
-    oss << this->device_id;
-    std::string id_parsed = oss.str();
-
-    std::string id = "{\"device_id\":" + id_parsed + ",",
+    std::string id = "{\"device_id\":\"" + this->device_id + "\",",
     first_name = "\"first_name\":\"" + this->first_name + "\",",
     last_name = "\"last_name\":\"" + this->last_name + "\",",
     email = "\"email\":\"" + this->email + "\",",
@@ -416,19 +425,21 @@ int Contacts::search(std::string contact) {
     return -1;
 }
 
-void Contacts::addContact(std::string contact_to_add) {
+int Contacts::addContact(std::string contact_to_add) {
     int index = this->search(contact_to_add);
     if (index == -1) {
         this->contacts.push_back(contact_to_add);
         std::sort(this->contacts.begin(), this->contacts.end(), std::less<std::string>());
     }
+    return index;
 }
 
-void Contacts::removeContact(std::string contact_to_remove) {
+int Contacts::removeContact(std::string contact_to_remove) {
     int index = this->search(contact_to_remove);
     if (index != -1) {
         this->contacts.erase(this->contacts.begin() + index);
     }
+    return index;
 }
 
 void Contacts::getOwnInfo(const rapidjson::Document &document) {
@@ -448,6 +459,9 @@ std::string Contacts::createJsonFile() {
     return result + "]}";
 }
 
+int Contacts::getNumberOfContacts() {
+    this->contacts.size();
+}
 
 
 void Solicitudes::getOwnInfo(const rapidjson::Document &document) {
@@ -497,11 +511,12 @@ void Solicitudes::addSolicitude(struct Solicitude solicitude_to_add) {
     }
 }
 
-void Solicitudes::removeSolicitude(struct Solicitude solicitude_to_remove) {
+int Solicitudes::removeSolicitude(struct Solicitude solicitude_to_remove) {
     int index = this->search(solicitude_to_remove);
     if (index != -1) {
         this->solicitudes.erase(this->solicitudes.begin() + index);
     }
+    return index;
 }
 
 std::string Solicitudes::createJsonFile() {
@@ -568,4 +583,37 @@ std::string Conversation::createJsonFile() {
         }
     }
     return result + "]}";
+}
+
+void Credentials::getOwnInfo(const rapidjson::Document &document) {
+    this->token = document["token"].GetString();
+    this->incremental_number = document["incremental_number"].GetInt();
+}
+
+std::string Credentials::getToken() {
+    return this->token;
+}
+
+int Credentials::getIncrementalNumber() {
+    return this->incremental_number;
+}
+
+void Credentials::setToken(std::string token) {
+    this->token = token;
+}
+void Credentials::setIncrementalNumber(int incremental_number) {
+    this->incremental_number = incremental_number;
+}
+
+void Credentials::increaseIncrementalNumber(int increase) {
+    this->incremental_number += increase;
+}
+
+std::string Credentials::createJsonFile() {
+    std::ostringstream s;
+    s << this->incremental_number;
+    std::string incremental_number_parsed = s.str();
+
+    return "{\"token\":\"" + this->token + "\"," +
+            "\"incremental_number\":" + incremental_number_parsed + "}";
 }

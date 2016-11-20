@@ -23,6 +23,7 @@
 #include "rapidjson/writer.h"
 #include "RequestParse.h"
 #include "Authentication.h"
+#include <vector>
 
 typedef Response* (*function) (Message operation);
 
@@ -168,6 +169,7 @@ class MostPopularUsers: public Attendant {
     ~MostPopularUsers();
     static Response* get(Message operation);
 };
+
 class Facebook: public Attendant {
  public:
     Facebook();
@@ -202,4 +204,15 @@ class JobPosition: public Attendant {
     static Response* post(struct Message operation);
     static Response* get(struct Message operation);
 };
+
+class Search: public Attendant {
+ private:
+    static void loadParameters(std::string params, std::string *token, double *lat, double *lon, double *distance, std::string *position, std::vector<std::string> *skills);
+    static std::string random_string(std::string const &charset);
+ public:
+    Search();
+    ~Search();
+    static Response* get(Message operation);
+};
+
 #endif  // ATTENDANT_H_

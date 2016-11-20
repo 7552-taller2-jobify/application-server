@@ -10,7 +10,7 @@ import json
 
 class testApplicationServer(unittest.TestCase):
     def test_01_RegisterEmptyFields(self):
-        sleep(5)
+        sleep(1)
         body = {"email": "test@yahoo.com", "password": "admin", "device_id": "123", "first_name": "", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
                 "address": { "lat": "123456789", "lon": "12345678" }, "city": "lalala" }
         reply = requests.post('http://localhost:8000/users/register', json=body)
@@ -339,6 +339,10 @@ class testApplicationServer(unittest.TestCase):
 #        self.assertEqual("Invalid credentials.", reply.json()["message"])
 
 
+    def test_48_SearchByPosition(self):
+        params = (('distance', '199'),('lat', '199'),('lon', '199'),('position', 'Desarrollador Java'),('skills', 'UML, Unit Test'),('token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4'))
+        reply = requests.get('http://localhost:8000/users/search', params=params)
+        self.assertEqual(200, reply.status_code)
 
     def test_49_LogoutUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}

@@ -908,4 +908,68 @@ Response* JobPosition::post(struct Message operation) {
 Response* JobPosition::get(struct Message operation) {
     SharedService* shared = new SharedService();
     return shared->listJobPositions();
+
+Search::Search() {
+    this->functions["GET"] = get;
+}
+
+Search::~Search() {}
+
+Response* Search::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    
+    double lat, lon, distance;
+    std::string token, position;
+    std::vector<std::string> *skills = new std::vector<std::string>();
+    std::cout << "inicio cargando datos "<< std::endl;
+    loadParameters(operation.params, &token, &lat, &lon, &distance, &position, skills);
+    std::cout << "fin cargando datos "<< std::endl;
+    Response* response = new Response();
+    delete dbAdministrator;
+
+    return response;
+}
+
+void Search::loadParameters(std::string params, std::string *token, double *lat, double *lon, double *distance, std::string *position, std::vector<std::string> *skills){
+    int pos_token = params.find("&token=");
+    int pos_lat = params.find("&lat=");
+    int pos_lon = params.find("&lon=");
+    int pos_distance = params.find("distance=");
+    int pos_position = params.find("&position=");
+    int pos_skills = params.find("&skills=");
+    std::string distance1 = params.substr(pos_distance + 9, pos_lat - pos_distance - 9 );
+    std::string lat1 = params.substr(pos_lat + 5, pos_lon - distance1.length() - 14);
+    std::string lon1 = params.substr(pos_lon + 5, pos_position - distance1.length() - lat1.length() - 19);
+    *position = params.substr(pos_position + 10, pos_skills - distance1.length() - lat1.length() - lon1.length() - 29);
+    std::string skills_parse = params.substr(pos_skills + 8, pos_token - distance1.length() - lat1.length() - lon1.length() - position->length()- 37);
+    *token = params.substr(pos_token + 7);
+    //std::string skills_parse = params.substr(pos_token + 7);
+    
+
+ //   CURL *curl = curl_easy_init();
+ //   int number[3];
+    *position = random_string((*position).c_str());
+
+    RequestParse * rp = new RequestParse();
+    *skills = rp->split(skills_parse, ",");
+    delete rp;
+
+    std::cout << "token : " << *token << std::endl;
+    std::cout << "position : " << *position << std::endl;
+    std::cout << "lat : " << lat1 << std::endl;
+    std::cout << "lon : " << lon1 << std::endl;
+    std::cout << "distance : " << distance1 << std::endl;
+    for (int i = 0; i < skills->size(); i++){
+        std::cout << "skill " << i << " : " << (*skills)[i] << std::endl;
+    }
+
+}
+
+std::string Search::random_string(std::string const &charset)
+{
+    const int N = 10;
+    std::string result;
+    for (int i=0; i<N; i++)
+        result[i] = charset[rand() % charset.size()];
+    return result;
 }

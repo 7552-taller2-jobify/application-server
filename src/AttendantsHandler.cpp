@@ -27,7 +27,7 @@ AttendantsHandler::AttendantsHandler() {
     attendants["ProfileOwnRecommendations"] = new ProfileOwnRecommendations();
     attendants["ProfileOthersRecommendations"] = new ProfileOthersRecommendations();
     attendants["MostPopularUsers"] = new MostPopularUsers();
-
+    attendants["Search"] = new Search();
     this->url_mapper = new URLMapper();
 }
 

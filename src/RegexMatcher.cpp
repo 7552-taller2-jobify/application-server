@@ -20,6 +20,10 @@ int RegexMatcher::match(const char *string_to_compare, const char *pattern) {
     }
     status = regexec(&re, string_to_compare, 1, &rm, 0);
     regfree(&re);
+std::cout<<"\n\n"<<std::endl;
+std::cout<<"Patrón: "<<pattern<<std::endl;
+std::cout<<"string_to_compare: "<<string_to_compare<<std::endl;
+std::cout<<"status: "<<status<<std::endl;
     if (status != 0) {
         return 2;
     }

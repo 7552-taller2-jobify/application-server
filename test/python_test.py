@@ -10,7 +10,7 @@ import json
 
 class testApplicationServer(unittest.TestCase):
     def test_01_RegisterEmptyFields(self):
-        sleep(5)
+        sleep(1)
         body = {"email": "test@yahoo.com", "password": "admin", "device_id": "123", "first_name": "", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
                 "address": { "lat": "123456789", "lon": "12345678" }, "city": "lalala" }
         reply = requests.post('http://localhost:8000/users/register', json=body)
@@ -210,7 +210,7 @@ class testApplicationServer(unittest.TestCase):
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/contact', params=params)
         self.assertEqual(200, reply.status_code)
         self.assertEqual("03-01-2010T12:34:00.000Z", reply.json()["solicitudes"][0]["date"])
-        self.assertEqual("contact@gmail.com", reply.json()["solicitudes"][0]["mail"])
+        self.assertEqual("contact@gmail.com", reply.json()["solicitudes"][0]["email"])
 
     def test_29_GetContactUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
@@ -256,13 +256,13 @@ class testApplicationServer(unittest.TestCase):
 
     def test_36_GetFriendsSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/contacts', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/contacts', params=params)
         self.assertEqual(200, reply.status_code)
-        self.assertEqual([], reply.json()["solicitudes"])
+        self.assertEqual([], reply.json()["friends"])
 
     def test_37_GetFriendsUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/contacts', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/contacts', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
@@ -339,6 +339,10 @@ class testApplicationServer(unittest.TestCase):
 #        self.assertEqual("Invalid credentials.", reply.json()["message"])
 
 
+    def test_48_SearchByPosition(self):
+        params = (('distance', '199'),('lat', '199'),('lon', '199'),('position', 'Desarrollador Java'),('skills', 'UML, Unit Test'),('token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4'))
+        reply = requests.get('http://localhost:8000/users/search', params=params)
+        self.assertEqual(200, reply.status_code)
 
     def test_49_LogoutUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}

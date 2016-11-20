@@ -1,15 +1,29 @@
 // "Copyright 2016 <Jobify>"
 
-#include "Request.h"
 #include <string>
+#include "Request.h"
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
     std::string data((const char*) ptr, (size_t) size * nmemb);
-    *((std::stringstream*) stream) << data << endl;
+    *((std::stringstream*) stream) << data << std::endl;
     return size * nmemb;
 }
 
-Request::Request() {}
+Request::Request() {
+    slist1 = NULL;
+}
+
+void Request::SetContentJson() {
+  slist1 = curl_slist_append(slist1, "Authorization:key=AIzaSyAkvyuxBXTzeLiz9wkE2WrAsfyk0ylkQOk");
+  slist1 = curl_slist_append(slist1, "Accept: application/json");
+  slist1 = curl_slist_append(slist1, "Content-Type: application/json");
+  // headers = curl_slist_append(headers, "charsets: utf-8");
+}
+
+void Request::SetAuthorization(std::string authorization) {
+  std::string value = "Authorization:" + authorization;
+  slist1 = curl_slist_append(slist1, value.c_str() );
+}
 
 Response*  Request::Execute(const std::string url) {
     curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -54,7 +68,7 @@ Response*  Request::Execute(const std::string url) {
     /* Perform the request, res will get the return code */
     CURLcode res = curl_easy_perform(curl);
 
-    long http_code = 0;
+    int http_code = 0;
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
 
     /* Check for errors */
@@ -72,7 +86,7 @@ Response*  Request::Execute(const std::string url) {
 
 struct WriteThis {
     const char *readptr;
-    long sizeleft;
+    int sizeleft;
 };
 
 static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *userp) {
@@ -94,11 +108,7 @@ static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *userp) {
 Response* Request::ExecutePost(std::string url, std::string body) {
     std::stringstream out;
     CURLcode ret;
-    struct curl_slist *slist1;
-
-    slist1 = NULL;
     slist1 = curl_slist_append(slist1, "Content-Type: application/json");
-
     curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
@@ -109,22 +119,22 @@ Response* Request::ExecutePost(std::string url, std::string body) {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
     curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
 
-    // curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-    // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
+  //  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+  //  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
     ret = curl_easy_perform(curl);
 
-    long http_code = 0;
+    int http_code = 0;
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
 
-    // curl_slist_free_all(slist1);
-    // slist1 = NULL;
+  //  curl_slist_free_all(slist1);
+  //  slist1 = NULL;
 
     Response* response = new Response();
     response->setContent(out.str());
     response->setStatus(http_code);
 
     return response;
-}
+  }
 
 Request::~Request() {
     curl = NULL;

@@ -16,7 +16,7 @@ class RequestAdministrator {
     struct mg_connection *c;
     int ev;
     struct http_message* hm;
-    RequestParse* rp;	
+    RequestParse* rp;
     AttendantsHandler* attendantHandler;
 
  public:

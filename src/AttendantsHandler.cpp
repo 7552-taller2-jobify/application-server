@@ -17,12 +17,17 @@ AttendantsHandler::AttendantsHandler() {
     attendants["ProfileExpertise"] = new ProfileExpertise();
     attendants["ProfileSkills"] = new ProfileSkills();
     attendants["ProfilePhoto"] = new ProfilePhoto();
+    attendants["Facebook"] = new Facebook();
+    attendants["Firebase"] = new Firebase();
+    attendants["Category"] = new Category();
+    attendants["Skill"] = new Skill();
+    attendants["JobPositions"] = new JobPosition();
     attendants["ProfileFriends"] = new ProfileFriends();
     attendants["Vote"] = new Vote();
     attendants["ProfileOwnRecommendations"] = new ProfileOwnRecommendations();
     attendants["ProfileOthersRecommendations"] = new ProfileOthersRecommendations();
     attendants["MostPopularUsers"] = new MostPopularUsers();
-
+    attendants["Search"] = new Search();
     this->url_mapper = new URLMapper();
 }
 

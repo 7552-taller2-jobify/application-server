@@ -44,7 +44,7 @@ class Logout: public Attendant {
     Logout();
     ~Logout();
     static Response* get(Message operation);
-    static Response* put(Message operation);
+    static Response* erase(Message operation);
 };
 
 class Register: public Attendant {

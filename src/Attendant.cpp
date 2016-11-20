@@ -68,12 +68,12 @@ Response* Login::post(Message operation) {
 }
 
 Logout::Logout() {
-    this->functions["PUT"] = put;
+    this->functions["ERASE"] = erase;
 }
 
 Logout::~Logout() {}
 
-Response* Logout::put(Message operation) {
+Response* Logout::erase(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);

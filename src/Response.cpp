@@ -1,5 +1,7 @@
+// "Copyright 2016 <Jobify>"
 #include "Response.h"
 #include <string>
+
 
 Response::Response() {}
 
@@ -7,7 +9,7 @@ std::string Response::getContent() {
     return content;
 }
 
-long Response::getStatus() {
+int Response::getStatus() {
     return http_code;
 }
 
@@ -15,7 +17,7 @@ void Response::setContent(std::string str) {
     content = str;
 }
 
-void Response::setStatus(long code) {
+void Response::setStatus(int code) {
     http_code = code;
 }
 

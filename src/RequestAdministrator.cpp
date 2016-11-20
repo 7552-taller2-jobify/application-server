@@ -35,7 +35,7 @@ void RequestAdministrator::handle() {
                 std::cout << "body out : " << response->getContent() << std::endl;
                 std::cout << "status out : " << response->getStatus() << std::endl;
 
-                mg_printf(c, "HTTP/1.0 %li\r\n"
+                mg_printf(c, "HTTP/1.0 %i\r\n"
                              "Content-Length: %d\r\n"
                              "Content-Type: application/json\r\n\r\n%s",
                              response->getStatus(), static_cast<int> (response->getContent().size()),

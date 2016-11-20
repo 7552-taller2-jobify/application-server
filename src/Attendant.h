@@ -13,6 +13,14 @@
 #include "Response.h"
 #include "DataBaseAdministrator.h"
 #include "DataBase.h"
+#include "Request.h"
+#include "Mail.h"
+#include "FirebaseService.h"
+#include "SharedService.h"
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/writer.h"
 #include "RequestParse.h"
 #include "Authentication.h"
 
@@ -160,5 +168,38 @@ class MostPopularUsers: public Attendant {
     ~MostPopularUsers();
     static Response* get(struct Message operation);
 };
-
+class Facebook: public Attendant {
+ public:
+    Facebook();
+    ~Facebook();
+    static Response* get(struct Message operation);
+    static Response* post(struct Message operation);
+};
+class Firebase: public Attendant {
+ public:
+    Firebase();
+    ~Firebase();
+    static Response* post(struct Message operation);
+};
+class Category: public Attendant {
+ public:
+    Category();
+    ~Category();
+    static Response* post(struct Message operation);
+    static Response* get(struct Message operation);
+};
+class Skill: public Attendant {
+ public:
+    Skill();
+    ~Skill();
+    static Response* post(struct Message operation);
+    static Response* get(struct Message operation);
+};
+class JobPosition: public Attendant {
+ public:
+    JobPosition();
+    ~JobPosition();
+    static Response* post(struct Message operation);
+    static Response* get(struct Message operation);
+};
 #endif  // ATTENDANT_H_

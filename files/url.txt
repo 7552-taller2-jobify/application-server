@@ -20,3 +20,11 @@
 /users/pop MostPopularUsers
 /users/search Login
 /users/.*@.*/chat Login
+/users/.*@.*/perfil/expertise/position Login
+/users/.*@.*/perfil/expertise/position/.* Login
+/users/.*@.*/perfil/skills/category/.* Login
+/users/facebook/* Facebook
+/firebase/notification/* Firebase
+/categories Category
+/skills Skill
+/job_positions JobPositions

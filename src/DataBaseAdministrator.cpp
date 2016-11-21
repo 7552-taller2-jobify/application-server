@@ -221,15 +221,17 @@ int DataBaseAdministrator::addFriend(std::string email, struct Solicitude solici
     int return_code = solicitudes->removeSolicitude(solicitude_to_delete);
     DataBase::getInstance().put("SOLICITUDES_" + email, solicitudes->createJsonFile());
     delete solicitudes;
-    Friends *friends = new Friends();
-    if (DataBase::getInstance().get("FRIENDS_" + email) == "") {
-        DataBase::getInstance().put("FRIENDS_" + email, "{\"friends\":[]}");
+    if (return_code != -1) {
+        Friends *friends = new Friends();
+        if (DataBase::getInstance().get("FRIENDS_" + email) == "") {
+            DataBase::getInstance().put("FRIENDS_" + email, "{\"friends\":[]}");
+        }
+        friends->loadJson(DataBase::getInstance().get("FRIENDS_" + email));
+        DataBase::getInstance().erase("FRIENDS_" + email);
+        friends->addContact(solicitude_to_delete.email);
+        DataBase::getInstance().put("FRIENDS_" + email, friends->createJsonFile());
+        delete friends;
     }
-    friends->loadJson(DataBase::getInstance().get("FRIENDS_" + email));
-    DataBase::getInstance().erase("FRIENDS_" + email);
-    friends->addContact(solicitude_to_delete.email);
-    DataBase::getInstance().put("FRIENDS_" + email, friends->createJsonFile());
-    delete friends;
     return return_code;
 }
 

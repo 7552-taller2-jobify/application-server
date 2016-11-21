@@ -255,7 +255,7 @@ Response* Accept::post(Message operation) {
     int number[3];
     date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-     Solicitude solicitude;
+    Solicitude solicitude;
     solicitude.date = date;
     solicitude.email = contact_email;
     bool rightCredential = dbAdministrator->rightClient(email, token);

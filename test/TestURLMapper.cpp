@@ -19,7 +19,7 @@ class TestURLMapper : public ::testing::Test {
 };
 
 TEST_F(TestURLMapper, testFindExistingKey) {
-    std::string id = url_mapper->find("http://users/.*@.*/perfil/expertise");
+    std::string id = url_mapper->find("/users/.*@.*/perfil/expertise");
     ASSERT_EQ(id, "ProfileExpertise");
 }
 

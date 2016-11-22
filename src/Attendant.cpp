@@ -851,8 +851,8 @@ Response* Firebase::post(struct Message operation) {
     Response* firebaseResponse = firebaseService->SendNotification(toToken, operation.body);
 
     Response* response = new Response();
-        response->setContent(firebaseResponse->getContent());
-        response->setStatus(200);
+    response->setContent(firebaseResponse->getContent());
+    response->setStatus(200);
 
     return response;
 }
@@ -938,6 +938,8 @@ Response* Search::get(Message operation) {
     Response* response = new Response();
     delete dbAdministrator;
 
+    response->setContent("");
+    response->setStatus(200);
     return response;
 }
 
@@ -954,12 +956,9 @@ void Search::loadParameters(std::string params, std::string *token, double *lat,
     *position = params.substr(pos_position + 10, pos_skills - distance1.length() - lat1.length() - lon1.length() - 29);
     std::string skills_parse = params.substr(pos_skills + 8, pos_token - distance1.length() - lat1.length() - lon1.length() - position->length()- 37);
     *token = params.substr(pos_token + 7);
-    //std::string skills_parse = params.substr(pos_token + 7);
-    
-
- //   CURL *curl = curl_easy_init();
- //   int number[3];
-    *position = random_string((*position).c_str());
+  
+    *position = URLDecode(*position);
+    skills_parse = URLDecode(skills_parse);
 
     RequestParse * rp = new RequestParse();
     *skills = rp->split(skills_parse, ",");
@@ -976,11 +975,18 @@ void Search::loadParameters(std::string params, std::string *token, double *lat,
 
 }
 
-std::string Search::random_string(std::string const &charset)
-{
-    const int N = 10;
-    std::string result;
-    for (int i=0; i<N; i++)
-        result[i] = charset[rand() % charset.size()];
-    return result;
+std::string Search::URLDecode(std::string text){
+    text = curl_unescape(text.c_str(), 0);
+    RequestParse * rp = new RequestParse();
+    std::vector<std::string> words =  rp->split(text, "+");  
+    delete rp;
+    std::string text_decoding = "";
+    for (int i=0; i< words.size(); i++) {
+        if (i == 0){
+            text_decoding = words[i];
+        } else {
+            text_decoding = text_decoding + " " + words[i];
+        }
+    }
+    return text_decoding;      
 }

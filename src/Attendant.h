@@ -209,7 +209,7 @@ class JobPosition: public Attendant {
 class Search: public Attendant {
  private:
     static void loadParameters(std::string params, std::string *token, double *lat, double *lon, double *distance, std::string *position, std::vector<std::string> *skills);
-    static std::string random_string(std::string const &charset);
+    static std::string URLDecode(std::string text);
  public:
     Search();
     ~Search();

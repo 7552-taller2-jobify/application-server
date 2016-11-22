@@ -340,8 +340,9 @@ class testApplicationServer(unittest.TestCase):
 
 
     def test_48_SearchByPosition(self):
-        params = (('distance', '199'),('lat', '199'),('lon', '199'),('position', 'Desarrollador Java'),('skills', 'UML, Unit Test'),('token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4'))
-        reply = requests.get('http://localhost:8000/users/search', params=params)
+        params = (('distance', '199'),('lat', '199'),('lon', '199'),("position", "Desarrollador Java"),("skills", "UML, Unit Test"),('token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4'))
+        headers = {'Content-Type': 'application/json;charset=UTF-8'}
+        reply = requests.get('http://localhost:8000/users/search', headers=headers, params=params)
         self.assertEqual(200, reply.status_code)
 
     def test_49_LogoutUnsuccessfully(self):

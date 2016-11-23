@@ -24,9 +24,11 @@ void Profile::updateJson(const std::string json_file) {
 }
 
 void Profile::loadJson(const std::string json) {
-    rapidjson::Document document;
-    rapidjson::ParseResult parseRes = document.Parse(json.c_str());
-    this->getOwnInfo(document);
+    if (json != ""){
+        rapidjson::Document document;
+        rapidjson::ParseResult parseRes = document.Parse(json.c_str());
+        this->getOwnInfo(document);
+    }
 }
 
 void Profile::getProfileInfo(std::string json_file) {
@@ -616,4 +618,39 @@ std::string Credentials::createJsonFile() {
 
     return "{\"token\":\"" + this->token + "\"," +
             "\"incremental_number\":" + incremental_number_parsed + "}";
+}
+
+IdsDataBase::IdsDataBase(){
+    this->ids = new std::vector<std::string>();    
+}
+ 
+IdsDataBase::~IdsDataBase(){
+    delete this->ids;    
+}
+
+void IdsDataBase::getOwnInfo(const rapidjson::Document &document) {
+    for (rapidjson::SizeType i = 0; i < document["ids"].Size(); i++) {
+        std::string id = document["ids"][i].GetString();
+        this->addId(id);
+        std::cout<< id << std::endl;
+    }
+}
+
+std::vector<std::string>* IdsDataBase::getIds(){
+    return this->ids;
+}
+
+void IdsDataBase::addId(std::string id){
+    this->ids->push_back(id);
+}
+
+std::string IdsDataBase::createJsonFile() {
+    std::string result = "{\"ids\":[";
+    for (int i = 0; i < this->ids->size(); i++) {
+        result += "\"" + (*this->ids)[i] + "\"";
+        if (i != (this->ids->size() - 1)) {
+            result += ",";
+        }
+    }
+    return result + "]}";
 }

@@ -262,4 +262,17 @@ class Credentials: public Profile {
     std::string createJsonFile();
 };
 
+class IdsDataBase: public Profile {
+ private:
+    std::vector<std::string> *ids;
+    void getOwnInfo(const rapidjson::Document &document);
+
+ public:
+    IdsDataBase();
+    ~IdsDataBase();
+    std::vector<std::string>* getIds();
+    void addId(std::string id);
+    std::string createJsonFile();
+};
+
 #endif  // PROFILE_H_

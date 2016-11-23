@@ -20,7 +20,7 @@ DataBase::~DataBase() {
 }
 
 std::string DataBase::get(std::string key) {
-    std::string value;
+    std::string value = "";
     this->status = this->db->Get(leveldb::ReadOptions(), key, &value);
     if (this->status.ok()) {
         Logger::getInstance().log(info,

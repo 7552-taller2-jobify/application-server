@@ -94,6 +94,13 @@ int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *login
         DataBase::getInstance().put(email, credentials_parser);
         DataBase::getInstance().put("PERSONAL_" + email, personal->createJsonFile());
     }
+    IdsDataBase *idsDB = new IdsDataBase();
+    std::string ids_parse = DataBase::getInstance().get("IDS");
+    idsDB->loadJson(ids_parse);
+    idsDB->addId(email);
+    DataBase::getInstance().erase("IDS");
+    DataBase::getInstance().put("IDS", idsDB->createJsonFile());
+    delete idsDB;
     return 0;
 }
 

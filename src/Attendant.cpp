@@ -932,9 +932,10 @@ Response* Search::get(Message operation) {
     double lat, lon, distance;
     std::string token, position;
     std::vector<std::string> *skills = new std::vector<std::string>();
-    std::cout << "inicio cargando datos "<< std::endl;
     loadParameters(operation.params, &token, &lat, &lon, &distance, &position, skills);
-    std::cout << "fin cargando datos "<< std::endl;
+
+
+    
     Response* response = new Response();
     delete dbAdministrator;
 

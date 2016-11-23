@@ -118,6 +118,7 @@ class Expertise: public Profile {
     std::string getTo(int index);
     std::string getExpertise(int index);
     std::string getCategory(int index);
+    int getNumberOfExpertises();
     void setCompany(std::string new_company, int index);
     void setPosition(std::string new_position, int index);
     void setFrom(std::string new_from, int index);

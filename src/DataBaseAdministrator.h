@@ -45,6 +45,7 @@ class DataBaseAdministrator {
     void vote(std::string email, std::string email_to_vote);
     void unvote(std::string email, std::string email_to_unvote);
     std::string getMostPopularUsers();
+    std::vector<std::string>* getAllIds();
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

@@ -270,6 +270,10 @@ std::string Expertise::getCategory(int index) {
     return this->getItemByIndex(this->category, index);
 }
 
+int Expertise::getNumberOfExpertises(){
+    return this->number_of_expertises;
+}
+
 void Expertise::setCompany(std::string new_company, int index) {
     this->setItem(this->company, index, new_company);
 }
@@ -624,9 +628,7 @@ IdsDataBase::IdsDataBase(){
     this->ids = new std::vector<std::string>();    
 }
  
-IdsDataBase::~IdsDataBase(){
-    delete this->ids;    
-}
+IdsDataBase::~IdsDataBase(){}
 
 void IdsDataBase::getOwnInfo(const rapidjson::Document &document) {
     for (rapidjson::SizeType i = 0; i < document["ids"].Size(); i++) {

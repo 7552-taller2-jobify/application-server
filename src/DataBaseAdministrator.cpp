@@ -363,3 +363,12 @@ std::string DataBaseAdministrator::getMostPopularUsers() {
     result += "]}";
     return result;
 }
+
+std::vector<std::string>* DataBaseAdministrator::getAllIds(){
+    std::string ids_parser = DataBase::getInstance().get("IDS");
+    IdsDataBase *idsDB = new IdsDataBase();
+    idsDB->loadJson(ids_parser);
+    std::vector<std::string>* ids = idsDB->getIds();
+    delete idsDB;
+    return ids;
+}

@@ -934,7 +934,9 @@ Response* Search::get(Message operation) {
     std::vector<std::string> *skills = new std::vector<std::string>();
     loadParameters(operation.params, &token, &lat, &lon, &distance, &position, skills);
 
-
+    
+    std::vector<std::string> *ids = dbAdministrator->getAllIds();   
+    std::vector<std::string> *ids_match_position = searchByPosition(ids, position);
     
     Response* response = new Response();
     delete dbAdministrator;
@@ -942,6 +944,29 @@ Response* Search::get(Message operation) {
     response->setContent("");
     response->setStatus(200);
     return response;
+}
+
+std::vector<std::string>* Search::searchByPosition(std::vector<std::string>* ids, std::string position){
+    std::vector<std::string>* ids_match_position = new std::vector<std::string>();
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    for (int i=0; i < ids->size(); i++){
+        std::string id = (*ids)[i];
+        // CHEQUEAR SI ESTE USUARIO MACHEA CON POSITION, SI -> AGREGAR
+        std::string expertise_parse = dbAdministrator->getExpertise(id);
+        Expertise *expertises = new Expertise();
+        expertises->loadJson(expertise_parse);
+        int number_of_expertises = expertises->getNumberOfExpertises();
+        for (int j=0; j < number_of_expertises; j++){
+            bool match_position = strcmp(expertises->getPosition(j).c_str(), position.c_str()) == 0;
+            if (match_position){
+                ids_match_position->push_back(id);
+                std::cout << "MATCHEA: " << id << std::endl;
+            }
+        }
+        delete expertises;
+    }
+    delete dbAdministrator;
+    return ids_match_position;
 }
 
 void Search::loadParameters(std::string params, std::string *token, double *lat, double *lon, double *distance, std::string *position, std::vector<std::string> *skills){
@@ -982,6 +1007,7 @@ std::string Search::URLDecode(std::string text){
     std::vector<std::string> words =  rp->split(text, "+");  
     delete rp;
     std::string text_decoding = "";
+    
     for (int i=0; i< words.size(); i++) {
         if (i == 0){
             text_decoding = words[i];

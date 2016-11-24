@@ -211,6 +211,8 @@ class Search: public Attendant {
     static void loadParameters(std::string params, std::string *token, double *lat, double *lon, double *distance, std::string *position, std::vector<std::string> *skills);
     static std::string URLDecode(std::string text);
     static std::vector<std::string>* searchByPosition(std::vector<std::string>* ids, std::string position);
+    static std::vector<std::string>* searchBySkills(std::vector<std::string>* ids, std::vector<std::string>* skills);
+    static std::vector<std::string>* intersection(std::vector<std::string>* ids_match_position, std::vector<std::string>* ids_match_skills);
  public:
     Search();
     ~Search();

@@ -936,14 +936,84 @@ Response* Search::get(Message operation) {
 
     
     std::vector<std::string> *ids = dbAdministrator->getAllIds();   
+    std::cout << "SEARCH BY POSITION" << std::endl;
     std::vector<std::string> *ids_match_position = searchByPosition(ids, position);
+    std::cout << "SEARCH BY SKILLS" << std::endl;
+    std::vector<std::string> *ids_match_skills = searchBySkills(ids, skills);
     
+    std::vector<std::string> *ids_match = intersection(ids_match_position, ids_match_skills);
+    std::string message = "{\"ids\":[";    
+    for (int i = 0; i < ids_match->size(); i++){
+        message += "\"" + (*ids_match)[i] + "\"";
+        if (i != (ids_match->size() - 1)) {
+            message += ",";
+        }      
+    }
+    message += "]}";
     Response* response = new Response();
     delete dbAdministrator;
 
-    response->setContent("");
+    response->setContent(message);
     response->setStatus(200);
     return response;
+}
+
+std::vector<std::string>* Search::intersection(std::vector<std::string>* ids_match_position, std::vector<std::string>* ids_match_skills){
+    std::vector<std::string>* ids_match = new std::vector<std::string>();
+    for (int i = 0; i < ids_match_position->size(); i++){
+        std::string id_1 = (*ids_match_position)[i];
+        for (int j = 0; j < ids_match_skills->size(); j++){
+            std::string id_2 = (*ids_match_skills)[j];
+            bool match = strcmp(id_1.c_str(), id_2.c_str()) == 0;
+            if (match){
+                ids_match->push_back(id_1);
+            }   
+        }    
+    }    
+    return ids_match;
+}
+
+std::vector<std::string>* Search::searchBySkills(std::vector<std::string>* ids, std::vector<std::string>* skills_to_match){
+    std::vector<std::string>* ids_match_skills = new std::vector<std::string>();
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    RequestParse *rp = new RequestParse();
+    for (int i = 0; i < ids->size(); i++){
+        std::string id = (*ids)[i];
+        std::cout << "USER: " << id << std::endl;
+        // CHEQUEAR SI ESTE USUARIO MACHEA CON SKILLS, SI -> AGREGAR
+        bool isAdding = false;
+        std::string skills_parse = dbAdministrator->getSkills(id);
+        Skills *skills = new Skills();
+        skills->loadJson(skills_parse);
+        // Number of categories (category -> skills)
+        int number_of_skills = skills->getNumberOfSkills();
+        for (int j = 0; j < number_of_skills; j++){
+            std::string skills_string = skills->getSkills(j);
+            std::vector<std::string> skills_vector = rp->split(skills_string, ",");
+            std::cout << "SKILLS: " << skills_string << std::endl;
+            int count = 0;
+            // Skills for category
+            for (int k = 0; k < skills_vector.size(); k++){
+                std::string skill = skills_vector[k];
+                for (int k = 0; k < skills_to_match->size(); k++){   
+                    bool match_skill = strcmp(skill.c_str(), (*skills_to_match)[k].c_str()) == 0;
+                    if (match_skill){
+                        ++count;
+                    }
+                }
+            }
+            bool match_with_all_skills = count == skills_to_match->size();
+            if (match_with_all_skills && !isAdding) {
+                isAdding  = true;
+                ids_match_skills->push_back(id);
+                std::cout << "MATCHEA: " << id << std::endl;
+            }       
+        }
+        delete skills;
+    }
+    delete rp;    
+    delete dbAdministrator;
+    return ids_match_skills;
 }
 
 std::vector<std::string>* Search::searchByPosition(std::vector<std::string>* ids, std::string position){

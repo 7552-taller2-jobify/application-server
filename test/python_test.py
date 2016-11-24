@@ -341,25 +341,42 @@ class testApplicationServer(unittest.TestCase):
 
     def test_48_SearchByPosition(self):
        
-        body = {"email": "testDOS@yahoo.com", "password": "admin", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
+        body = {"email": "fulano@yahoo.com", "password": "admin", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
                 "address": { "lat": "123456789", "lon": "12345678" }, "city": "lalala" }
-        reply = requests.post('http://localhost:8000/users/register', json=body)
-        self.assertEqual(201, reply.status_code)
-        self.assertEqual("OK", json.loads(reply.content)["registration"])
-        sleep(1);
-        body = {"email": "testDOS@yahoo.com", "password": "admin"}
-        reply_login = requests.post('http://localhost:8000/users/login', json=body)
-        self.assertEqual(200, reply_login.status_code)
+        reply_fulano_register = requests.post('http://localhost:8000/users/register', json=body)
+        self.assertEqual(201, reply_fulano_register.status_code)
+        self.assertEqual("OK", json.loads(reply_fulano_register.content)["registration"])
+
+        body = {"email": "fulano@yahoo.com", "password": "admin"}
+        reply_fulano_login = requests.post('http://localhost:8000/users/login', json=body)
+        self.assertEqual(200, reply_fulano_login.status_code)
 
         body = {"expertises":[{"company": "Lalala","position": "Desarrollador C++","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "Software"},{"company": "Lololo","position": "Desarrollador Java","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "Software"}]}
-        params = {"token": reply_login.json()["metadata"]["token"]}
-        reply = requests.put('http://localhost:8000/users/testDOS@yahoo.com/perfil/expertise/position', params=params, json=body)
-        self.assertEqual(200, reply.status_code)
+        params = {"token": reply_fulano_login.json()["metadata"]["token"]}
+        reply_fulano = requests.put('http://localhost:8000/users/fulano@yahoo.com/perfil/expertise/position', params=params, json=body)
+        self.assertEqual(200, reply_fulano.status_code)
 
-        params = (('distance', '199'),('lat', '199'),('lon', '199'),("position", "Lider tecnico"),("skills", "UML, Unit Test"),('token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4'))
-        headers = {'Content-Type': 'application/json;charset=UTF-8'}
-        reply = requests.get('http://localhost:8000/users/search', headers=headers, params=params)
+
+        body = {"email": "pepito@yahoo.com", "password": "admin", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
+                "address": { "lat": "123456789", "lon": "12345678" }, "city": "lalala" }
+        reply_pepito_register = requests.post('http://localhost:8000/users/register', json=body)
+        self.assertEqual(201, reply_pepito_register.status_code)
+        self.assertEqual("OK", json.loads(reply_pepito_register.content)["registration"])
+
+        body = {"email": "pepito@yahoo.com", "password": "admin"}
+        reply_pepito_login = requests.post('http://localhost:8000/users/login', json=body)
+        self.assertEqual(200, reply_pepito_login.status_code)
+
+        body = {"every_skill":[{"skills": ["java","c","UML"],"category": "software"},{"skills": ["moto","auto"],"category": "licencia_manejo"}]}
+        params = {"token": reply_pepito_login.json()["metadata"]["token"]}
+        reply_pepito = requests.put('http://localhost:8000/users/pepito@yahoo.com/perfil/skills/category', params=params, json=body)
+        self.assertEqual(200, reply_pepito.status_code)
+
+
+        params = (('distance', '199'),('lat', '199'),('lon', '199'),("position", "Lider tecnico"),("skills", "UML,c"),('token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4'))
+        reply = requests.get('http://localhost:8000/users/search', params=params)
         self.assertEqual(200, reply.status_code)
+        self.assertEqual("test@yahoo.com", reply.json()["ids"][0])
 
     def test_49_LogoutUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}

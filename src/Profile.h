@@ -110,7 +110,7 @@ class Expertise: public Profile {
     void getOwnInfo(const rapidjson::Document &document);
 
  public:
-    Expertise() : Profile() {}
+    Expertise();
     ~Expertise();
     std::string getCompany(int index);
     std::string getPosition(int index);
@@ -137,10 +137,11 @@ class Skills: public Profile {
     void getOwnInfo(const rapidjson::Document &document);
 
  public:
-    Skills() : Profile() {}
-    ~Skills() {}
+    Skills();
+    ~Skills();
     std::string getSkills(int index);
     std::string getCategory(int index);
+    int getNumberOfSkills();
     void setSkills(std::string new_skills, int index);
     void setCategory(std::string new_skills, int index);
     std::string createJsonFile();

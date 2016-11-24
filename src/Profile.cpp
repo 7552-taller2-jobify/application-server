@@ -227,6 +227,9 @@ std::string Summary::createJsonFile() {
 }
 
 
+Expertise::Expertise(){
+    this->number_of_expertises = 0;
+}
 
 void Expertise::getOwnInfo(const rapidjson::Document &document) {
     this->number_of_expertises = document["expertises"].Size();
@@ -299,12 +302,14 @@ void Expertise::setCategory(std::string new_category, int index) {
 }
 
 Expertise::~Expertise() {
-    delete[] this->company;
-    delete[] this->position;
-    delete[] this->from;
-    delete[] this->to;
-    delete[] this->expertise;
-    delete[] this->category;
+    if (this->number_of_expertises != 0) {
+        delete[] this->company;
+        delete[] this->position;
+        delete[] this->from;
+        delete[] this->to;
+        delete[] this->expertise;
+        delete[] this->category;
+    }
 }
 
 std::string Expertise::createJsonFile() {
@@ -326,6 +331,9 @@ std::string Expertise::createJsonFile() {
 }
 
 
+Skills::Skills(){
+    this->number_of_skills = 0;
+}
 
 void Skills::getOwnInfo(const rapidjson::Document &document) {
     this->number_of_skills = document["every_skill"].Size();
@@ -372,6 +380,10 @@ void Skills::setCategory(std::string new_category, int index) {
     this->setItem(this->category, index, new_category);
 }
 
+int Skills::getNumberOfSkills(){
+    return this->number_of_skills;
+}
+
 std::string Skills::createJsonFile() {
     std::string result = "{\"every_skill\":[";
     int last = this->number_of_skills - 1;
@@ -386,7 +398,12 @@ std::string Skills::createJsonFile() {
     return result;
 }
 
-
+Skills::~Skills() {
+    if (this->number_of_skills != 0) {
+        delete[] this->skills;
+        delete[] this->category;
+    }
+}
 
 void Picture::getOwnInfo(const rapidjson::Document &document) {
     this->picture = document["picture"].GetString();

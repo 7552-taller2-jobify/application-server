@@ -12,3 +12,18 @@ add_library (Sources ${Clases})
 target_link_libraries (Sources LINK_PUBLIC Mongoose leveldb pthread jwt curl)
 
 target_include_directories(Sources PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+
+
+#FIND_PACKAGE(VTK REQUIRED)
+#INCLUDE(${VTK_USE_FILE})
+
+###############    DEB    #############
+INSTALL(TARGETS Server DESTINATION ServerJobify)
+ 
+SET(CPACK_GENERATOR "DEB")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Jobify")
+
+#######################################
+
+INCLUDE(CPack)

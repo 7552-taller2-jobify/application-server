@@ -13,6 +13,8 @@ SET(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 SET(CMAKE_C_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
 SETUP_TARGET_FOR_COVERAGE(coverage runTests coverage-output)
 
+#SETUP_TARGET_FOR_COVERAGE_COBERTURA(coverage runTests coverage-output)
+
 #######################################
 
 include_directories(

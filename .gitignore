@@ -11,3 +11,4 @@ files
 .DS_Store
 coverage-output.info
 coverage-output.info.cleaned
+coverage-output/

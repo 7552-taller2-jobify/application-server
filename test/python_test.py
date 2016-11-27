@@ -449,4 +449,26 @@ class testApplicationServer(unittest.TestCase):
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(testApplicationServer)
-unittest.TextTestRunner(verbosity=2).run(suite)
+def StartServer():
+   #bashCommand = "rm -rf db log.txt"
+   #process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+   #output, error = process.communicate()
+   call(["./Server"])
+
+def KillServer():
+   for line in os.popen("ps ax | grep Server | grep -v grep"):
+       fields = line.split()
+       pid = fields[0]
+   os.kill(int(pid), signal.SIGKILL)
+
+def RunTests():
+   unittest.TextTestRunner(verbosity=2).run(suite)
+
+
+t1 = Process(target = StartServer, args = ())
+t2 = Process(target = RunTests, args = ())
+t1.start()
+t2.start()
+t2.join()
+KillServer()
+#unittest.TextTestRunner(verbosity=2).run(suite)

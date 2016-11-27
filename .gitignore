@@ -11,3 +11,7 @@ files
 .DS_Store
 coverage-output.info
 coverage-output.info.cleaned
+CPackConfig.cmake
+CPackSourceConfig.cmake
+_CPack_Packages/
+install_manifest.txt

@@ -6,8 +6,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-
-
 include_directories(
 	${LEVELDB_PREFIX}/include
 	/usr/local/include

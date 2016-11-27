@@ -60,9 +60,9 @@ Response* Login::post(Message operation) {
         response->setStatus(200);
         Logger::getInstance().log(info, "The client " + email +" was logged.");
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
-       Logger::getInstance().log(warn, "The client " + email +" was not logged.");
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+        Logger::getInstance().log(warn, "The client " + email +" was not logged.");
     }
     return response;
 }
@@ -103,10 +103,11 @@ Response* Logout::erase(Message operation) {
             return response;
             Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was logged out.");
         }
+    } else {
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+        Logger::getInstance().log(warn, "The client " + email +" was not logged out.");
     }
-    response->setContent("{\"message\":\"Invalid credentials.\"}");
-    response->setStatus(401);
-    Logger::getInstance().log(warn, "The client " + email +" was not logged out.");
     return response;
 }
 
@@ -135,9 +136,6 @@ Response* Register::post(Message operation) {
          loginInformation->loadJson(operation.body.c_str());
     }
     int success = dbAdministrator->addClient(personal, loginInformation, operation);
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("{\"registration\":\"OK\"}");
@@ -145,10 +143,10 @@ Response* Register::post(Message operation) {
         Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was register.");
     } else {
         if (success == 1) {
-            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client already exists.\"}");
+            response->setContent("{\"code\":" + CLIENT_ALREADY_EXISTS + ",\"message\":\"Client already exists.\"}");
             response->setStatus(500);
         } else {
-            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"There are empty fields.\"}");
+            response->setContent("{\"code\":" + EMPTY_FIELDS + ",\"message\":\"There are empty fields.\"}");
             response->setStatus(500);
         }
         Logger::getInstance().log(warn, "The client " + loginInformation->getEmail() +" was not register.");
@@ -198,15 +196,12 @@ Response* Contact::post(Message operation) {
     solicitude.email = contact_email;
     int success = dbAdministrator->addSolicitude(email, token, solicitude);
     delete dbAdministrator;
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(201);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't posted.\"}");
+        response->setContent("{\"code\":" + COULD_NOT_POST + ",\"message\":\"Could not post.\"}");
         response->setStatus(500);
     }
     return response;
@@ -225,8 +220,8 @@ Response* Contact::get(Message operation) {
         response->setContent(dbAdministrator->getSolicitudes(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -263,18 +258,15 @@ Response* Accept::post(Message operation) {
     if (rightCredential) {
         int success = dbAdministrator->addFriend(email, solicitude);
         delete dbAdministrator;
-        std::ostringstream s;
-        s << success;
-        std::string success_parsed = s.str();
         if (success >= 0) {
             response->setContent("");
             response->setStatus(201);
         } else if (success == -1) {
-            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"User did not send solicitude.\"}");
+            response->setContent("{\"code\":" + NO_SOLICITUDE_SENT + ",\"message\":\"User did not send solicitude.\"}");
             response->setStatus(500);
         }
     } else {
-        response->setContent("{\"message\":\"Invalid credentials.\"}");
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
         response->setStatus(401);
     }
     return response;
@@ -311,18 +303,15 @@ Response* Reject::erase(Message operation) {
     if (rightCredential) {
         int success = dbAdministrator->removeSolicitude(email, solicitude);
         delete dbAdministrator;
-        std::ostringstream s;
-        s << success;
-        std::string success_parsed = s.str();
         if (success >= 0) {
             response->setContent("");
             response->setStatus(204);
         } else if (success == -1) {
-            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"User did not send solicitude.\"}");
+            response->setContent("{\"code\":" + NO_SOLICITUDE_SENT + ",\"message\":\"User did not send solicitude.\"}");
             response->setStatus(500);
         }
     } else {
-        response->setContent("{\"message\":\"Invalid credentials.\"}");
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
         response->setStatus(401);
     }
     return response;
@@ -348,8 +337,8 @@ Response* ProfilePersonal::get(Message operation) {
         response->setContent(dbAdministrator->getProfilePersonal(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     return response;
 }
@@ -363,15 +352,12 @@ Response* ProfilePersonal::put(Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     int success = dbAdministrator->uploadPersonal(email, token, personal);
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + COULD_NOT_PUT + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
@@ -397,8 +383,8 @@ Response* ProfileSummary::get(Message operation) {
         response->setContent(dbAdministrator->getSummary(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     return response;
 }
@@ -412,15 +398,12 @@ Response* ProfileSummary::put(Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     int success = dbAdministrator->uploadSummary(email, token, summary);
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + COULD_NOT_PUT + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
@@ -446,15 +429,12 @@ Response* ProfileExpertise::put(Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     int success = dbAdministrator->uploadExpertise(email, token, expertise);
     delete dbAdministrator;
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + COULD_NOT_PUT + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
@@ -473,8 +453,8 @@ Response* ProfileExpertise::get(Message operation) {
         response->setContent(dbAdministrator->getExpertise(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -517,15 +497,12 @@ Response* ProfileSkills::put(Message operation) {
     int success = dbAdministrator->uploadSkills(email, token, skills);
     delete dbAdministrator;
     delete skills;
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + COULD_NOT_PUT + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
@@ -544,8 +521,8 @@ Response* ProfileSkills::get(Message operation) {
         response->setContent(dbAdministrator->getSkills(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -573,8 +550,8 @@ Response* ProfilePhoto::get(Message operation) {
         response->setContent(dbAdministrator->getPicture(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -591,15 +568,12 @@ Response* ProfilePhoto::put(Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     int success = dbAdministrator->uploadPicture(email, token, picture);
     delete dbAdministrator;
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + COULD_NOT_PUT + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
@@ -626,8 +600,8 @@ Response* ProfileFriends::get(Message operation) {
         response->setContent(dbAdministrator->getFriends(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -661,8 +635,8 @@ Response* Vote::post(Message operation) {
         response->setContent("");
         response->setStatus(201);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -687,8 +661,8 @@ Response* Vote::erase(Message operation) {
         response->setContent("");
         response->setStatus(204);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -715,8 +689,8 @@ Response* ProfileOwnRecommendations::get(Message operation) {
         response->setContent(dbAdministrator->getOwnRecommendations(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -743,8 +717,8 @@ Response* ProfileOthersRecommendations::get(Message operation) {
         response->setContent(dbAdministrator->getOthersRecommendations(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -773,8 +747,8 @@ Response* MostPopularUsers::get(Message operation) {
         response->setContent(dbAdministrator->getMostPopularUsers());
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + INVALID_CREDENTIALS + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     } */
     delete dbAdministrator;
     return response;

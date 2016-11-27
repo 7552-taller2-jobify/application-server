@@ -26,6 +26,13 @@
 #include <vector>
 #include <cmath>
 
+const std::string INVALID_CREDENTIALS = "0";
+const std::string CLIENT_ALREADY_EXISTS = "1";
+const std::string EMPTY_FIELDS = "2";
+const std::string COULD_NOT_POST = "3";
+const std::string NO_SOLICITUDE_SENT = "4";
+const std::string COULD_NOT_PUT = "5";
+
 typedef Response* (*function) (Message operation);
 
 class Attendant {

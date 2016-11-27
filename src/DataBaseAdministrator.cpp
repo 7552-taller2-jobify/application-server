@@ -125,13 +125,18 @@ int DataBaseAdministrator::uploadPersonal(std::string email, std::string token, 
     return 1;
 }
 
-std::string DataBaseAdministrator::getPersonal(std::string email) {
+std::string DataBaseAdministrator::getProfilePersonal(std::string email) {
     std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
     Personal *personal = new Personal();
     personal->loadJson(personal_parser);
     UserService *userService = new UserService();
     std::string personal_parser_modify = userService->getPersonal(personal);
     return personal_parser_modify;
+}
+
+std::string DataBaseAdministrator::getPersonal(std::string email) {
+    std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
+    return personal_parser;
 }
 
 // Returns 0 if success, 1 if credential invalid

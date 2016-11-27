@@ -70,6 +70,8 @@ class Personal: public Profile {
     std::string getGender();
     std::string getBirthday();
     std::string* getAddress();
+    std::string getLat();
+    std::string getLon();    
     std::string getCity();
     void setDeviceId(std::string new_id);
     void setFirstName(std::string new_first_name);

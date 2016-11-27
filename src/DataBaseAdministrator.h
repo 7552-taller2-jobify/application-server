@@ -25,6 +25,7 @@ class DataBaseAdministrator {
     bool rightClient(LoginInformation *li);
     std::string getPersonalLogin(std::string email);
     std::string getPersonal(std::string email);
+    std::string getProfilePersonal(std::string email);
     std::string getSummary(std::string email);
     std::string getExpertise(std::string email);
     std::string getSkills(std::string email);

@@ -24,6 +24,7 @@
 #include "RequestParse.h"
 #include "Authentication.h"
 #include <vector>
+#include <cmath>
 
 typedef Response* (*function) (Message operation);
 
@@ -206,13 +207,22 @@ class JobPosition: public Attendant {
     static Response* get(struct Message operation);
 };
 
+#include <stdlib.h>     /* atof */
+
 class Search: public Attendant {
+ #define pi 3.14159265358979323846
+ #define earth_radio 6371
  private:
-    static void loadParameters(std::string params, std::string *token, double *lat, double *lon, double *distance, std::string *position, std::vector<std::string> *skills);
+    static void loadParameters(std::string params, std::string *token, std::string *lat, std::string *lon, std::string *distance, std::string *position, std::vector<std::string> *skills);
     static std::string URLDecode(std::string text);
     static std::vector<std::string>* searchByPosition(std::vector<std::string>* ids, std::string position);
     static std::vector<std::string>* searchBySkills(std::vector<std::string>* ids, std::vector<std::string>* skills);
+    static std::vector<std::string>* searchByDistance(std::vector<std::string>* ids, double lat, double lon, double distance);
     static std::vector<std::string>* intersection(std::vector<std::string>* ids_match_position, std::vector<std::string>* ids_match_skills);
+    static double calculateDistance(double lat1, double long1, double lat2, double long2);
+    static bool rightLong(double lon);
+    static bool rightLat(double lon);
+    static double toRad(double degree);
  public:
     Search();
     ~Search();

@@ -345,7 +345,7 @@ Response* ProfilePersonal::get(Message operation) {
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
-        response->setContent(dbAdministrator->getPersonal(email));
+        response->setContent(dbAdministrator->getProfilePersonal(email));
         response->setStatus(200);
     } else {
        response->setContent("{\"message\":\"Invalid credentials.\"}");
@@ -930,18 +930,59 @@ Response* Search::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     
     double lat, lon, distance;
-    std::string token, position;
+    std::string token, position, lat_str, lon_str, distance_str;
     std::vector<std::string> *skills = new std::vector<std::string>();
-    loadParameters(operation.params, &token, &lat, &lon, &distance, &position, skills);
-
+    loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position, skills);
     
     std::vector<std::string> *ids = dbAdministrator->getAllIds();   
-    std::cout << "SEARCH BY POSITION" << std::endl;
-    std::vector<std::string> *ids_match_position = searchByPosition(ids, position);
-    std::cout << "SEARCH BY SKILLS" << std::endl;
-    std::vector<std::string> *ids_match_skills = searchBySkills(ids, skills);
+    bool isEmptyPosition = std::strcmp(position.c_str(), "") == 0;    
+    std::vector<std::string> *ids_match_position = NULL;
+    if (!isEmptyPosition) {
+        std::cout << "SEARCH BY POSITION" << std::endl;
+        ids_match_position = searchByPosition(ids, position);
+    }
+    bool isEmptySkills = skills->size() == 0;
+    std::vector<std::string> *ids_match_skills = NULL;
+    if (!isEmptySkills) {
+        std::cout << "SEARCH BY SKILLS" << std::endl;
+        ids_match_skills = searchBySkills(ids, skills);
+    }
+
+    bool isEmpthyDistance = std::strcmp(distance_str.c_str(), "") == 0; 
+    bool isEmpthyLat = std::strcmp(lat_str.c_str(), "") == 0; 
+    bool isEmpthyLon = std::strcmp(lon_str.c_str(), "") == 0; 
+    bool isEmthySomeDLatLon = isEmpthyDistance || isEmpthyLat || isEmpthyLon;
+    std::vector<std::string> *ids_match_distance = NULL;
+    if (!isEmthySomeDLatLon) {
+        lat = atof(lat_str.c_str());
+        lon = atof(lon_str.c_str());
+        distance = atof(distance_str.c_str());
+        std::cout << "SEARCH BY LAT AND LONG" << std::endl;
+        ids_match_distance = searchByDistance(ids,  lat, lon, distance);
+    }
     
-    std::vector<std::string> *ids_match = intersection(ids_match_position, ids_match_skills);
+    std::vector<std::string> *ids_match_2 = NULL;
+    std::vector<std::string> *ids_match_1 = NULL;
+    std::vector<std::string> *ids_match = NULL;
+
+    if (!isEmptyPosition && !isEmptySkills && !isEmthySomeDLatLon) {
+        ids_match_2 = intersection(ids_match_position, ids_match_skills);
+        ids_match_1 = intersection(ids_match_2, ids_match_distance);
+        ids_match = ids_match_1;
+    } else if (!isEmptyPosition && !isEmptySkills ) {
+        ids_match = intersection(ids_match_position, ids_match_skills);
+    } else if (!isEmptyPosition && !isEmthySomeDLatLon) {
+        ids_match = intersection(ids_match_position, ids_match_distance);
+    } else if (!isEmptySkills && !isEmthySomeDLatLon) {
+        ids_match = intersection(ids_match_skills, ids_match_distance);
+    } else if (!isEmptyPosition) {
+        ids_match = ids_match_position;
+    } else if (!isEmptySkills) {
+        ids_match = ids_match_skills;
+    } else if (!isEmthySomeDLatLon) {
+        ids_match = ids_match_distance;
+    }    
+    
     std::string message = "{\"ids\":[";    
     for (int i = 0; i < ids_match->size(); i++){
         message += "\"" + (*ids_match)[i] + "\"";
@@ -952,7 +993,7 @@ Response* Search::get(Message operation) {
     message += "]}";
     Response* response = new Response();
     delete dbAdministrator;
-
+    
     response->setContent(message);
     response->setStatus(200);
     return response;
@@ -979,7 +1020,7 @@ std::vector<std::string>* Search::searchBySkills(std::vector<std::string>* ids, 
     RequestParse *rp = new RequestParse();
     for (int i = 0; i < ids->size(); i++){
         std::string id = (*ids)[i];
-        std::cout << "USER: " << id << std::endl;
+//        std::cout << "USER: " << id << std::endl;
         // CHEQUEAR SI ESTE USUARIO MACHEA CON SKILLS, SI -> AGREGAR
         bool isAdding = false;
         std::string skills_parse = dbAdministrator->getSkills(id);
@@ -990,7 +1031,7 @@ std::vector<std::string>* Search::searchBySkills(std::vector<std::string>* ids, 
         for (int j = 0; j < number_of_skills; j++){
             std::string skills_string = skills->getSkills(j);
             std::vector<std::string> skills_vector = rp->split(skills_string, ",");
-            std::cout << "SKILLS: " << skills_string << std::endl;
+//            std::cout << "SKILLS: " << skills_string << std::endl;
             int count = 0;
             // Skills for category
             for (int k = 0; k < skills_vector.size(); k++){
@@ -1011,8 +1052,8 @@ std::vector<std::string>* Search::searchBySkills(std::vector<std::string>* ids, 
         }
         delete skills;
     }
-    delete rp;    
     delete dbAdministrator;
+    delete rp;    
     return ids_match_skills;
 }
 
@@ -1039,18 +1080,47 @@ std::vector<std::string>* Search::searchByPosition(std::vector<std::string>* ids
     return ids_match_position;
 }
 
-void Search::loadParameters(std::string params, std::string *token, double *lat, double *lon, double *distance, std::string *position, std::vector<std::string> *skills){
+std::vector<std::string>* Search::searchByDistance(std::vector<std::string>* ids, double lat_initial, double lon_initial, double distance) {
+    std::vector<std::string>* ids_match_distance = new std::vector<std::string>();
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    for (int i=0; i < ids->size(); i++){
+        std::string id = (*ids)[i];
+//        std::cout << "USER: " << id << std::endl;
+        std::string personal_parse = dbAdministrator->getPersonal(id);
+        Personal *personal = new Personal();
+        personal->loadJson(personal_parse);
+        double lat_final = atof(personal->getLat().c_str());    
+        double lon_final = atof(personal->getLon().c_str());
+        
+//        std::cout << "LAT: " << lat_final << std::endl;
+//        std::cout << "LON: " << lon_final << std::endl;
+
+        double distance_calculated = calculateDistance(lat_initial, lon_initial, lat_final, lon_final);
+        bool rightDistance = 0 <= distance_calculated && distance_calculated <= distance;
+//        std::cout << "distance between ("<< lat_initial << ", " <<lon_initial << ") and (" << lat_final << ", " << lon_final << ") is : " << distance_calculated << std::endl;   
+        if (rightDistance) {
+            std::cout << "MATCHEA: " << id << std::endl;            
+            ids_match_distance->push_back(id);
+        }
+
+        delete personal;
+    }
+    delete dbAdministrator;
+    return ids_match_distance;
+}
+
+void Search::loadParameters(std::string params, std::string *token, std::string *lat_str, std::string *lon_str, std::string *distance_str, std::string *position, std::vector<std::string> *skills){
     int pos_token = params.find("&token=");
     int pos_lat = params.find("&lat=");
     int pos_lon = params.find("&lon=");
     int pos_distance = params.find("distance=");
     int pos_position = params.find("&position=");
     int pos_skills = params.find("&skills=");
-    std::string distance1 = params.substr(pos_distance + 9, pos_lat - pos_distance - 9 );
-    std::string lat1 = params.substr(pos_lat + 5, pos_lon - distance1.length() - 14);
-    std::string lon1 = params.substr(pos_lon + 5, pos_position - distance1.length() - lat1.length() - 19);
-    *position = params.substr(pos_position + 10, pos_skills - distance1.length() - lat1.length() - lon1.length() - 29);
-    std::string skills_parse = params.substr(pos_skills + 8, pos_token - distance1.length() - lat1.length() - lon1.length() - position->length()- 37);
+    *distance_str = params.substr(pos_distance + 9, pos_lat - pos_distance - 9 );
+    *lat_str = params.substr(pos_lat + 5, pos_lon - distance_str->length() - 14);
+    *lon_str = params.substr(pos_lon + 5, pos_position - distance_str->length() - lat_str->length() - 19);
+    *position = params.substr(pos_position + 10, pos_skills - distance_str->length() - lat_str->length() - lon_str->length() - 29);
+    std::string skills_parse = params.substr(pos_skills + 8, pos_token - distance_str->length() - lat_str->length() - lon_str->length() - position->length()- 37);
     *token = params.substr(pos_token + 7);
   
     *position = URLDecode(*position);
@@ -1062,13 +1132,12 @@ void Search::loadParameters(std::string params, std::string *token, double *lat,
 
     std::cout << "token : " << *token << std::endl;
     std::cout << "position : " << *position << std::endl;
-    std::cout << "lat : " << lat1 << std::endl;
-    std::cout << "lon : " << lon1 << std::endl;
-    std::cout << "distance : " << distance1 << std::endl;
+    std::cout << "lat : " << *lat_str << std::endl;
+    std::cout << "lon : " << *lon_str << std::endl;
+    std::cout << "distance : " << *distance_str << std::endl;
     for (int i = 0; i < skills->size(); i++){
         std::cout << "skill " << i << " : " << (*skills)[i] << std::endl;
     }
-
 }
 
 std::string Search::URLDecode(std::string text){
@@ -1086,4 +1155,31 @@ std::string Search::URLDecode(std::string text){
         }
     }
     return text_decoding;      
+}
+
+double Search::toRad(double degree) {
+    double rad =  degree/180 * pi;
+    return rad;
+}
+
+bool Search::rightLat(double lat) {
+    return 0 <= abs(lat) && abs(lat) <= 90;
+}
+
+bool Search::rightLong(double lon) {
+    return 0 <= abs(lon) && abs(lon) <= 180;
+}
+
+double Search::calculateDistance(double lat1, double long1, double lat2, double long2) {
+    double dist = -1;
+    if ( rightLat(lat1) && rightLat(lat2) && rightLong(long1) && rightLong(long2)) {
+        dist = sin(toRad(lat1)) * sin(toRad(lat2)) + cos(toRad(lat1)) * cos(toRad(lat2)) * cos(toRad(long1 - long2));
+        dist = acos(dist);
+    //        dist = (6371 * pi * dist) / 180;
+        //got dist in radian, no need to change back to degree and convert to rad again.
+        dist = earth_radio * dist;
+    } else {
+        std::cout << "Incorrect parameters" << std::endl;
+    }
+    return dist;
 }

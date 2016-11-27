@@ -9,7 +9,7 @@ ENV WORKDIR=/usr/src/app
 # Running commands to start our image
 RUN \
   apt-get update && \
-  apt-get install -y build-essential libssl-dev wget python lcov && \
+  apt-get install -y build-essential libssl-dev wget python lcov gcovr && \
   apt-get install -y cmake libgtest-dev vim
 
 #Google Tests

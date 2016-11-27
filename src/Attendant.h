@@ -218,7 +218,7 @@ class JobPosition: public Attendant {
 
 class Search: public Attendant {
  #define pi 3.14159265358979323846
- #define earth_radio 6371
+ #define earth_radio 6371   
  private:
     static void loadParameters(std::string params, std::string *token, std::string *lat, std::string *lon, std::string *distance, std::string *position, std::vector<std::string> *skills);
     static std::string URLDecode(std::string text);

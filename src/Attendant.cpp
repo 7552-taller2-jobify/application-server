@@ -902,13 +902,24 @@ Search::~Search() {}
 
 Response* Search::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
-    
     double lat, lon, distance;
     std::string token, position, lat_str, lon_str, distance_str;
     std::vector<std::string> *skills = new std::vector<std::string>();
     loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position, skills);
-    
     std::vector<std::string> *ids = dbAdministrator->getAllIds();   
+    Response* response = new Response();    
+    Authentication *auth = new Authentication();
+    LoginInformation *loginInformation = new LoginInformation();
+    Credentials *credentials = new Credentials();
+    bool rightDecode = auth->decode(token, loginInformation, credentials);
+    delete auth;
+    delete credentials;
+    if (!rightDecode) {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+       return response;
+    }
+
     bool isEmptyPosition = std::strcmp(position.c_str(), "") == 0;    
     std::vector<std::string> *ids_match_position = NULL;
     if (!isEmptyPosition) {
@@ -921,13 +932,15 @@ Response* Search::get(Message operation) {
         std::cout << "SEARCH BY SKILLS" << std::endl;
         ids_match_skills = searchBySkills(ids, skills);
     }
-
     bool isEmpthyDistance = std::strcmp(distance_str.c_str(), "") == 0; 
+    if (isEmpthyDistance) {
+        distance_str = "10.0";  // Set distance by default 10.0 kms 
+    }
     bool isEmpthyLat = std::strcmp(lat_str.c_str(), "") == 0; 
     bool isEmpthyLon = std::strcmp(lon_str.c_str(), "") == 0; 
-    bool isEmthySomeDLatLon = isEmpthyDistance || isEmpthyLat || isEmpthyLon;
+    bool isEmthySomeLatLon = isEmpthyLat || isEmpthyLon;
     std::vector<std::string> *ids_match_distance = NULL;
-    if (!isEmthySomeDLatLon) {
+    if (!isEmthySomeLatLon) {
         lat = atof(lat_str.c_str());
         lon = atof(lon_str.c_str());
         distance = atof(distance_str.c_str());
@@ -939,35 +952,44 @@ Response* Search::get(Message operation) {
     std::vector<std::string> *ids_match_1 = NULL;
     std::vector<std::string> *ids_match = NULL;
 
-    if (!isEmptyPosition && !isEmptySkills && !isEmthySomeDLatLon) {
+    if (!isEmptyPosition && !isEmptySkills && !isEmthySomeLatLon) {
         ids_match_2 = intersection(ids_match_position, ids_match_skills);
         ids_match_1 = intersection(ids_match_2, ids_match_distance);
         ids_match = ids_match_1;
     } else if (!isEmptyPosition && !isEmptySkills ) {
         ids_match = intersection(ids_match_position, ids_match_skills);
-    } else if (!isEmptyPosition && !isEmthySomeDLatLon) {
+    } else if (!isEmptyPosition && !isEmthySomeLatLon) {
         ids_match = intersection(ids_match_position, ids_match_distance);
-    } else if (!isEmptySkills && !isEmthySomeDLatLon) {
+    } else if (!isEmptySkills && !isEmthySomeLatLon) {
         ids_match = intersection(ids_match_skills, ids_match_distance);
     } else if (!isEmptyPosition) {
         ids_match = ids_match_position;
     } else if (!isEmptySkills) {
         ids_match = ids_match_skills;
-    } else if (!isEmthySomeDLatLon) {
+    } else if (!isEmthySomeLatLon) {
         ids_match = ids_match_distance;
     }    
-    
+
     std::string message = "{\"ids\":[";    
-    for (int i = 0; i < ids_match->size(); i++){
-        message += "\"" + (*ids_match)[i] + "\"";
-        if (i != (ids_match->size() - 1)) {
-            message += ",";
-        }      
+    if (ids_match->size() > 0) {
+        for (int i = 0; i < ids_match->size(); i++){
+            std::string id = (*ids_match)[i];
+            std::string personal_str = dbAdministrator->getPersonal(id);
+            Personal *personal = new Personal();
+            personal->loadJson(personal_str);
+            std::string picture_str = dbAdministrator->getPicture(id);
+            Picture *picture = new Picture();
+            picture->loadJson(picture_str);
+            message += "{\"email\":\"" + id + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+            if (i != (ids_match->size() - 1)) {
+                message += ",";
+            }      
+            delete personal;
+            delete picture;
+        }
     }
     message += "]}";
-    Response* response = new Response();
     delete dbAdministrator;
-    
     response->setContent(message);
     response->setStatus(200);
     return response;
@@ -1071,7 +1093,7 @@ std::vector<std::string>* Search::searchByDistance(std::vector<std::string>* ids
 
         double distance_calculated = calculateDistance(lat_initial, lon_initial, lat_final, lon_final);
         bool rightDistance = 0 <= distance_calculated && distance_calculated <= distance;
-//        std::cout << "distance between ("<< lat_initial << ", " <<lon_initial << ") and (" << lat_final << ", " << lon_final << ") is : " << distance_calculated << std::endl;   
+        std::cout << "distance between ("<< lat_initial << ", " <<lon_initial << ") and (" << lat_final << ", " << lon_final << ") is : " << distance_calculated << std::endl;   
         if (rightDistance) {
             std::cout << "MATCHEA: " << id << std::endl;            
             ids_match_distance->push_back(id);

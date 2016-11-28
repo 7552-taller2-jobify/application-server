@@ -6,6 +6,9 @@
 #include "mongoose.h"
 #include <iostream>
 
+#define  pi  3.14159265358979323846
+#define  earth_radio  6371
+
 static const struct mg_str PUT_FUNCTION = MG_STR("PUT");
 static const struct mg_str GET_FUNCTION = MG_STR("GET");
 static const struct mg_str POST_FUNCTION = MG_STR("POST");

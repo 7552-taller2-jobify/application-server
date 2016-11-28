@@ -26,3 +26,4 @@ TEST_F(TestAttendant, testFindExistingKey) {
     recoveryPass->attend(message);
     ASSERT_TRUE(true);
 }
+

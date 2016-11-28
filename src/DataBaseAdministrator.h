@@ -5,6 +5,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 #include "DataBase.h"
 #include "Profile.h"
 #include "Logger.h"
@@ -21,7 +22,7 @@ class DataBaseAdministrator {
     DataBaseAdministrator();
     ~DataBaseAdministrator();
     bool existsClient(std::string email);
-    bool rightClient(std::string email, std::string token);     
+    bool rightClient(std::string email, std::string token);
     bool rightClient(LoginInformation *li);
     std::string getPersonalLogin(std::string email);
     std::string getPersonal(std::string email);

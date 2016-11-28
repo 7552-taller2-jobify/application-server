@@ -32,3 +32,12 @@ Aplicación con el objetivo de brindar una interfaz para la comunicación de los
   docker stop <CONTAINER>
   ```
 
+# DEB instalación
+
+## Testing
+
+Te monta un docker pelado para poder testear la instalación del DEB.
+
+```
+$ empty/run
+```

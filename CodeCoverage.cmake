@@ -75,7 +75,6 @@ ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 #                       HTML report is generated in _outputname/index.html
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
-#FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
 	IF(NOT LCOV_PATH)
@@ -90,6 +89,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 	SET(coverage_cleaned "${coverage_info}.cleaned")
 
 	SEPARATE_ARGUMENTS(test_command UNIX_COMMAND "${_testrunner}")
+
 
     #set(CLEAN_DB_COMMAND rm -rf $PWD/db $PWD/log.txt)
     #execute_process(COMMAND ${CLEAN_DB_COMMAND})

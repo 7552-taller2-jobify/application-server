@@ -9,7 +9,7 @@ ENV WORKDIR=/usr/src/app
 # Running commands to start our image
 RUN \
   apt-get update && \
-  apt-get install -y build-essential libssl-dev wget python && \
+  apt-get install -y build-essential libssl-dev wget python lcov gcovr python-requests && \
   apt-get install -y cmake libgtest-dev vim
 
 #Google Tests
@@ -23,10 +23,13 @@ RUN \
 #cURL
 RUN \
   apt-get install -y autoconf libtool && \
-  wget https://curl.haxx.se/download/curl-7.50.3.tar.gz && tar -xzf curl-7.50.3.tar.gz && rm curl-7.50.3.tar.gz && cd curl-7.50.3 && ./buildconf && ./configure && make && make install && \
-  rm /usr/local/lib/libcurl.so.4 && ln -s /usr/lib/x86_64-linux-gnu/libcurl.so.4.4.0 /usr/local/lib/libcurl.so.4
+  wget https://curl.haxx.se/download/curl-7.50.3.tar.gz && tar -xzf curl-7.50.3.tar.gz && rm curl-7.50.3.tar.gz && cd curl-7.50.3 && ./buildconf && ./configure && make && make install
 
 #JWT.io
 RUN \
   apt-get install -y software-properties-common python-software-properties && \
   add-apt-repository -y ppa:ben-collins/libjwt && apt-get update && apt-get install -y libjwt-dev
+
+#cURL dynamic library doble linked
+RUN \
+  rm /usr/local/lib/libcurl.so.4 && ln -s /usr/lib/x86_64-linux-gnu/libcurl.so.4.4.0 /usr/local/lib/libcurl.so.4

@@ -1,0 +1,6 @@
+#!/bin/bash
+#validacion
+if [ ! -e "$PWD/empty/run" ]; then echo "Tenes que correrlo desde la raiz del proyecto."; exit 2; fi;
+
+#levantando contenedor
+docker run -it -w "/home" -p 8000:8000 7552taller2jobify/empty $*

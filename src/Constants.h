@@ -16,6 +16,7 @@ static const struct mg_str DELETE_FUNCTION = MG_STR("DELETE");
 static const char* SECRET = "AAAA";
 static const int SECRET_LEN = 4;
 static const int MAX_POPULAR_USERS = 10;
+static const char* PASSWORD_DEFAULT = "admin";
 
 struct Message {
     std::string uri;

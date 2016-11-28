@@ -455,6 +455,26 @@ class testApplicationServer(unittest.TestCase):
         reply = requests.delete('http://localhost:8000/users/test@yahoo.com/logout', params=params)
         self.assertEqual(200, reply.status_code)
 
+    def test_60_RecoveryPassUnsuccessfully(self):
+        reply_recovery_pass = requests.get('http://localhost:8000/users/noExist@yahoo.com/recovery_pass')
+        self.assertEqual(500, reply_recovery_pass.status_code)
+        self.assertEqual("Client not exists.", reply_recovery_pass.json()["message"])
+        self.assertEqual(6, reply_recovery_pass.json()["code"])        
+
+    def test_61_RecoveryPassSuccessfully(self):
+        reply_recovery_pass = requests.get('http://localhost:8000/users/test@yahoo.com/recovery_pass')
+        self.assertEqual(200, reply_recovery_pass.status_code)
+        self.assertEqual("admin", reply_recovery_pass.json()["password"])        
+
+        body = {"email": "test@yahoo.com", "password": "admin"}
+        reply = requests.post('http://localhost:8000/users/login', json=body)
+        self.assertEqual(200, reply.status_code)
+        self.assertEqual("asdf1234asdf", reply.json()["profile"]["picture"])
+        self.assertEqual("Donnal", reply.json()["profile"]["first_name"])
+        self.assertEqual("Trump", reply.json()["profile"]["last_name"])
+        self.assertEqual("test@yahoo.com", reply.json()["profile"]["email"])
+        self.assertEqual("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4", reply.json()["metadata"]["token"])
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(testApplicationServer)
 def StartServer():

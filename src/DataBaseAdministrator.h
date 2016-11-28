@@ -48,6 +48,7 @@ class DataBaseAdministrator {
     void unvote(std::string email, std::string email_to_unvote);
     std::string getMostPopularUsers();
     std::vector<std::string>* getAllIds();
+    int resetPassword(std::string email);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

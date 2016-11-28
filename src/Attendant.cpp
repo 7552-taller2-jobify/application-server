@@ -164,7 +164,34 @@ RecoveryPass::RecoveryPass() {
 RecoveryPass::~RecoveryPass() {}
 
 Response* RecoveryPass::get(Message operation) {
-    std::cout << "Chau\n" << std::endl;
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    Response *response = new Response();
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    if (dbAdministrator->existsClient(email)){
+        int result = dbAdministrator->resetPassword(email);
+        if (result == 0) {
+            std::string credentials_parser = DataBase::getInstance().get(email);
+            Credentials *credentials = new Credentials();
+            credentials->loadJson(credentials_parser);
+            std::string token = credentials->getToken();
+            Authentication *auth = new Authentication();
+            LoginInformation *loginInformation = new LoginInformation();
+            bool rightDecode = auth->decode(token, loginInformation, credentials);   
+            std::string password = loginInformation->getPassword();
+            delete loginInformation;
+            delete credentials;
+            delete auth;    
+            response->setContent("{\"password\":\"" + password + "\"}");
+            response->setStatus(200);
+            Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was register.");
+            return response;
+        }
+    }
+    response->setContent("{\"code\":" + std::string(CLIENT_NOT_EXISTS) + ",\"message\":\"Client not exists.\"}");
+    response->setStatus(500);
+    delete dbAdministrator;
+    return response;
 }
 
 

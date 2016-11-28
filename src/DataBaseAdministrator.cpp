@@ -380,3 +380,29 @@ std::vector<std::string>* DataBaseAdministrator::getAllIds(){
     delete idsDB;
     return ids;
 }
+
+// return 0 if successfully, and 1 in others case
+int DataBaseAdministrator::resetPassword(std::string email){
+    int result = 1;
+    std::string credentials_parser = DataBase::getInstance().get(email);
+    Credentials *credentials = new Credentials();
+    credentials->loadJson(credentials_parser);
+    std::string token = credentials->getToken();
+    Authentication *auth = new Authentication();
+    LoginInformation *loginInformation = new LoginInformation();
+    bool rightDecode = auth->decode(token, loginInformation, credentials);   
+    if (rightDecode) {
+        loginInformation->setPassword(PASSWORD_DEFAULT);
+        int incremental_number = 0;
+        std::string token_new = auth->encode(email, PASSWORD_DEFAULT, incremental_number);
+        credentials->setToken(token_new);
+        credentials->setIncrementalNumber(incremental_number);
+        DataBase::getInstance().erase(email);
+        DataBase::getInstance().put(email, credentials->createJsonFile());
+        result =  0;
+    }
+    delete credentials;
+    delete loginInformation;
+    delete auth;
+    return result;   
+}

@@ -222,7 +222,7 @@ class Search: public Attendant {
     static std::string URLDecode(std::string text);
     static std::vector<std::string>* searchByPosition(std::vector<std::string>* ids, std::string position);
     static std::vector<std::string>* searchBySkills(std::vector<std::string>* ids, std::vector<std::string>* skills);
-    static std::vector<std::string>* searchByDistance(std::vector<std::string>* ids, double lat, double lon,
+    static std::map<std::string, std::string>* searchByDistance(std::vector<std::string>* ids, double lat, double lon,
                                                       double distance);
     static std::vector<std::string>* intersection(std::vector<std::string>* ids_match_position,
                                                   std::vector<std::string>* ids_match_skills);
@@ -230,6 +230,7 @@ class Search: public Attendant {
     static bool rightLong(double lon);
     static bool rightLat(double lon);
     static double toRad(double degree);
+    static std::vector<std::string>* getKeys(std::map<std::string, std::string>* m);
  public:
     Search();
     ~Search();

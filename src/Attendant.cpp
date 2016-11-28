@@ -968,12 +968,16 @@ Response* Search::get(Message operation) {
     bool isEmpthyLon = std::strcmp(lon_str.c_str(), "") == 0; 
     bool isEmthySomeLatLon = isEmpthyLat || isEmpthyLon;
     std::vector<std::string> *ids_match_distance = NULL;
+    std::map<std::string, std::string> *ids_match_distance_map = NULL;        
     if (!isEmthySomeLatLon) {
         lat = atof(lat_str.c_str());
         lon = atof(lon_str.c_str());
         distance = atof(distance_str.c_str());
         std::cout << "SEARCH BY LAT AND LONG" << std::endl;
-        ids_match_distance = searchByDistance(ids,  lat, lon, distance);
+        ids_match_distance_map = searchByDistance(ids,  lat, lon, distance);
+        if (ids_match_distance_map != NULL) {
+            ids_match_distance = getKeys(ids_match_distance_map);
+        }
     }
     
     std::vector<std::string> *ids_match_2 = NULL;
@@ -1005,13 +1009,22 @@ Response* Search::get(Message operation) {
     if (ids_match->size() > 0) {
         for (int i = 0; i < ids_match->size(); i++){
             std::string id = (*ids_match)[i];
+            std::string distance = "";
+            if (!isEmthySomeLatLon) {
+                if (ids_match_distance_map != NULL) {
+                    bool existId = ids_match_distance_map->find(id) != ids_match_distance_map->end();
+                    if (existId) {
+                        distance = (*ids_match_distance_map)[id];
+                    }
+                }                
+            }
             std::string personal_str = dbAdministrator->getPersonal(id);
             Personal *personal = new Personal();
             personal->loadJson(personal_str);
             std::string picture_str = dbAdministrator->getPicture(id);
             Picture *picture = new Picture();
             picture->loadJson(picture_str);
-            message += "{\"email\":\"" + id + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+            message += "{\"email\":\"" + id + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"distance\":" + "\"" + distance + "\""+ ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
             if (i != (ids_match->size() - 1)) {
                 message += ",";
             }      
@@ -1107,8 +1120,8 @@ std::vector<std::string>* Search::searchByPosition(std::vector<std::string>* ids
     return ids_match_position;
 }
 
-std::vector<std::string>* Search::searchByDistance(std::vector<std::string>* ids, double lat_initial, double lon_initial, double distance) {
-    std::vector<std::string>* ids_match_distance = new std::vector<std::string>();
+std::map<std::string, std::string>* Search::searchByDistance(std::vector<std::string>* ids, double lat_initial, double lon_initial, double distance) {
+    std::map<std::string, std::string>* ids_match_distance = new std::map<std::string, std::string>();
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     for (int i=0; i < ids->size(); i++){
         std::string id = (*ids)[i];
@@ -1127,7 +1140,9 @@ std::vector<std::string>* Search::searchByDistance(std::vector<std::string>* ids
         std::cout << "distance between ("<< lat_initial << ", " <<lon_initial << ") and (" << lat_final << ", " << lon_final << ") is : " << distance_calculated << std::endl;   
         if (rightDistance) {
             std::cout << "MATCHEA: " << id << std::endl;            
-            ids_match_distance->push_back(id);
+            std::ostringstream distance;
+            distance<<distance_calculated;
+            ids_match_distance->insert(std::pair<std::string, std::string>(id, distance.str()));
         }
 
         delete personal;
@@ -1209,4 +1224,12 @@ double Search::calculateDistance(double lat1, double long1, double lat2, double 
         std::cout << "Incorrect parameters" << std::endl;
     }
     return dist;
+}
+
+std::vector<std::string>* Search::getKeys(std::map<std::string, std::string>* m) {
+    std::vector<std::string>* v = new std::vector<std::string>();
+    for(std::map<std::string, std::string>::iterator it = m->begin(); it != m->end(); ++it) {
+      v->push_back(it->first);
+    }
+    return v;
 }

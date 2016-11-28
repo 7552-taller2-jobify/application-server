@@ -24,9 +24,9 @@ before_install:
 "
 
 script:
-  - cmake CMakeLists.txt
+  - cmake -DCMAKE_BUILD_TYPE=Coverage .
   - make
-  - ./runTests
+  - make coverage
 
 notifications:
   slack: 7552-taller2-jobify:k32z7mkadyW1xTdrFsEqsiGX

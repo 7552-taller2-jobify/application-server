@@ -50,19 +50,19 @@ class testApplicationServer(unittest.TestCase):
     def test_06_ModifyPersonalDataSuccessfully(self):
         body = {"first_name": "Donnal", "last_name": "Trump", "birthday": "23/05/1960", "gender": "M", "address": {"lat": "-11.9302", "lon": "-77.0846"}, "city": "New York"}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/personal', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/personal', params=params, json=body)
         self.assertEqual(200, reply.status_code)
 
     def test_07_ModifyPersonalDataUnsuccsessfully(self):
         body = {"first_name": "Donald", "last_name": "Trump", "birthday": "14/06/1946", "gender": "M", "address": {"lat": "9999", "lon": "9999"}, "city": "New York"}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/personal', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/personal', params=params, json=body)
         self.assertEqual(500, reply.status_code)
         self.assertEqual("Could not upload.", reply.json()["message"])
 
     def test_08_GetPersonalDataSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/personal', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/personal', params=params)
         self.assertEqual(200, reply.status_code)
         self.assertEqual("New York", reply.json()["city"])
         self.assertEqual("Donnal", reply.json()["first_name"])
@@ -73,51 +73,51 @@ class testApplicationServer(unittest.TestCase):
 
     def test_09_GetPersonalDataUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/personal', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/personal', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
     def test_10_ModifySummarySuccessfully(self):
         body = {"summary": "Future president of the USA"}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/summary', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/summary', params=params, json=body)
         self.assertEqual(200, reply.status_code)
 
     def test_11_ModifySummaryUnsuccsessfully(self):
         body = {"summary": "Future president of the usa"}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/summary', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/summary', params=params, json=body)
         self.assertEqual(500, reply.status_code)
         self.assertEqual("Could not upload.", reply.json()["message"])
 
     def test_12_GetSummarySuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/summary', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/summary', params=params)
         self.assertEqual(200, reply.status_code)
         self.assertEqual("Future president of the USA", reply.json()["summary"])
 
     def test_13_GetSummaryUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/summary', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/summary', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
     def test_14_ModifyExpertiseSuccessfully(self):
         body = {"expertises":[{"company": "Lalala","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "Lololo","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/expertise/position', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/expertise/position', params=params, json=body)
         self.assertEqual(200, reply.status_code)
 
     def test_15_ModifyExpertiseUnsuccsessfully(self):
         body = {"expertises":[{"company": "Lalala","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "Lololo","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/expertise/position', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/expertise/position', params=params, json=body)
         self.assertEqual(500, reply.status_code)
         self.assertEqual("Could not upload.", reply.json()["message"])
 
     def test_16_GetExpertiseSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/expertise', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params)
         self.assertEqual(200, reply.status_code)
         self.assertEqual("software", reply.json()["expertises"][0]["category"])
         self.assertEqual("01/01/2010", reply.json()["expertises"][0]["from"])
@@ -134,26 +134,26 @@ class testApplicationServer(unittest.TestCase):
 
     def test_17_GetExpertiseUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/expertise', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
     def test_18_ModifySkillsSuccessfully(self):
         body = {"every_skill":[{"skills": ["java","c","UML"],"category": "software"},{"skills": ["moto","auto"],"category": "licencia_manejo"}]}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/skills/category', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/skills/category', params=params, json=body)
         self.assertEqual(200, reply.status_code)
 
     def test_19_ModifySkillsUnsuccsessfully(self):
         body = {"every_skill":[{"skills": ["java","c","UML"],"category": "software"},{"skills": ["moto","auto"],"category": "licencia_manejo"}]}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/skills/category', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/skills/category', params=params, json=body)
         self.assertEqual(500, reply.status_code)
         self.assertEqual("Could not upload.", reply.json()["message"])
 
     def test_20_GetSkillsSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/skills', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/skills', params=params)
         self.assertEqual(200, reply.status_code)
         self.assertEqual("java", reply.json()["every_skill"][0]["skills"][0])
         self.assertEqual("c", reply.json()["every_skill"][0]["skills"][1])
@@ -165,32 +165,32 @@ class testApplicationServer(unittest.TestCase):
 
     def test_21_GetSkillsUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/skills', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/skills', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
     def test_22_ModifyPictureSuccessfully(self):
         body = {"picture": "asdf1234asdf"}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/picture', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/picture', params=params, json=body)
         self.assertEqual(200, reply.status_code)
 
     def test_23_ModifyPictureUnsuccsessfully(self):
         body = {"picture": "asdf1234asdf"}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/perfil/picture', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/picture', params=params, json=body)
         self.assertEqual(500, reply.status_code)
         self.assertEqual("Could not upload.", reply.json()["message"])
 
     def test_24_GetPictureSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/picture', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/picture', params=params)
         self.assertEqual(200, reply.status_code)
         self.assertEqual("asdf1234asdf", reply.json()["picture"])
 
     def test_25_GetPictureUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/picture', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/picture', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
@@ -256,13 +256,13 @@ class testApplicationServer(unittest.TestCase):
 
     def test_36_GetFriendsSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/contacts', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/contacts', params=params)
         self.assertEqual(200, reply.status_code)
         self.assertEqual("contact@gmail.com", reply.json()["friends"][0])
 
     def test_37_GetFriendsUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.get('http://localhost:8000/users/test@yahoo.com/perfil/contacts', params=params)
+        reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/contacts', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
@@ -353,7 +353,7 @@ class testApplicationServer(unittest.TestCase):
 
         body = {"expertises":[{"company": "Lalala","position": "Desarrollador C++","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "Software"},{"company": "Lololo","position": "Desarrollador Java","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "Software"}]}
         params = {"token": reply_fulano_login.json()["metadata"]["token"]}
-        reply_fulano = requests.put('http://localhost:8000/users/fulano@yahoo.com/perfil/expertise/position', params=params, json=body)
+        reply_fulano = requests.put('http://localhost:8000/users/fulano@yahoo.com/profile/expertise/position', params=params, json=body)
         self.assertEqual(200, reply_fulano.status_code)
 
         # Distance is in Km
@@ -375,7 +375,7 @@ class testApplicationServer(unittest.TestCase):
 
         body = {"every_skill":[{"skills": ["c"],"category": "software"},{"skills": ["moto","auto"],"category": "licencia_manejo"}]}
         params = {"token": reply_pepito_login.json()["metadata"]["token"]}
-        reply_pepito = requests.put('http://localhost:8000/users/pepito@yahoo.com/perfil/skills/category', params=params, json=body)
+        reply_pepito = requests.put('http://localhost:8000/users/pepito@yahoo.com/profile/skills/category', params=params, json=body)
         self.assertEqual(200, reply_pepito.status_code)
 
         # Distance is in Km

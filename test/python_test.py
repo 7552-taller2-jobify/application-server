@@ -12,21 +12,21 @@ class testApplicationServer(unittest.TestCase):
     def test_01_RegisterEmptyFields(self):
         sleep(1)
         body = {"email": "test@yahoo.com", "password": "admin", "device_id": "123", "first_name": "", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
-                "address": { "lat": "123456789", "lon": "12345678" }, "city": "lalala" }
+                "address": { "lat": "123456789", "lon": "12345678" } }
         reply = requests.post('http://localhost:8000/users/register', json=body)
         self.assertEqual(500, reply.status_code)
         self.assertEqual("There are empty fields.", reply.json()["message"])
 
     def test_02_RegisterSuccessfully(self):
         body = {"email": "test@yahoo.com", "password": "admin", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
-                "address": { "lat": "123456789", "lon": "12345678" }, "city": "lalala" }
+                "address": { "lat": "123456789", "lon": "12345678" }}
         reply = requests.post('http://localhost:8000/users/register', json=body)
         self.assertEqual(201, reply.status_code)
         self.assertEqual("OK", json.loads(reply.content)["registration"])
     
     def test_03_RegisterClienExists(self):
         body = {"email": "test@yahoo.com", "password": "admin", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
-                "address": { "lat": "123456789", "lon": "12345678" }, "city": "lalala" }
+                "address": { "lat": "123456789", "lon": "12345678" }}
         reply = requests.post('http://localhost:8000/users/register', json=body)
         self.assertEqual(500, reply.status_code)
         self.assertEqual("Client already exists.", reply.json()["message"])
@@ -48,13 +48,13 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual("Invalid credentials.", reply.json()["message"])
     
     def test_06_ModifyPersonalDataSuccessfully(self):
-        body = {"first_name": "Donnal", "last_name": "Trump", "birthday": "23/05/1960", "gender": "M", "address": {"lat": "-11.9302", "lon": "-77.0846"}, "city": "New York"}
+        body = {"first_name": "Donnal", "last_name": "Trump", "birthday": "23/05/1960", "gender": "M", "address": {"lat": "-11.9302", "lon": "-77.0846"}}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/personal', params=params, json=body)
         self.assertEqual(200, reply.status_code)
 
     def test_07_ModifyPersonalDataUnsuccsessfully(self):
-        body = {"first_name": "Donald", "last_name": "Trump", "birthday": "14/06/1946", "gender": "M", "address": {"lat": "9999", "lon": "9999"}, "city": "New York"}
+        body = {"first_name": "Donald", "last_name": "Trump", "birthday": "14/06/1946", "gender": "M", "address": {"lat": "9999", "lon": "9999"}}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
         reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/personal', params=params, json=body)
         self.assertEqual(500, reply.status_code)
@@ -64,7 +64,6 @@ class testApplicationServer(unittest.TestCase):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.get('http://localhost:8000/users/test@yahoo.com/profile/personal', params=params)
         self.assertEqual(200, reply.status_code)
-        self.assertEqual("New York", reply.json()["city"])
         self.assertEqual("Donnal", reply.json()["first_name"])
         self.assertEqual("Trump", reply.json()["last_name"])
         self.assertEqual("M", reply.json()["gender"])
@@ -364,7 +363,7 @@ class testApplicationServer(unittest.TestCase):
 
     def test_49_SearchBySkills(self):
         body = {"email": "pepito@yahoo.com", "password": "admin", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
-                "address": { "lat": "180.0", "lon": "180.0" }, "city": "lalala" }
+                "address": { "lat": "180.0", "lon": "180.0" }}
         reply_pepito_register = requests.post('http://localhost:8000/users/register', json=body)
         self.assertEqual(201, reply_pepito_register.status_code)
         self.assertEqual("OK", json.loads(reply_pepito_register.content)["registration"])
@@ -386,7 +385,7 @@ class testApplicationServer(unittest.TestCase):
 
     def test_50_SearchByDistance(self):
         body = {"email": "mengano@yahoo.com", "password": "admin", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "M",	"birthday": "01/01/2000",
-                "address": { "lat": "-11.9302235", "lon": "-77.0846415" }, "city": "lalala" }
+                "address": { "lat": "-11.9302235", "lon": "-77.0846415" }}
         reply_pepito_register = requests.post('http://localhost:8000/users/register', json=body)
         self.assertEqual(201, reply_pepito_register.status_code)
         self.assertEqual("OK", json.loads(reply_pepito_register.content)["registration"])

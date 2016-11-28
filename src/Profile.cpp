@@ -99,7 +99,6 @@ void Personal::getOwnInfo(const rapidjson::Document &document) {
     this->birthday = document["birthday"].GetString();
     this->address[0] = document["address"]["lat"].GetString();
     this->address[1] = document["address"]["lon"].GetString();
-    this->city = document["city"].GetString();
     if (document.HasMember("device_id") && document["device_id"].IsString()) {
         this->device_id = document["device_id"].GetString();
     } else {
@@ -147,10 +146,6 @@ std::string Personal::getLon() {
     return this->address[1];
 }
 
-std::string Personal::getCity() {
-    return this->city;
-}
-
 void Personal::setDeviceId(std::string new_id) {
     this->device_id = new_id;
 }
@@ -180,10 +175,6 @@ void Personal::setAddress(std::string new_lat, std::string new_lon) {
     this->address[1] = new_lon.c_str();
 }
 
-void Personal::setCity(std::string new_city) {
-    this->city = new_city;
-}
-
 void Personal::setPassword(std::string password) {
     this->password = password;
 }
@@ -196,14 +187,13 @@ std::string Personal::createJsonFile() {
     gender = "\"gender\":\"" + this->gender + "\",",
     birthday = "\"birthday\":\"" + this->birthday + "\",",
     address_1 = "\"address\":{\"lat\":\"" + this->address[0] + "\",",
-    address_2 = "\"lon\":\"" + this->address[1] + "\"},",
-    city = "\"city\":\"" + this->city + "\"}";
-    return id + first_name + last_name + email + gender + birthday + address_1 + address_2 + city;
+    address_2 = "\"lon\":\"" + this->address[1] + "\"}}";
+    return id + first_name + last_name + email + gender + birthday + address_1 + address_2;
 }
 
 bool Personal::emptyFields() {
     if ((isNull(first_name)) || (isNull(last_name)) || (isNull(email)) || (isNull(gender)) || (isNull(birthday))
-                || (isNull(address[0])) || (isNull(address[1])) || (isNull(city))) {
+                || (isNull(address[0])) || (isNull(address[1]))) {
         return true;
     }
     return false;

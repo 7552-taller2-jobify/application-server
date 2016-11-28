@@ -115,7 +115,6 @@ int DataBaseAdministrator::uploadPersonal(std::string email, std::string token, 
         actual_personal->setLastName(upload_personal->getLastName());
         actual_personal->setGender(upload_personal->getGender());
         actual_personal->setBirthday(upload_personal->getBirthday());
-        actual_personal->setCity(upload_personal->getCity());
         actual_personal->setAddress(upload_personal->getAddress()[0], upload_personal->getAddress()[1]);
 
         DataBase::getInstance().erase("PERSONAL_" + email);

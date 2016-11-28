@@ -87,7 +87,6 @@ TEST_F(TestProfile, testPersonalWellCreated) {
     std::string lat = "-34.61543532", lon = "-58.37213459";
     ASSERT_EQ(personal->getAddress()[0], lat);
     ASSERT_EQ(personal->getAddress()[1], lon);
-    ASSERT_EQ(personal->getCity(), "La Plata");
 }
 
 TEST_F(TestProfile, testChangeFirstName) {
@@ -120,11 +119,6 @@ TEST_F(TestProfile, testChangeAddress) {
     personal->setAddress(lat, lon);
     ASSERT_EQ(personal->getAddress()[0], lat);
     ASSERT_EQ(personal->getAddress()[1], lon);
-}
-
-TEST_F(TestProfile, testChangeCity) {
-    personal->setCity("CABA");
-    ASSERT_EQ(personal->getCity(), "CABA");
 }
 
 TEST_F(TestProfile, testUpdateJsonPersonal) {

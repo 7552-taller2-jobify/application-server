@@ -19,8 +19,7 @@ std::string UserService::getPersonal(Personal *personal) {
             "\"last_name\":\"" + personal->getLastName() + "\"," +
             "\"email\":\"" + personal->getEmail() + "\"," +
             "\"birthday\":\"" + personal->getBirthday() + "\"," +
-            "\"gender\":\"" + personal->getGender() + "\"," +
-            "\"city\":\"" + personal->getCity() + "\"" + "}");
+            "\"gender\":\"" + personal->getGender() + "\"}");
 }
 
 /*std::string UserService::loginInformation(Personal *personal, Picture *picture, str::string token) {

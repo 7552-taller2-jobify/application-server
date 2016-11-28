@@ -129,7 +129,6 @@ Response* Register::post(Message operation) {
         personal->setGender("");
         personal->setBirthday("");
         personal->setPassword("");
-        personal->setCity("");
         personal->setAddress("", "");
     } else {
          personal->loadJson(operation.body.c_str());

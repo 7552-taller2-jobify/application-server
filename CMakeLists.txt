@@ -6,17 +6,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-#######################################
-
-INCLUDE(CodeCoverage.cmake)
-SET(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
-SET(CMAKE_C_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
-SETUP_TARGET_FOR_COVERAGE(coverage runTests coverage-output)
-
-#SETUP_TARGET_FOR_COVERAGE_COBERTURA(coverage runTests coverage-output)
-
-#######################################
-
 include_directories(
 	${LEVELDB_PREFIX}/include
 	/usr/local/include

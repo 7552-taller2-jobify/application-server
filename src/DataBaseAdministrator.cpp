@@ -35,7 +35,7 @@ bool DataBaseAdministrator::rightClient(LoginInformation *loginInformation) {
 bool DataBaseAdministrator::rightClient(std::string email, std::string token) {
     bool existsClient = this->existsClient(email);
     if (existsClient) {
-        std::cout << "exists client" << std::endl;
+        //  std::cout << "exists client" << std::endl;
         std::string credentials_parser = DataBase::getInstance().get(email);
         Credentials *credentials = new Credentials();
         credentials->loadJson(credentials_parser);
@@ -45,7 +45,7 @@ bool DataBaseAdministrator::rightClient(std::string email, std::string token) {
             return true;
         }
     }
-    std::cout << "not exists client" << std::endl;
+    //  std::cout << "not exists client" << std::endl;
     return false;
 }
 
@@ -299,6 +299,7 @@ void DataBaseAdministrator::vote(std::string email, std::string email_to_vote) {
     std::string others_recommendation_email = ("OTHERS_RECOMMENDATIONS_" + email_to_vote);
     DataBase::getInstance().erase(others_recommendation_email);
     DataBase::getInstance().put(others_recommendation_email, others_recommendations->createJsonFile());
+    //  std::cout<<"VOTE OTHERS:\n\n\n"<<others_recommendations->createJsonFile();
     delete others_recommendations;
 }
 
@@ -317,6 +318,7 @@ void DataBaseAdministrator::unvote(std::string email, std::string email_to_unvot
     std::string others_recommendation_email = ("OTHERS_RECOMMENDATIONS_" + email_to_unvote);
     DataBase::getInstance().erase(others_recommendation_email);
     DataBase::getInstance().put(others_recommendation_email, others_recommendations->createJsonFile());
+    //  std::cout<<"UNVOTE OTHERS:\n\n\n"<<others_recommendations->createJsonFile();
     delete others_recommendations;
 }
 
@@ -334,6 +336,7 @@ std::vector<struct PopularUser> DataBaseAdministrator::searchRange(const std::st
             OthersRecommendations *others_recommendations = new OthersRecommendations();
             others_recommendations->loadJson(db_iterator->value().ToString());
             user.votes = others_recommendations->getNumberOfContacts();
+            //  std::cout<<"CANTIDAD:"<<user.votes<<" -JSON-["<<user.email<<"] "<<db_iterator->value().ToString()<<"\n\n\n";
             delete others_recommendations;
             if (users.size() < MAX_POPULAR_USERS) {
                 users.push_back(user);

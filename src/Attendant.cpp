@@ -617,6 +617,7 @@ Vote::Vote() {
 Vote::~Vote() {}
 
 Response* Vote::post(Message operation) {
+std::cout<<"Vote POST\n\n\n\n";
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -643,6 +644,7 @@ Response* Vote::post(Message operation) {
 }
 
 Response* Vote::erase(Message operation) {
+std::cout<<"Vote DELETE\n\n\n\n";
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);

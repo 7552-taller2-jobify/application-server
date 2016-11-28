@@ -484,7 +484,7 @@ std::string Contacts::createJsonFile() {
 }
 
 int Contacts::getNumberOfContacts() {
-    this->contacts.size();
+    return this->contacts.size();
 }
 
 
@@ -652,7 +652,7 @@ void IdsDataBase::getOwnInfo(const rapidjson::Document &document) {
     for (rapidjson::SizeType i = 0; i < document["ids"].Size(); i++) {
         std::string id = document["ids"][i].GetString();
         this->addId(id);
-        std::cout<< id << std::endl;
+        //  std::cout<< id << std::endl;
     }
 }
 

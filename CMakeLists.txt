@@ -25,6 +25,11 @@ add_subdirectory(libs)
 add_subdirectory(src)
 add_subdirectory(test)
 
+INCLUDE(CodeCoverage.cmake)
+SET(CMAKE_CXX_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+SET(CMAKE_C_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
+SETUP_TARGET_FOR_COVERAGE(coverage runTests coverage-output)
+
 set(SOURCE_FILES ${CMAKE_BINARY_DIR}/src)
 
 set(TEST_FILES ${CMAKE_BINARY_DIR}/test)

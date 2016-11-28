@@ -9,3 +9,4 @@ log.txt
 src/libSources.a
 files
 .DS_Store
+coverage-output/

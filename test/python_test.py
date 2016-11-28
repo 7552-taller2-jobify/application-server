@@ -322,6 +322,13 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual("test@yahoo.com", reply.json()["most_popular_users"][1]["email"])
 
     def test_47_GetMostPopularUsersAddingVotesSuccessfully(self):
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.get('http://localhost:8000/users/pop', params=params)
+        self.assertEqual(200, reply.status_code)
+        self.assertEqual("contact@gmail.com", reply.json()["most_popular_users"][0]["email"])
+        self.assertEqual(0, reply.json()["most_popular_users"][0]["votes"])
+        self.assertEqual("test@yahoo.com", reply.json()["most_popular_users"][1]["email"])
+        self.assertEqual(0, reply.json()["most_popular_users"][1]["votes"])
         params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("email", "contact@gmail.com")}
         reply = requests.post('http://localhost:8000/users/test@yahoo.com/vote', params=params)
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
@@ -331,13 +338,6 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(1, reply.json()["most_popular_users"][0]["votes"])
         self.assertEqual("test@yahoo.com", reply.json()["most_popular_users"][1]["email"])
         self.assertEqual(0, reply.json()["most_popular_users"][1]["votes"])
-
-#    def test_48_GetMostPopularUsersUnsuccessfully(self):
-#        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-#        reply = requests.get('http://localhost:8000/users/pop', params=params)
-#        self.assertEqual(401, reply.status_code)
-#        self.assertEqual("Invalid credentials.", reply.json()["message"])
-
 
     def test_48_SearchByPosition(self):
        
@@ -434,7 +434,6 @@ class testApplicationServer(unittest.TestCase):
         reply = requests.get('http://localhost:8000/users/search', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
-
 
     def test_57_LogoutUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}

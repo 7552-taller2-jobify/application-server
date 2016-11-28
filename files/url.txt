@@ -18,7 +18,7 @@
 ^/users/.*@.*/own_recommendations$ ProfileOwnRecommendations
 ^/users/.*@.*/others_recommendations$ ProfileOthersRecommendations
 ^/users/pop$ MostPopularUsers
-^/users/search$ Search
+^/users$ Search
 ^/users/.*@.*/chat$ Login
 ^/users/facebook* Facebook
 ^/firebase/notification* Firebase

@@ -970,7 +970,10 @@ Response* Search::get(Message operation) {
         ids_match = ids_match_skills;
     } else if (!isEmthySomeLatLon) {
         ids_match = ids_match_distance;
-    }    
+    } else {
+        // If al the fields are empthy returning all users.
+        ids_match = ids;
+    }   
 
     std::string message = "{\"ids\":[";    
     if (ids_match->size() > 0) {

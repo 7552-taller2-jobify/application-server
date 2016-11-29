@@ -1024,7 +1024,15 @@ Response* Search::get(Message operation) {
             std::string picture_str = dbAdministrator->getPicture(id);
             Picture *picture = new Picture();
             picture->loadJson(picture_str);
-            message += "{\"email\":\"" + id + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"distance\":" + "\"" + distance + "\""+ ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+
+            OthersRecommendations *others_recommendations = new OthersRecommendations();
+            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(id);
+            others_recommendations->loadJson(others_recomendations_parse);
+            int vote = others_recommendations->getNumberOfContacts();
+            delete others_recommendations;
+            std::ostringstream vote_str;
+            vote_str<<vote;
+            message += "{\"email\":\"" + id + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"distance\":" + "\"" + distance + "\"" + ",\"votes\":" + vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
             if (i != (ids_match->size() - 1)) {
                 message += ",";
             }      

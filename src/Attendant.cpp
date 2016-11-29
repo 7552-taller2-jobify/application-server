@@ -623,7 +623,32 @@ Response* ProfileFriends::get(Message operation) {
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
-        response->setContent(dbAdministrator->getFriends(email));
+        std::string friends_parse = dbAdministrator->getFriends(email);
+        Friends *friends = new Friends();
+        friends->loadJson(friends_parse);
+        std::string message = "{\"friends\":[";
+        for (int i=0; i<friends->getNumberOfContacts(); i++){
+            std::string email = friends->getContactAt(i);
+            std::string personal_str = dbAdministrator->getPersonal(email);
+            Personal *personal = new Personal();
+            personal->loadJson(personal_str);
+            std::string picture_str = dbAdministrator->getPicture(email);
+            Picture *picture = new Picture();
+            picture->loadJson(picture_str);
+            OthersRecommendations *others_recommendations = new OthersRecommendations();
+            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(email);
+            others_recommendations->loadJson(others_recomendations_parse);
+            int vote = others_recommendations->getNumberOfContacts();
+            delete others_recommendations;
+            std::ostringstream vote_str;
+            vote_str<<vote;
+            message += "{\"email\":\"" + email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"votes\":" + vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+            if (i != (friends->getNumberOfContacts() - 1)) {
+                message += ",";
+            }
+        }
+        message += "]}";        
+        response->setContent(message);
         response->setStatus(200);
     } else {
         response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");

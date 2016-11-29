@@ -35,40 +35,19 @@ IF(NOT LEVELDB)
     FIND_LIBRARY(LEVELDB leveldb)
 ENDIF()
 
-
-
-
 file(GLOB Clases
 	"*.h"
 	"*.cpp"
 )
 
-
-
 add_library (Sources ${Clases})
 
-target_link_libraries (Sources LINK_PUBLIC Mongoose ${LEVELDB} pthread ${LIBJWTDEV} ${LIBCURL})
+target_link_libraries(Sources LINK_PUBLIC Mongoose ${LEVELDB} pthread ${LIBJWTDEV} ${LIBCURL})
 
 target_include_directories(Sources PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-
-
-
 add_executable (Server ${Clases})
 
-TARGET_LINK_LIBRARIES(Server Mongoose ${LEVELDB} pthread ${LIBJWTDEV} ${LIBCURL})
+target_link_libraries(Server Mongoose ${LEVELDB} pthread ${LIBJWTDEV} ${LIBCURL})
 
-#install(TARGETS Sources 
-#   ARCHIVE
-#   DESTINATION libs)
-# install(TARGETS Server
-#   RUNTIME
-#   DESTINATION bin)
-# install(FILES ${Clases}
-#   DESTINATION include)
-
-
-
-#set(DEPENDENCIES ${DEPENDENCIES} ${LIBCURL} ${LEVELDB} ${LIBJWTDEV})
-
-INSTALL(TARGETS Server RUNTIME DESTINATION bin)
+install(TARGETS Server RUNTIME DESTINATION bin)

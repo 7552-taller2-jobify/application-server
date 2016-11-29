@@ -24,7 +24,7 @@ before_install:
 "
 
 script:
-  - cmake -DCMAKE_BUILD_TYPE=Debug .
+  - cmake -DCMAKE_BUILD_TYPE=Coverage .
   - make
   - make coverage
 

@@ -218,7 +218,8 @@ class JobPosition: public Attendant {
 class Search: public Attendant {
  private:
     static void loadParameters(std::string params, std::string *token, std::string *lat, std::string *lon,
-                               std::string *distance, std::string *position, std::vector<std::string> *skills);
+                               std::string *distance, std::string *position, std::string *limit_str, 
+                               std::string *offset_str, std::vector<std::string> *skills);
     static std::string URLDecode(std::string text);
     static std::vector<std::string>* searchByPosition(std::vector<std::string>* ids, std::string position);
     static std::vector<std::string>* searchBySkills(std::vector<std::string>* ids, std::vector<std::string>* skills);
@@ -231,6 +232,8 @@ class Search: public Attendant {
     static bool rightLat(double lon);
     static double toRad(double degree);
     static std::vector<std::string>* getKeys(std::map<std::string, std::string>* m);
+    static std::string generateMessage(std::vector<std::string>* ids_match, std::map<std::string, 
+                                       std::string> *ids_match_distance_map, int offset, int limit);    
  public:
     Search();
     ~Search();

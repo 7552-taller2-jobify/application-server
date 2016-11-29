@@ -955,10 +955,31 @@ Search::~Search() {}
 
 Response* Search::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    RequestParse *rp = new RequestParse();
     double lat, lon, distance;
-    std::string token, position, lat_str, lon_str, distance_str;
-    std::vector<std::string> *skills = new std::vector<std::string>();
-    loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position, skills);
+    int offset, limit;
+    std::string token = "";
+    std::string position = "";
+    std::string lat_str = "";
+    std::string lon_str = "";
+    std::string distance_str = "";
+    std::string limit_str = "";
+    std::string offset_str = "";
+    std::vector<std::string> *skills = new std::vector<std::string>();    
+    loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position, &limit_str, &offset_str, skills);
+/*    std::cout << "token : " << token << std::endl;
+    std::cout << "position : " << position << std::endl;
+    std::cout << "lat : " << lat_str << std::endl;
+    std::cout << "lon : " << lon_str << std::endl;
+    std::cout << "distance : " << distance_str << std::endl;
+    std::cout << "limit : " << limit_str << std::endl;
+    std::cout << "offset : " << offset_str << std::endl;
+    if (skills != NULL) {
+        for (int i = 0; i < skills->size(); i++){
+            std::cout << "skill " << i << " : " << (*skills)[i] << std::endl;
+        }
+    }
+*/
     std::vector<std::string> *ids = dbAdministrator->getAllIds();   
     Response* response = new Response();    
     Authentication *auth = new Authentication();
@@ -972,14 +993,26 @@ Response* Search::get(Message operation) {
        response->setStatus(401);
        return response;
     }
-
+    bool isEmpthyOffset = std::strcmp(offset_str.c_str(), "") == 0;
+    bool isEmpthyLimit = std::strcmp(limit_str.c_str(), "") == 0;
+    if (isEmpthyOffset) {
+        offset_str = OFFSET_DEFAULT;                
+    }
+    offset = atof(offset_str.c_str());
+    if (isEmpthyLimit) {
+        limit_str = LIMIT_DEFAULT;
+    }
+    limit = atof(limit_str.c_str());
     bool isEmptyPosition = std::strcmp(position.c_str(), "") == 0;    
     std::vector<std::string> *ids_match_position = NULL;
     if (!isEmptyPosition) {
         std::cout << "SEARCH BY POSITION" << std::endl;
         ids_match_position = searchByPosition(ids, position);
     }
-    bool isEmptySkills = skills->size() == 0;
+    bool isEmptySkills = true;
+    if (skills != NULL) {
+        isEmptySkills = skills->size() == 0;
+    }
     std::vector<std::string> *ids_match_skills = NULL;
     if (!isEmptySkills) {
         std::cout << "SEARCH BY SKILLS" << std::endl;
@@ -1004,7 +1037,6 @@ Response* Search::get(Message operation) {
             ids_match_distance = getKeys(ids_match_distance_map);
         }
     }
-    
     std::vector<std::string> *ids_match_2 = NULL;
     std::vector<std::string> *ids_match_1 = NULL;
     std::vector<std::string> *ids_match = NULL;
@@ -1029,20 +1061,30 @@ Response* Search::get(Message operation) {
         // If al the fields are empthy returning all users.
         ids_match = ids;
     }   
+    std::string message = generateMessage(ids_match, ids_match_distance_map, offset, limit);
+    delete dbAdministrator;
+    delete rp;
+    response->setContent(message);
+    response->setStatus(200);
+    return response;
+}
 
-    std::string message = "{\"ids\":[";    
+std::string Search::generateMessage(std::vector<std::string>* ids_match, std::map<std::string, std::string> *ids_match_distance_map, int offset, int limit){
+    std::cout << "limit : " << limit << std::endl;
+    std::cout << "offset : " << offset << std::endl;
+
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    std::string results = "\"results\":[";    
     if (ids_match->size() > 0) {
-        for (int i = 0; i < ids_match->size(); i++){
+        for (int i = offset; i < ids_match->size() && i < (offset+limit); i++){
             std::string id = (*ids_match)[i];
             std::string distance = "";
-            if (!isEmthySomeLatLon) {
-                if (ids_match_distance_map != NULL) {
-                    bool existId = ids_match_distance_map->find(id) != ids_match_distance_map->end();
-                    if (existId) {
-                        distance = (*ids_match_distance_map)[id];
-                    }
-                }                
-            }
+            if (ids_match_distance_map != NULL) {
+                bool existId = ids_match_distance_map->find(id) != ids_match_distance_map->end();
+                if (existId) {
+                    distance = (*ids_match_distance_map)[id];
+                }
+            }                
             std::string personal_str = dbAdministrator->getPersonal(id);
             Personal *personal = new Personal();
             personal->loadJson(personal_str);
@@ -1057,19 +1099,23 @@ Response* Search::get(Message operation) {
             delete others_recommendations;
             std::ostringstream vote_str;
             vote_str<<vote;
-            message += "{\"email\":\"" + id + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"distance\":" + "\"" + distance + "\"" + ",\"votes\":" + vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
-            if (i != (ids_match->size() - 1)) {
-                message += ",";
+            results += "{\"email\":\"" + id + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"distance\":" + "\"" + distance + "\"" + ",\"votes\":" + vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+            if ((i != (ids_match->size() - 1)) && (i != (offset + limit - 1))){
+                results += ",";
             }      
             delete personal;
             delete picture;
         }
     }
-    message += "]}";
+    results += "]";
+    std::ostringstream match_size_str;
+    match_size_str<<ids_match->size();
+    std::ostringstream offset_str;
+    offset_str<<offset;
+    std::string paging = "\"paging\":{\"total\":" + match_size_str.str() + ",\"offset\":" + offset_str.str() + "},";
+    std::string message = "{" + paging + results + "}";
     delete dbAdministrator;
-    response->setContent(message);
-    response->setStatus(200);
-    return response;
+    return message;
 }
 
 std::vector<std::string>* Search::intersection(std::vector<std::string>* ids_match_position, std::vector<std::string>* ids_match_skills){
@@ -1184,35 +1230,55 @@ std::map<std::string, std::string>* Search::searchByDistance(std::vector<std::st
     return ids_match_distance;
 }
 
-void Search::loadParameters(std::string params, std::string *token, std::string *lat_str, std::string *lon_str, std::string *distance_str, std::string *position, std::vector<std::string> *skills){
-    int pos_token = params.find("&token=");
-    int pos_lat = params.find("&lat=");
-    int pos_lon = params.find("&lon=");
-    int pos_distance = params.find("distance=");
-    int pos_position = params.find("&position=");
-    int pos_skills = params.find("&skills=");
-    *distance_str = params.substr(pos_distance + 9, pos_lat - pos_distance - 9 );
-    *lat_str = params.substr(pos_lat + 5, pos_lon - distance_str->length() - 14);
-    *lon_str = params.substr(pos_lon + 5, pos_position - distance_str->length() - lat_str->length() - 19);
-    *position = params.substr(pos_position + 10, pos_skills - distance_str->length() - lat_str->length() - lon_str->length() - 29);
-    std::string skills_parse = params.substr(pos_skills + 8, pos_token - distance_str->length() - lat_str->length() - lon_str->length() - position->length()- 37);
-    *token = params.substr(pos_token + 7);
-  
-    *position = URLDecode(*position);
-    skills_parse = URLDecode(skills_parse);
-
+void Search::loadParameters(std::string params, std::string *token, std::string *lat_str, std::string *lon_str, std::string *distance_str, std::string *position, std::string *limit_str, std::string *offset_str, std::vector<std::string> *skills){
+std::cout<<"INICIO LOAD PARAMETER 2" << std::endl;
+    std::map<std::string, std::string>* parameters = new std::map<std::string, std::string>();
     RequestParse * rp = new RequestParse();
-    *skills = rp->split(skills_parse, ",");
-    delete rp;
-
-    std::cout << "token : " << *token << std::endl;
-    std::cout << "position : " << *position << std::endl;
-    std::cout << "lat : " << *lat_str << std::endl;
-    std::cout << "lon : " << *lon_str << std::endl;
-    std::cout << "distance : " << *distance_str << std::endl;
-    for (int i = 0; i < skills->size(); i++){
-        std::cout << "skill " << i << " : " << (*skills)[i] << std::endl;
+    std::vector<std::string> parameters_vector = rp->split(params, "&");
+    for (int i=0; i<parameters_vector.size(); i++) {
+        std::string a_parameter = parameters_vector[i];
+        std::vector<std::string> key_value = rp->split(a_parameter, "=");
+        bool isValue = key_value.size() > 1;
+        std::string value = "";
+        if (isValue) {
+            value =  URLDecode(key_value[1]);
+        }    
+        parameters->insert(std::pair<std::string, std::string>(key_value[0], value));
     }
+    bool existSkills = parameters->find("skills") != parameters->end();
+    if (existSkills) {
+        *skills = rp->split((*parameters)["skills"], ",");            
+    }    
+    bool existLon = parameters->find("lon") != parameters->end();
+    if (existLon) {
+        *lon_str = (*parameters)["lon"];    
+    }    
+    bool existLat = parameters->find("lat") != parameters->end();
+    if (existLat) {
+        *lat_str = (*parameters)["lat"];    
+    }
+    bool existDistance = parameters->find("distance") != parameters->end();
+    if (existLat) {
+        *distance_str = (*parameters)["distance"];
+    }
+    bool existPosition = parameters->find("position") != parameters->end();
+    if (existPosition) {
+        *position = (*parameters)["position"];
+    }
+    bool existToken = parameters->find("token") != parameters->end();
+    if (existToken) {
+        *token = (*parameters)["token"];
+    }
+    bool existLimit = parameters->find("limit") != parameters->end();
+    if (existLimit) {
+        *limit_str = (*parameters)["limit"];
+    }
+    bool existOffset = parameters->find("offset") != parameters->end();
+    if (existToken) {
+        *offset_str = (*parameters)["offset"];
+    }
+    delete rp;
+std::cout<<"FIN LOAD PARAMETER 2" << std::endl;
 }
 
 std::string Search::URLDecode(std::string text){

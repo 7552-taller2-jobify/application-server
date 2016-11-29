@@ -17,7 +17,8 @@ static const char* SECRET = "AAAA";
 static const int SECRET_LEN = 4;
 static const int MAX_POPULAR_USERS = 10;
 static const char* PASSWORD_DEFAULT = "admin";
-
+static const char* OFFSET_DEFAULT = "0";
+static const char* LIMIT_DEFAULT = "5";
 struct Message {
     std::string uri;
     std::string body;

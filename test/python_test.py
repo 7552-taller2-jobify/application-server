@@ -104,13 +104,13 @@ class testApplicationServer(unittest.TestCase):
     def test_14_ModifyExpertiseSuccessfully(self):
         body = {"expertises":[{"company": "Lalala","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "Lololo","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/expertise/position', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
         self.assertEqual(200, reply.status_code)
 
     def test_15_ModifyExpertiseUnsuccsessfully(self):
         body = {"expertises":[{"company": "Lalala","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "Lololo","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
-        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/expertise/position', params=params, json=body)
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
         self.assertEqual(500, reply.status_code)
         self.assertEqual("Could not upload.", reply.json()["message"])
 
@@ -352,7 +352,7 @@ class testApplicationServer(unittest.TestCase):
 
         body = {"expertises":[{"company": "Lalala","position": "Desarrollador C++","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "Software"},{"company": "Lololo","position": "Desarrollador Java","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "Software"}]}
         params = {"token": reply_fulano_login.json()["metadata"]["token"]}
-        reply_fulano = requests.put('http://localhost:8000/users/fulano@yahoo.com/profile/expertise/position', params=params, json=body)
+        reply_fulano = requests.put('http://localhost:8000/users/fulano@yahoo.com/profile/expertise', params=params, json=body)
         self.assertEqual(200, reply_fulano.status_code)
 
         # Distance is in Km

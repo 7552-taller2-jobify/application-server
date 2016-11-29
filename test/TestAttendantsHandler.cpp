@@ -89,7 +89,7 @@ TEST_F(TestAttendantsHandler, testFindProfileFriends) {
 }
 
 TEST_F(TestAttendantsHandler, testFindProfileExpertise) {
-    Attendant* attendant = attendants_handler->find("/users/.*@.*/profile/expertise/position");
+    Attendant* attendant = attendants_handler->find("/users/.*@.*/profile/expertise");
     ASSERT_TRUE(dynamic_cast<ProfileExpertise*> (attendant));
 }
 

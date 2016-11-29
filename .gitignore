@@ -16,3 +16,4 @@ CPackSourceConfig.cmake
 _CPack_Packages/
 install_manifest.txt
 coverage-output/
+*.deb

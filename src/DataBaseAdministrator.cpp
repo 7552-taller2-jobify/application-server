@@ -35,7 +35,7 @@ bool DataBaseAdministrator::rightClient(LoginInformation *loginInformation) {
 bool DataBaseAdministrator::rightClient(std::string email, std::string token) {
     bool existsClient = this->existsClient(email);
     if (existsClient) {
-        std::cout << "exists client" << std::endl;
+        //  std::cout << "exists client" << std::endl;
         std::string credentials_parser = DataBase::getInstance().get(email);
         Credentials *credentials = new Credentials();
         credentials->loadJson(credentials_parser);
@@ -45,7 +45,7 @@ bool DataBaseAdministrator::rightClient(std::string email, std::string token) {
             return true;
         }
     }
-    std::cout << "not exists client" << std::endl;
+    //  std::cout << "not exists client" << std::endl;
     return false;
 }
 
@@ -94,6 +94,13 @@ int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *login
         DataBase::getInstance().put(email, credentials_parser);
         DataBase::getInstance().put("PERSONAL_" + email, personal->createJsonFile());
     }
+    IdsDataBase *idsDB = new IdsDataBase();
+    std::string ids_parse = DataBase::getInstance().get("IDS");
+    idsDB->loadJson(ids_parse);
+    idsDB->addId(email);
+    DataBase::getInstance().erase("IDS");
+    DataBase::getInstance().put("IDS", idsDB->createJsonFile());
+    delete idsDB;
     return 0;
 }
 
@@ -108,7 +115,6 @@ int DataBaseAdministrator::uploadPersonal(std::string email, std::string token, 
         actual_personal->setLastName(upload_personal->getLastName());
         actual_personal->setGender(upload_personal->getGender());
         actual_personal->setBirthday(upload_personal->getBirthday());
-        actual_personal->setCity(upload_personal->getCity());
         actual_personal->setAddress(upload_personal->getAddress()[0], upload_personal->getAddress()[1]);
 
         DataBase::getInstance().erase("PERSONAL_" + email);
@@ -118,13 +124,18 @@ int DataBaseAdministrator::uploadPersonal(std::string email, std::string token, 
     return 1;
 }
 
-std::string DataBaseAdministrator::getPersonal(std::string email) {
+std::string DataBaseAdministrator::getProfilePersonal(std::string email) {
     std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
     Personal *personal = new Personal();
     personal->loadJson(personal_parser);
     UserService *userService = new UserService();
     std::string personal_parser_modify = userService->getPersonal(personal);
     return personal_parser_modify;
+}
+
+std::string DataBaseAdministrator::getPersonal(std::string email) {
+    std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
+    return personal_parser;
 }
 
 // Returns 0 if success, 1 if credential invalid
@@ -221,15 +232,17 @@ int DataBaseAdministrator::addFriend(std::string email, struct Solicitude solici
     int return_code = solicitudes->removeSolicitude(solicitude_to_delete);
     DataBase::getInstance().put("SOLICITUDES_" + email, solicitudes->createJsonFile());
     delete solicitudes;
-    Friends *friends = new Friends();
-    if (DataBase::getInstance().get("FRIENDS_" + email) == "") {
-        DataBase::getInstance().put("FRIENDS_" + email, "{\"friends\":[]}");
+    if (return_code != -1) {
+        Friends *friends = new Friends();
+        if (DataBase::getInstance().get("FRIENDS_" + email) == "") {
+            DataBase::getInstance().put("FRIENDS_" + email, "{\"friends\":[]}");
+        }
+        friends->loadJson(DataBase::getInstance().get("FRIENDS_" + email));
+        DataBase::getInstance().erase("FRIENDS_" + email);
+        friends->addContact(solicitude_to_delete.email);
+        DataBase::getInstance().put("FRIENDS_" + email, friends->createJsonFile());
+        delete friends;
     }
-    friends->loadJson(DataBase::getInstance().get("FRIENDS_" + email));
-    DataBase::getInstance().erase("FRIENDS_" + email);
-    friends->addContact(solicitude_to_delete.mail);
-    DataBase::getInstance().put("FRIENDS_" + email, friends->createJsonFile());
-    delete friends;
     return return_code;
 }
 
@@ -285,6 +298,7 @@ void DataBaseAdministrator::vote(std::string email, std::string email_to_vote) {
     std::string others_recommendation_email = ("OTHERS_RECOMMENDATIONS_" + email_to_vote);
     DataBase::getInstance().erase(others_recommendation_email);
     DataBase::getInstance().put(others_recommendation_email, others_recommendations->createJsonFile());
+    //  std::cout<<"VOTE OTHERS:\n\n\n"<<others_recommendations->createJsonFile();
     delete others_recommendations;
 }
 
@@ -303,6 +317,7 @@ void DataBaseAdministrator::unvote(std::string email, std::string email_to_unvot
     std::string others_recommendation_email = ("OTHERS_RECOMMENDATIONS_" + email_to_unvote);
     DataBase::getInstance().erase(others_recommendation_email);
     DataBase::getInstance().put(others_recommendation_email, others_recommendations->createJsonFile());
+    //  std::cout<<"UNVOTE OTHERS:\n\n\n"<<others_recommendations->createJsonFile();
     delete others_recommendations;
 }
 
@@ -320,6 +335,7 @@ std::vector<struct PopularUser> DataBaseAdministrator::searchRange(const std::st
             OthersRecommendations *others_recommendations = new OthersRecommendations();
             others_recommendations->loadJson(db_iterator->value().ToString());
             user.votes = others_recommendations->getNumberOfContacts();
+            //  std::cout<<"CANTIDAD:"<<user.votes<<" -JSON-["<<user.email<<"] "<<db_iterator->value().ToString()<<"\n\n\n";
             delete others_recommendations;
             if (users.size() < MAX_POPULAR_USERS) {
                 users.push_back(user);
@@ -353,4 +369,39 @@ std::string DataBaseAdministrator::getMostPopularUsers() {
     }
     result += "]}";
     return result;
+}
+
+std::vector<std::string>* DataBaseAdministrator::getAllIds(){
+    std::string ids_parser = DataBase::getInstance().get("IDS");
+    IdsDataBase *idsDB = new IdsDataBase();
+    idsDB->loadJson(ids_parser);
+    std::vector<std::string>* ids = idsDB->getIds();
+    delete idsDB;
+    return ids;
+}
+
+// return 0 if successfully, and 1 in others case
+int DataBaseAdministrator::resetPassword(std::string email){
+    int result = 1;
+    std::string credentials_parser = DataBase::getInstance().get(email);
+    Credentials *credentials = new Credentials();
+    credentials->loadJson(credentials_parser);
+    std::string token = credentials->getToken();
+    Authentication *auth = new Authentication();
+    LoginInformation *loginInformation = new LoginInformation();
+    bool rightDecode = auth->decode(token, loginInformation, credentials);   
+    if (rightDecode) {
+        loginInformation->setPassword(PASSWORD_DEFAULT);
+        int incremental_number = 0;
+        std::string token_new = auth->encode(email, PASSWORD_DEFAULT, incremental_number);
+        credentials->setToken(token_new);
+        credentials->setIncrementalNumber(incremental_number);
+        DataBase::getInstance().erase(email);
+        DataBase::getInstance().put(email, credentials->createJsonFile());
+        result =  0;
+    }
+    delete credentials;
+    delete loginInformation;
+    delete auth;
+    return result;   
 }

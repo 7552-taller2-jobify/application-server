@@ -25,7 +25,7 @@
 FIND_PROGRAM( GCOV_PATH gcov )
 FIND_PROGRAM( LCOV_PATH lcov )
 FIND_PROGRAM( GENHTML_PATH genhtml )
-FIND_PROGRAM( GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
+FIND_PROGRAM( GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/test)
 FIND_PROGRAM( PYTHON_EXECUTABLE python)
 
 IF(NOT GCOV_PATH)
@@ -90,14 +90,25 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
 	SEPARATE_ARGUMENTS(test_command UNIX_COMMAND "${_testrunner}")
 
+
+    #set(CLEAN_DB_COMMAND rm -rf $PWD/db $PWD/log.txt)
+    #execute_process(COMMAND ${CLEAN_DB_COMMAND})
+
+    #set(PYTHON_TEST_COMMAND coverage run test/python_test.py)
+    #set(REPORT_COMMAND coverage html)
+
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
-
 		# Cleanup lcov
 		${LCOV_PATH} --directory . --zerocounters
 
+		#COMMAND ${CLEAN_DB_COMMAND}
+
 		# Run tests
-		COMMAND ${test_command} ${ARGV3}
+		COMMAND ${test_command}# ${ARGV3}
+
+		#COMMAND ${PYTHON_TEST_COMMAND}#python test/python_test.py#test_gcovr.py#test/python_test.py
+		#COMMAND ${REPORT_COMMAND}
 
 		# Capturing lcov counters and generating report
 		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${coverage_info}

@@ -5,6 +5,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 #include "DataBase.h"
 #include "Profile.h"
 #include "Logger.h"
@@ -21,10 +22,11 @@ class DataBaseAdministrator {
     DataBaseAdministrator();
     ~DataBaseAdministrator();
     bool existsClient(std::string email);
-    bool rightClient(std::string email, std::string token);     
+    bool rightClient(std::string email, std::string token);
     bool rightClient(LoginInformation *li);
     std::string getPersonalLogin(std::string email);
     std::string getPersonal(std::string email);
+    std::string getProfilePersonal(std::string email);
     std::string getSummary(std::string email);
     std::string getExpertise(std::string email);
     std::string getSkills(std::string email);
@@ -45,6 +47,8 @@ class DataBaseAdministrator {
     void vote(std::string email, std::string email_to_vote);
     void unvote(std::string email, std::string email_to_unvote);
     std::string getMostPopularUsers();
+    std::vector<std::string>* getAllIds();
+    int resetPassword(std::string email);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

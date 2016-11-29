@@ -11,6 +11,7 @@ Authentication::Authentication() {}
 
 std::string Authentication::encode(std::string email, std::string password, int numeroIncremental) {
     jwt_new(&this->myJWT);
+    // SHA 256 es seguro, no  tiene colisiones
     jwt_set_alg(this->myJWT, JWT_ALG_HS256, (const unsigned char *) SECRET, SECRET_LEN);
     jwt_add_grant(this->myJWT, "email", email.c_str());
     jwt_add_grant(this->myJWT, "password", password.c_str());

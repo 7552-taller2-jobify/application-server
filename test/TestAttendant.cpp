@@ -10,12 +10,10 @@ class TestAttendant : public ::testing::Test {
 
     void SetUp() {
         login = new Login();
-        recoveryPass = new RecoveryPass();
     }
 
     ~TestAttendant() {
         delete login;
-        delete recoveryPass;
     }
 };
 // TODO modificar este test
@@ -23,6 +21,6 @@ TEST_F(TestAttendant, testFindExistingKey) {
     struct Message message;
     message.verb = "GET";
     login->attend(message);
-    recoveryPass->attend(message);
     ASSERT_TRUE(true);
 }
+

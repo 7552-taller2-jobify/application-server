@@ -10,7 +10,7 @@ Attendant::Attendant() {}
 
 Attendant::~Attendant() {}
 
-Response* Attendant::attend(struct Message operation) {
+Response* Attendant::attend(Message operation) {
     Response* response = NULL;
     if (strcmp(operation.verb.c_str(), "DELETE") == 0) {
         response = this->functions["ERASE"](operation);
@@ -41,7 +41,7 @@ Login::Login() {
 
 Login::~Login() {}
 
-Response* Login::post(struct Message operation) {
+Response* Login::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     LoginInformation *loginInformation = new LoginInformation();
     bool hasLoginFacebook = strcmp(operation.params.c_str(), "app=facebook") == 0;
@@ -60,20 +60,20 @@ Response* Login::post(struct Message operation) {
         response->setStatus(200);
         Logger::getInstance().log(info, "The client " + email +" was logged.");
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
-       Logger::getInstance().log(warn, "The client " + email +" was not logged.");
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+        Logger::getInstance().log(warn, "The client " + email +" was not logged.");
     }
     return response;
 }
 
 Logout::Logout() {
-    this->functions["PUT"] = put;
+    this->functions["ERASE"] = erase;
 }
 
 Logout::~Logout() {}
 
-Response* Logout::put(struct Message operation) {
+Response* Logout::erase(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -103,10 +103,11 @@ Response* Logout::put(struct Message operation) {
             return response;
             Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was logged out.");
         }
+    } else {
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+        Logger::getInstance().log(warn, "The client " + email +" was not logged out.");
     }
-    response->setContent("{\"message\":\"Invalid credentials.\"}");
-    response->setStatus(401);
-    Logger::getInstance().log(warn, "The client " + email +" was not logged out.");
     return response;
 }
 
@@ -116,7 +117,7 @@ Register::Register() {
 
 Register::~Register() {}
 
-Response* Register::post(struct Message operation) {
+Response* Register::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     Personal *personal = new Personal();
     LoginInformation *loginInformation = new LoginInformation();
@@ -128,16 +129,12 @@ Response* Register::post(struct Message operation) {
         personal->setGender("");
         personal->setBirthday("");
         personal->setPassword("");
-        personal->setCity("");
         personal->setAddress("", "");
     } else {
          personal->loadJson(operation.body.c_str());
          loginInformation->loadJson(operation.body.c_str());
     }
     int success = dbAdministrator->addClient(personal, loginInformation, operation);
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("{\"registration\":\"OK\"}");
@@ -145,10 +142,10 @@ Response* Register::post(struct Message operation) {
         Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was register.");
     } else {
         if (success == 1) {
-            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Client already exists.\"}");
+            response->setContent("{\"code\":" + std::string(CLIENT_ALREADY_EXISTS) + ",\"message\":\"Client already exists.\"}");
             response->setStatus(500);
         } else {
-            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"There are empty fields.\"}");
+            response->setContent("{\"code\":" + std::string(EMPTY_FIELDS) + ",\"message\":\"There are empty fields.\"}");
             response->setStatus(500);
         }
         Logger::getInstance().log(warn, "The client " + loginInformation->getEmail() +" was not register.");
@@ -165,8 +162,35 @@ RecoveryPass::RecoveryPass() {
 
 RecoveryPass::~RecoveryPass() {}
 
-Response* RecoveryPass::get(struct Message operation) {
-    std::cout << "Chau\n" << std::endl;
+Response* RecoveryPass::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    Response *response = new Response();
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    if (dbAdministrator->existsClient(email)){
+        int result = dbAdministrator->resetPassword(email);
+        if (result == 0) {
+            std::string credentials_parser = DataBase::getInstance().get(email);
+            Credentials *credentials = new Credentials();
+            credentials->loadJson(credentials_parser);
+            std::string token = credentials->getToken();
+            Authentication *auth = new Authentication();
+            LoginInformation *loginInformation = new LoginInformation();
+            bool rightDecode = auth->decode(token, loginInformation, credentials);   
+            std::string password = loginInformation->getPassword();
+            delete loginInformation;
+            delete credentials;
+            delete auth;    
+            response->setContent("{\"password\":\"" + password + "\"}");
+            response->setStatus(200);
+            Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was register.");
+            return response;
+        }
+    }
+    response->setContent("{\"code\":" + std::string(CLIENT_NOT_EXISTS) + ",\"message\":\"Client not exists.\"}");
+    response->setStatus(500);
+    delete dbAdministrator;
+    return response;
 }
 
 
@@ -178,8 +202,8 @@ Contact::Contact() {
 
 Contact::~Contact() {}
 
-Response* Contact::post(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* Contact::post(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -193,27 +217,24 @@ Response* Contact::post(struct Message operation) {
     int number[3];
     date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-    struct Solicitude solicitude;
+     Solicitude solicitude;
     solicitude.date = date;
-    solicitude.mail = contact_email;
+    solicitude.email = contact_email;
     int success = dbAdministrator->addSolicitude(email, token, solicitude);
     delete dbAdministrator;
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(201);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't posted.\"}");
+        response->setContent("{\"code\":" + std::string(COULD_NOT_POST) + ",\"message\":\"Could not post.\"}");
         response->setStatus(500);
     }
     return response;
 }
 
-Response* Contact::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* Contact::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -225,8 +246,8 @@ Response* Contact::get(struct Message operation) {
         response->setContent(dbAdministrator->getSolicitudes(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -240,8 +261,8 @@ Accept::Accept() {
 
 Accept::~Accept() {}
 
-Response* Accept::post(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* Accept::post(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -255,26 +276,23 @@ Response* Accept::post(struct Message operation) {
     int number[3];
     date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-    struct Solicitude solicitude;
+    Solicitude solicitude;
     solicitude.date = date;
-    solicitude.mail = contact_email;
+    solicitude.email = contact_email;
     bool rightCredential = dbAdministrator->rightClient(email, token);
     Response* response = new Response();
     if (rightCredential) {
         int success = dbAdministrator->addFriend(email, solicitude);
         delete dbAdministrator;
-        std::ostringstream s;
-        s << success;
-        std::string success_parsed = s.str();
         if (success >= 0) {
             response->setContent("");
             response->setStatus(201);
         } else if (success == -1) {
-            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"User did not send solicitude.\"}");
+            response->setContent("{\"code\":" + std::string(NO_SOLICITUDE_SENT) + ",\"message\":\"User did not send solicitude.\"}");
             response->setStatus(500);
         }
     } else {
-        response->setContent("{\"message\":\"Invalid credentials.\"}");
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
         response->setStatus(401);
     }
     return response;
@@ -288,8 +306,8 @@ Reject::Reject() {
 
 Reject::~Reject() {}
 
-Response* Reject::erase(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* Reject::erase(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -303,31 +321,27 @@ Response* Reject::erase(struct Message operation) {
     int number[3];
     date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-    struct Solicitude solicitude;
+     Solicitude solicitude;
     solicitude.date = date;
-    solicitude.mail = contact_email;
+    solicitude.email = contact_email;
     bool rightCredential = dbAdministrator->rightClient(email, token);
     Response* response = new Response();
     if (rightCredential) {
         int success = dbAdministrator->removeSolicitude(email, solicitude);
         delete dbAdministrator;
-        std::ostringstream s;
-        s << success;
-        std::string success_parsed = s.str();
         if (success >= 0) {
             response->setContent("");
             response->setStatus(204);
         } else if (success == -1) {
-            response->setContent("{\"code\":" + success_parsed + ",\"message\":\"User did not send solicitude.\"}");
+            response->setContent("{\"code\":" + std::string(NO_SOLICITUDE_SENT) + ",\"message\":\"User did not send solicitude.\"}");
             response->setStatus(500);
         }
     } else {
-        response->setContent("{\"message\":\"Invalid credentials.\"}");
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
         response->setStatus(401);
     }
     return response;
 }
-
 
 
 ProfilePersonal::ProfilePersonal() {
@@ -337,8 +351,8 @@ ProfilePersonal::ProfilePersonal() {
 
 ProfilePersonal::~ProfilePersonal() {}
 
-Response* ProfilePersonal::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfilePersonal::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     const int SIZE_NAME_PARAMETER = 6;
@@ -346,17 +360,17 @@ Response* ProfilePersonal::get(struct Message operation) {
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
-        response->setContent(dbAdministrator->getPersonal(email));
+        response->setContent(dbAdministrator->getProfilePersonal(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     return response;
 }
 
-Response* ProfilePersonal::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfilePersonal::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     Personal *personal = new Personal();
@@ -364,15 +378,12 @@ Response* ProfilePersonal::put(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     int success = dbAdministrator->uploadPersonal(email, token, personal);
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
@@ -386,8 +397,8 @@ ProfileSummary::ProfileSummary() {
 
 ProfileSummary::~ProfileSummary() {}
 
-Response* ProfileSummary::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileSummary::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     const int SIZE_NAME_PARAMETER = 6;
@@ -398,14 +409,14 @@ Response* ProfileSummary::get(struct Message operation) {
         response->setContent(dbAdministrator->getSummary(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     return response;
 }
 
-Response* ProfileSummary::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileSummary::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     Summary *summary = new Summary();
@@ -413,15 +424,12 @@ Response* ProfileSummary::put(struct Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     int success = dbAdministrator->uploadSummary(email, token, summary);
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
@@ -436,8 +444,8 @@ ProfileExpertise::ProfileExpertise() {
 
 ProfileExpertise::~ProfileExpertise() {}
 
-Response* ProfileExpertise::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileExpertise::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -447,22 +455,19 @@ Response* ProfileExpertise::put(struct Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     int success = dbAdministrator->uploadExpertise(email, token, expertise);
     delete dbAdministrator;
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
 }
 
-Response* ProfileExpertise::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileExpertise::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -474,8 +479,8 @@ Response* ProfileExpertise::get(struct Message operation) {
         response->setContent(dbAdministrator->getExpertise(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -491,7 +496,7 @@ ProfileSkills::ProfileSkills() {
 
 ProfileSkills::~ProfileSkills() {}
 
-Response* ProfileSkills::post(struct Message operation) {
+Response* ProfileSkills::post(Message operation) {
     RequestParse *rp = new RequestParse();
     std::string mail = rp->extractEmail(operation.uri);
     delete rp;
@@ -506,8 +511,8 @@ Response* ProfileSkills::post(struct Message operation) {
     return response;
 }
 
-Response* ProfileSkills::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileSkills::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -518,22 +523,19 @@ Response* ProfileSkills::put(struct Message operation) {
     int success = dbAdministrator->uploadSkills(email, token, skills);
     delete dbAdministrator;
     delete skills;
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
 }
 
-Response* ProfileSkills::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfileSkills::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -545,8 +547,8 @@ Response* ProfileSkills::get(struct Message operation) {
         response->setContent(dbAdministrator->getSkills(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -561,8 +563,8 @@ ProfilePhoto::ProfilePhoto() {
 
 ProfilePhoto::~ProfilePhoto() {}
 
-Response* ProfilePhoto::get(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfilePhoto::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -574,15 +576,15 @@ Response* ProfilePhoto::get(struct Message operation) {
         response->setContent(dbAdministrator->getPicture(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
 }
 
-Response* ProfilePhoto::put(struct Message operation) {
-    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+Response* ProfilePhoto::put(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
@@ -592,15 +594,12 @@ Response* ProfilePhoto::put(struct Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     int success = dbAdministrator->uploadPicture(email, token, picture);
     delete dbAdministrator;
-    std::ostringstream s;
-    s << success;
-    std::string success_parsed = s.str();
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
         response->setStatus(200);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + success_parsed + ",\"message\":\"Don't upload.\"}");
+        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
@@ -614,7 +613,7 @@ ProfileFriends::ProfileFriends() {
 
 ProfileFriends::~ProfileFriends() {}
 
-Response* ProfileFriends::get(struct Message operation) {
+Response* ProfileFriends::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -624,11 +623,36 @@ Response* ProfileFriends::get(struct Message operation) {
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
-        response->setContent(dbAdministrator->getFriends(email));
+        std::string friends_parse = dbAdministrator->getFriends(email);
+        Friends *friends = new Friends();
+        friends->loadJson(friends_parse);
+        std::string message = "{\"friends\":[";
+        for (int i=0; i<friends->getNumberOfContacts(); i++){
+            std::string email = friends->getContactAt(i);
+            std::string personal_str = dbAdministrator->getPersonal(email);
+            Personal *personal = new Personal();
+            personal->loadJson(personal_str);
+            std::string picture_str = dbAdministrator->getPicture(email);
+            Picture *picture = new Picture();
+            picture->loadJson(picture_str);
+            OthersRecommendations *others_recommendations = new OthersRecommendations();
+            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(email);
+            others_recommendations->loadJson(others_recomendations_parse);
+            int vote = others_recommendations->getNumberOfContacts();
+            delete others_recommendations;
+            std::ostringstream vote_str;
+            vote_str<<vote;
+            message += "{\"email\":\"" + email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"votes\":" + vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+            if (i != (friends->getNumberOfContacts() - 1)) {
+                message += ",";
+            }
+        }
+        message += "]}";        
+        response->setContent(message);
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -643,7 +667,8 @@ Vote::Vote() {
 
 Vote::~Vote() {}
 
-Response* Vote::post(struct Message operation) {
+Response* Vote::post(Message operation) {
+std::cout<<"Vote POST\n\n\n\n";
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -662,14 +687,15 @@ Response* Vote::post(struct Message operation) {
         response->setContent("");
         response->setStatus(201);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
 }
 
-Response* Vote::erase(struct Message operation) {
+Response* Vote::erase(Message operation) {
+std::cout<<"Vote DELETE\n\n\n\n";
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -688,8 +714,8 @@ Response* Vote::erase(struct Message operation) {
         response->setContent("");
         response->setStatus(204);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -703,7 +729,7 @@ ProfileOwnRecommendations::ProfileOwnRecommendations() {
 
 ProfileOwnRecommendations::~ProfileOwnRecommendations() {}
 
-Response* ProfileOwnRecommendations::get(struct Message operation) {
+Response* ProfileOwnRecommendations::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -716,8 +742,8 @@ Response* ProfileOwnRecommendations::get(struct Message operation) {
         response->setContent(dbAdministrator->getOwnRecommendations(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -731,7 +757,7 @@ ProfileOthersRecommendations::ProfileOthersRecommendations() {
 
 ProfileOthersRecommendations::~ProfileOthersRecommendations() {}
 
-Response* ProfileOthersRecommendations::get(struct Message operation) {
+Response* ProfileOthersRecommendations::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -744,8 +770,8 @@ Response* ProfileOthersRecommendations::get(struct Message operation) {
         response->setContent(dbAdministrator->getOthersRecommendations(email));
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -759,7 +785,7 @@ MostPopularUsers::MostPopularUsers() {
 
 MostPopularUsers::~MostPopularUsers() {}
 
-Response* MostPopularUsers::get(struct Message operation) {
+Response* MostPopularUsers::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -774,8 +800,8 @@ Response* MostPopularUsers::get(struct Message operation) {
         response->setContent(dbAdministrator->getMostPopularUsers());
         response->setStatus(200);
     } else {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
-       response->setStatus(401);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     } */
     delete dbAdministrator;
     return response;
@@ -786,8 +812,8 @@ Facebook::Facebook() {
     this->functions["POST"] = post;
 }
 
-Facebook::~Facebook() {
-}
+Facebook::~Facebook() {}
+
 void split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss;
     ss.str(s);
@@ -819,6 +845,7 @@ Response* Facebook::get(struct Message operation) {
 
     return response;
 }
+
 // prueba envio mail
 Response* Facebook::post(struct Message operation) {
     Mail* mail = new Mail();
@@ -835,8 +862,8 @@ Firebase::Firebase() {
     this->functions["POST"] = post;
 }
 
-Firebase::~Firebase() {
-}
+Firebase::~Firebase() {}
+
 Response* Firebase::post(struct Message operation) {
     // std::string toTokenMAti
     // "eZrExMhfu-o:APA91bGJwLtfev7GkgvEEA-bS1aTFSvyupR7ieVGgMo2IqrUFgPlt-pPQtihviEp4n-aXMYNwvnNZEg6O_xX55fhi3MOwjpHOZbeSeQgCudSifFn37t-tn1bTq2c5F9oBm21m6v95Rsc";
@@ -851,18 +878,20 @@ Response* Firebase::post(struct Message operation) {
     Response* firebaseResponse = firebaseService->SendNotification(toToken, operation.body);
 
     Response* response = new Response();
-        response->setContent(firebaseResponse->getContent());
-        response->setStatus(200);
+    response->setContent(firebaseResponse->getContent());
+    response->setStatus(200);
 
     return response;
 }
+
 //  Para probar el enlace con el shared
 Category::Category() {
     this->functions["POST"] = post;
     this->functions["GET"] = get;
 }
-Category::~Category() {
-}
+
+Category::~Category() {}
+
 Response* Category::post(struct Message operation) {
     rapidjson::Document document;
     rapidjson::ParseResult parseRes = document.Parse(operation.body.c_str());
@@ -870,16 +899,19 @@ Response* Category::post(struct Message operation) {
     SharedService* shared = new SharedService();
     return shared->createCategory(document["name"].GetString(), document["description"].GetString());
 }
+
 Response* Category::get(struct Message operation) {
     SharedService* shared = new SharedService();
     return shared->listCategories();
 }
+
 Skill::Skill() {
     this->functions["POST"] = post;
     this->functions["GET"] = get;
 }
-Skill::~Skill() {
-}
+
+Skill::~Skill() {}
+
 Response* Skill::post(struct Message operation) {
     rapidjson::Document document;
     rapidjson::ParseResult parseRes = document.Parse(operation.body.c_str());
@@ -888,16 +920,19 @@ Response* Skill::post(struct Message operation) {
     return shared->createSkill(document["name"].GetString(),
         document["description"].GetString(), document["category"].GetString());
 }
+
 Response* Skill::get(struct Message operation) {
     SharedService* shared = new SharedService();
     return shared->listSkills();
 }
+
 JobPosition::JobPosition() {
     this->functions["POST"] = post;
     this->functions["GET"] = get;
 }
-JobPosition::~JobPosition() {
-}
+
+JobPosition::~JobPosition() {}
+
 Response* JobPosition::post(struct Message operation) {
     rapidjson::Document document;
     rapidjson::ParseResult parseRes = document.Parse(operation.body.c_str());
@@ -906,7 +941,394 @@ Response* JobPosition::post(struct Message operation) {
     return shared->createJobPosition(document["name"].GetString(),
         document["description"].GetString(), document["category"].GetString());
 }
+
 Response* JobPosition::get(struct Message operation) {
     SharedService* shared = new SharedService();
     return shared->listJobPositions();
+}
+
+Search::Search() {
+    this->functions["GET"] = get;
+}
+
+Search::~Search() {}
+
+Response* Search::get(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    RequestParse *rp = new RequestParse();
+    double lat, lon, distance;
+    int offset, limit;
+    std::string token = "";
+    std::string position = "";
+    std::string lat_str = "";
+    std::string lon_str = "";
+    std::string distance_str = "";
+    std::string limit_str = "";
+    std::string offset_str = "";
+    std::vector<std::string> *skills = new std::vector<std::string>();    
+    loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position, &limit_str, &offset_str, skills);
+/*    std::cout << "token : " << token << std::endl;
+    std::cout << "position : " << position << std::endl;
+    std::cout << "lat : " << lat_str << std::endl;
+    std::cout << "lon : " << lon_str << std::endl;
+    std::cout << "distance : " << distance_str << std::endl;
+    std::cout << "limit : " << limit_str << std::endl;
+    std::cout << "offset : " << offset_str << std::endl;
+    if (skills != NULL) {
+        for (int i = 0; i < skills->size(); i++){
+            std::cout << "skill " << i << " : " << (*skills)[i] << std::endl;
+        }
+    }
+*/
+    std::vector<std::string> *ids = dbAdministrator->getAllIds();   
+    Response* response = new Response();    
+    Authentication *auth = new Authentication();
+    LoginInformation *loginInformation = new LoginInformation();
+    Credentials *credentials = new Credentials();
+    bool rightDecode = auth->decode(token, loginInformation, credentials);
+    delete auth;
+    delete credentials;
+    if (!rightDecode) {
+       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setStatus(401);
+       return response;
+    }
+    bool isEmpthyOffset = std::strcmp(offset_str.c_str(), "") == 0;
+    bool isEmpthyLimit = std::strcmp(limit_str.c_str(), "") == 0;
+    if (isEmpthyOffset) {
+        offset_str = OFFSET_DEFAULT;                
+    }
+    offset = atof(offset_str.c_str());
+    if (isEmpthyLimit) {
+        limit_str = LIMIT_DEFAULT;
+    }
+    limit = atof(limit_str.c_str());
+    bool isEmptyPosition = std::strcmp(position.c_str(), "") == 0;    
+    std::vector<std::string> *ids_match_position = NULL;
+    if (!isEmptyPosition) {
+        std::cout << "SEARCH BY POSITION" << std::endl;
+        ids_match_position = searchByPosition(ids, position);
+    }
+    bool isEmptySkills = true;
+    if (skills != NULL) {
+        isEmptySkills = skills->size() == 0;
+    }
+    std::vector<std::string> *ids_match_skills = NULL;
+    if (!isEmptySkills) {
+        std::cout << "SEARCH BY SKILLS" << std::endl;
+        ids_match_skills = searchBySkills(ids, skills);
+    }
+    bool isEmpthyDistance = std::strcmp(distance_str.c_str(), "") == 0; 
+    if (isEmpthyDistance) {
+        distance_str = "10.0";  // Set distance by default 10.0 kms 
+    }
+    bool isEmpthyLat = std::strcmp(lat_str.c_str(), "") == 0; 
+    bool isEmpthyLon = std::strcmp(lon_str.c_str(), "") == 0; 
+    bool isEmthySomeLatLon = isEmpthyLat || isEmpthyLon;
+    std::vector<std::string> *ids_match_distance = NULL;
+    std::map<std::string, std::string> *ids_match_distance_map = NULL;        
+    if (!isEmthySomeLatLon) {
+        lat = atof(lat_str.c_str());
+        lon = atof(lon_str.c_str());
+        distance = atof(distance_str.c_str());
+        std::cout << "SEARCH BY LAT AND LONG" << std::endl;
+        ids_match_distance_map = searchByDistance(ids,  lat, lon, distance);
+        if (ids_match_distance_map != NULL) {
+            ids_match_distance = getKeys(ids_match_distance_map);
+        }
+    }
+    std::vector<std::string> *ids_match_2 = NULL;
+    std::vector<std::string> *ids_match_1 = NULL;
+    std::vector<std::string> *ids_match = NULL;
+
+    if (!isEmptyPosition && !isEmptySkills && !isEmthySomeLatLon) {
+        ids_match_2 = intersection(ids_match_position, ids_match_skills);
+        ids_match_1 = intersection(ids_match_2, ids_match_distance);
+        ids_match = ids_match_1;
+    } else if (!isEmptyPosition && !isEmptySkills ) {
+        ids_match = intersection(ids_match_position, ids_match_skills);
+    } else if (!isEmptyPosition && !isEmthySomeLatLon) {
+        ids_match = intersection(ids_match_position, ids_match_distance);
+    } else if (!isEmptySkills && !isEmthySomeLatLon) {
+        ids_match = intersection(ids_match_skills, ids_match_distance);
+    } else if (!isEmptyPosition) {
+        ids_match = ids_match_position;
+    } else if (!isEmptySkills) {
+        ids_match = ids_match_skills;
+    } else if (!isEmthySomeLatLon) {
+        ids_match = ids_match_distance;
+    } else {
+        // If al the fields are empthy returning all users.
+        ids_match = ids;
+    }   
+    std::string message = generateMessage(ids_match, ids_match_distance_map, offset, limit);
+    delete dbAdministrator;
+    delete rp;
+    response->setContent(message);
+    response->setStatus(200);
+    return response;
+}
+
+std::string Search::generateMessage(std::vector<std::string>* ids_match, std::map<std::string, std::string> *ids_match_distance_map, int offset, int limit){
+    std::cout << "limit : " << limit << std::endl;
+    std::cout << "offset : " << offset << std::endl;
+
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    std::string results = "\"results\":[";    
+    if (ids_match->size() > 0) {
+        for (int i = offset; i < ids_match->size() && i < (offset+limit); i++){
+            std::string id = (*ids_match)[i];
+            std::string distance = "";
+            if (ids_match_distance_map != NULL) {
+                bool existId = ids_match_distance_map->find(id) != ids_match_distance_map->end();
+                if (existId) {
+                    distance = (*ids_match_distance_map)[id];
+                }
+            }                
+            std::string personal_str = dbAdministrator->getPersonal(id);
+            Personal *personal = new Personal();
+            personal->loadJson(personal_str);
+            std::string picture_str = dbAdministrator->getPicture(id);
+            Picture *picture = new Picture();
+            picture->loadJson(picture_str);
+
+            OthersRecommendations *others_recommendations = new OthersRecommendations();
+            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(id);
+            others_recommendations->loadJson(others_recomendations_parse);
+            int vote = others_recommendations->getNumberOfContacts();
+            delete others_recommendations;
+            std::ostringstream vote_str;
+            vote_str<<vote;
+            results += "{\"email\":\"" + id + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() + "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"distance\":" + "\"" + distance + "\"" + ",\"votes\":" + vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+            if ((i != (ids_match->size() - 1)) && (i != (offset + limit - 1))){
+                results += ",";
+            }      
+            delete personal;
+            delete picture;
+        }
+    }
+    results += "]";
+    std::ostringstream match_size_str;
+    match_size_str<<ids_match->size();
+    std::ostringstream offset_str;
+    offset_str<<offset;
+    std::string paging = "\"paging\":{\"total\":" + match_size_str.str() + ",\"offset\":" + offset_str.str() + "},";
+    std::string message = "{" + paging + results + "}";
+    delete dbAdministrator;
+    return message;
+}
+
+std::vector<std::string>* Search::intersection(std::vector<std::string>* ids_match_position, std::vector<std::string>* ids_match_skills){
+    std::vector<std::string>* ids_match = new std::vector<std::string>();
+    for (int i = 0; i < ids_match_position->size(); i++){
+        std::string id_1 = (*ids_match_position)[i];
+        for (int j = 0; j < ids_match_skills->size(); j++){
+            std::string id_2 = (*ids_match_skills)[j];
+            bool match = strcmp(id_1.c_str(), id_2.c_str()) == 0;
+            if (match){
+                ids_match->push_back(id_1);
+            }   
+        }    
+    }    
+    return ids_match;
+}
+
+std::vector<std::string>* Search::searchBySkills(std::vector<std::string>* ids, std::vector<std::string>* skills_to_match){
+    std::vector<std::string>* ids_match_skills = new std::vector<std::string>();
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    RequestParse *rp = new RequestParse();
+    for (int i = 0; i < ids->size(); i++){
+        std::string id = (*ids)[i];
+//        std::cout << "USER: " << id << std::endl;
+        // CHEQUEAR SI ESTE USUARIO MACHEA CON SKILLS, SI -> AGREGAR
+        bool isAdding = false;
+        std::string skills_parse = dbAdministrator->getSkills(id);
+        Skills *skills = new Skills();
+        skills->loadJson(skills_parse);
+        // Number of categories (category -> skills)
+        int number_of_skills = skills->getNumberOfSkills();
+        for (int j = 0; j < number_of_skills; j++){
+            std::string skills_string = skills->getSkills(j);
+            std::vector<std::string> skills_vector = rp->split(skills_string, ",");
+//            std::cout << "SKILLS: " << skills_string << std::endl;
+            int count = 0;
+            // Skills for category
+            for (int k = 0; k < skills_vector.size(); k++){
+                std::string skill = skills_vector[k];
+                for (int k = 0; k < skills_to_match->size(); k++){   
+                    bool match_skill = strcmp(skill.c_str(), (*skills_to_match)[k].c_str()) == 0;
+                    if (match_skill){
+                        ++count;
+                    }
+                }
+            }
+            bool match_with_all_skills = count == skills_to_match->size();
+            if (match_with_all_skills && !isAdding) {
+                isAdding  = true;
+                ids_match_skills->push_back(id);
+                std::cout << "MATCHEA: " << id << std::endl;
+            }       
+        }
+        delete skills;
+    }
+    delete dbAdministrator;
+    delete rp;    
+    return ids_match_skills;
+}
+
+std::vector<std::string>* Search::searchByPosition(std::vector<std::string>* ids, std::string position){
+    std::vector<std::string>* ids_match_position = new std::vector<std::string>();
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    for (int i=0; i < ids->size(); i++){
+        std::string id = (*ids)[i];
+        // CHEQUEAR SI ESTE USUARIO MACHEA CON POSITION, SI -> AGREGAR
+        std::string expertise_parse = dbAdministrator->getExpertise(id);
+        Expertise *expertises = new Expertise();
+        expertises->loadJson(expertise_parse);
+        int number_of_expertises = expertises->getNumberOfExpertises();
+        for (int j=0; j < number_of_expertises; j++){
+            bool match_position = strcmp(expertises->getPosition(j).c_str(), position.c_str()) == 0;
+            if (match_position){
+                ids_match_position->push_back(id);
+                std::cout << "MATCHEA: " << id << std::endl;
+            }
+        }
+        delete expertises;
+    }
+    delete dbAdministrator;
+    return ids_match_position;
+}
+
+std::map<std::string, std::string>* Search::searchByDistance(std::vector<std::string>* ids, double lat_initial, double lon_initial, double distance) {
+    std::map<std::string, std::string>* ids_match_distance = new std::map<std::string, std::string>();
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
+    for (int i=0; i < ids->size(); i++){
+        std::string id = (*ids)[i];
+//        std::cout << "USER: " << id << std::endl;
+        std::string personal_parse = dbAdministrator->getPersonal(id);
+        Personal *personal = new Personal();
+        personal->loadJson(personal_parse);
+        double lat_final = atof(personal->getLat().c_str());    
+        double lon_final = atof(personal->getLon().c_str());
+        
+//        std::cout << "LAT: " << lat_final << std::endl;
+//        std::cout << "LON: " << lon_final << std::endl;
+
+        double distance_calculated = calculateDistance(lat_initial, lon_initial, lat_final, lon_final);
+        bool rightDistance = 0 <= distance_calculated && distance_calculated <= distance;
+        std::cout << "distance between ("<< lat_initial << ", " <<lon_initial << ") and (" << lat_final << ", " << lon_final << ") is : " << distance_calculated << std::endl;   
+        if (rightDistance) {
+            std::cout << "MATCHEA: " << id << std::endl;            
+            std::ostringstream distance;
+            distance<<distance_calculated;
+            ids_match_distance->insert(std::pair<std::string, std::string>(id, distance.str()));
+        }
+
+        delete personal;
+    }
+    delete dbAdministrator;
+    return ids_match_distance;
+}
+
+void Search::loadParameters(std::string params, std::string *token, std::string *lat_str, std::string *lon_str, std::string *distance_str, std::string *position, std::string *limit_str, std::string *offset_str, std::vector<std::string> *skills){
+std::cout<<"INICIO LOAD PARAMETER 2" << std::endl;
+    std::map<std::string, std::string>* parameters = new std::map<std::string, std::string>();
+    RequestParse * rp = new RequestParse();
+    std::vector<std::string> parameters_vector = rp->split(params, "&");
+    for (int i=0; i<parameters_vector.size(); i++) {
+        std::string a_parameter = parameters_vector[i];
+        std::vector<std::string> key_value = rp->split(a_parameter, "=");
+        bool isValue = key_value.size() > 1;
+        std::string value = "";
+        if (isValue) {
+            value =  URLDecode(key_value[1]);
+        }    
+        parameters->insert(std::pair<std::string, std::string>(key_value[0], value));
+    }
+    bool existSkills = parameters->find("skills") != parameters->end();
+    if (existSkills) {
+        *skills = rp->split((*parameters)["skills"], ",");            
+    }    
+    bool existLon = parameters->find("lon") != parameters->end();
+    if (existLon) {
+        *lon_str = (*parameters)["lon"];    
+    }    
+    bool existLat = parameters->find("lat") != parameters->end();
+    if (existLat) {
+        *lat_str = (*parameters)["lat"];    
+    }
+    bool existDistance = parameters->find("distance") != parameters->end();
+    if (existLat) {
+        *distance_str = (*parameters)["distance"];
+    }
+    bool existPosition = parameters->find("position") != parameters->end();
+    if (existPosition) {
+        *position = (*parameters)["position"];
+    }
+    bool existToken = parameters->find("token") != parameters->end();
+    if (existToken) {
+        *token = (*parameters)["token"];
+    }
+    bool existLimit = parameters->find("limit") != parameters->end();
+    if (existLimit) {
+        *limit_str = (*parameters)["limit"];
+    }
+    bool existOffset = parameters->find("offset") != parameters->end();
+    if (existToken) {
+        *offset_str = (*parameters)["offset"];
+    }
+    delete rp;
+std::cout<<"FIN LOAD PARAMETER 2" << std::endl;
+}
+
+std::string Search::URLDecode(std::string text){
+    text = curl_unescape(text.c_str(), 0);
+    RequestParse * rp = new RequestParse();
+    std::vector<std::string> words =  rp->split(text, "+");  
+    delete rp;
+    std::string text_decoding = "";
+    
+    for (int i=0; i< words.size(); i++) {
+        if (i == 0){
+            text_decoding = words[i];
+        } else {
+            text_decoding = text_decoding + " " + words[i];
+        }
+    }
+    return text_decoding;      
+}
+
+double Search::toRad(double degree) {
+    double rad =  degree/180 * pi;
+    return rad;
+}
+
+bool Search::rightLat(double lat) {
+    return 0 <= abs(lat) && abs(lat) <= 90;
+}
+
+bool Search::rightLong(double lon) {
+    return 0 <= abs(lon) && abs(lon) <= 180;
+}
+
+double Search::calculateDistance(double lat1, double long1, double lat2, double long2) {
+    double dist = -1;
+    if ( rightLat(lat1) && rightLat(lat2) && rightLong(long1) && rightLong(long2)) {
+        dist = sin(toRad(lat1)) * sin(toRad(lat2)) + cos(toRad(lat1)) * cos(toRad(lat2)) * cos(toRad(long1 - long2));
+        dist = acos(dist);
+    //        dist = (6371 * pi * dist) / 180;
+        //got dist in radian, no need to change back to degree and convert to rad again.
+        dist = earth_radio * dist;
+    } else {
+        std::cout << "Incorrect parameters" << std::endl;
+    }
+    return dist;
+}
+
+std::vector<std::string>* Search::getKeys(std::map<std::string, std::string>* m) {
+    std::vector<std::string>* v = new std::vector<std::string>();
+    for(std::map<std::string, std::string>::iterator it = m->begin(); it != m->end(); ++it) {
+      v->push_back(it->first);
+    }
+    return v;
 }

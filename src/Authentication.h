@@ -1,10 +1,4 @@
-/*
- *  Authentication.h
- *
- *  Created on: Sep 17, 2016
- *      Author: hernan-fiuba
- */
-
+// "Copyright 2016 <Jobify>"
 #ifndef AUTHENTICATION_H_
 #define AUTHENTICATION_H_
 
@@ -24,4 +18,4 @@ class Authentication {
     virtual ~Authentication();
 };
 
-#endif /* AUTHENTICATION_H_ */
+#endif  /* AUTHENTICATION_H_ */

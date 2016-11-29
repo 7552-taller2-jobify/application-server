@@ -27,4 +27,4 @@ class RequestParse {
     std::vector<std::string> split(std::string uri, std::string separator);
 };
 
-#endif // REQUESTPARSE_H_
+#endif  // REQUESTPARSE_H_

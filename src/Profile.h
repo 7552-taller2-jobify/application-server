@@ -55,7 +55,6 @@ class Personal: public Profile {
     std::string gender;
     std::string birthday;
     std::string address[2];
-    std::string city;
     std::string password;
     void getOwnInfo(const rapidjson::Document &document);
     bool isNull(std::string field);
@@ -70,7 +69,8 @@ class Personal: public Profile {
     std::string getGender();
     std::string getBirthday();
     std::string* getAddress();
-    std::string getCity();
+    std::string getLat();
+    std::string getLon();
     void setDeviceId(std::string new_id);
     void setFirstName(std::string new_first_name);
     void setPassword(std::string password);
@@ -79,7 +79,6 @@ class Personal: public Profile {
     void setGender(std::string new_gender);
     void setBirthday(std::string new_birthday);
     void setAddress(std::string new_lat, std::string new_lon);
-    void setCity(std::string new_city);
     std::string createJsonFile();
     bool emptyFields();
 };
@@ -110,7 +109,7 @@ class Expertise: public Profile {
     void getOwnInfo(const rapidjson::Document &document);
 
  public:
-    Expertise() : Profile() {}
+    Expertise();
     ~Expertise();
     std::string getCompany(int index);
     std::string getPosition(int index);
@@ -118,6 +117,7 @@ class Expertise: public Profile {
     std::string getTo(int index);
     std::string getExpertise(int index);
     std::string getCategory(int index);
+    int getNumberOfExpertises();
     void setCompany(std::string new_company, int index);
     void setPosition(std::string new_position, int index);
     void setFrom(std::string new_from, int index);
@@ -136,10 +136,11 @@ class Skills: public Profile {
     void getOwnInfo(const rapidjson::Document &document);
 
  public:
-    Skills() : Profile() {}
-    ~Skills() {}
+    Skills();
+    ~Skills();
     std::string getSkills(int index);
     std::string getCategory(int index);
+    int getNumberOfSkills();
     void setSkills(std::string new_skills, int index);
     void setCategory(std::string new_skills, int index);
     std::string createJsonFile();
@@ -201,7 +202,7 @@ class OthersRecommendations: public Contacts {
 
 struct Solicitude {
     std::string date;
-    std::string mail;
+    std::string email;
 };
 
 class Solicitudes: public Profile {
@@ -210,7 +211,7 @@ class Solicitudes: public Profile {
 
     void getOwnInfo(const rapidjson::Document &document);
     std::string getDateAt(int index);
-    std::string getMailAt(int index);
+    std::string getEmailAt(int index);
     int search(struct Solicitude solicitude);
 
  public:
@@ -259,6 +260,19 @@ class Credentials: public Profile {
     void setToken(std::string token);
     void setIncrementalNumber(int incremental_number);
     void increaseIncrementalNumber(int increase);
+    std::string createJsonFile();
+};
+
+class IdsDataBase: public Profile {
+ private:
+    std::vector<std::string> *ids;
+    void getOwnInfo(const rapidjson::Document &document);
+
+ public:
+    IdsDataBase();
+    ~IdsDataBase();
+    std::vector<std::string>* getIds();
+    void addId(std::string id);
     std::string createJsonFile();
 };
 

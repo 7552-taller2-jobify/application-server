@@ -8,6 +8,7 @@
 #include <map>
 #include "Profile.h"
 #include "RegexMatcher.h"
+#include <vector>
 
 class ProfileHandler {
  private:

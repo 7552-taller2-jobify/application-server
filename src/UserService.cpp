@@ -19,6 +19,7 @@ std::string UserService::getPersonal(Personal *personal) {
             "\"last_name\":\"" + personal->getLastName() + "\"," +
             "\"email\":\"" + personal->getEmail() + "\"," +
             "\"birthday\":\"" + personal->getBirthday() + "\"," +
+            "\"address\":{\"lat\":\"" + personal->getLat() + "\", \"lon\":\"" + personal->getLon() + "\"}," +
             "\"gender\":\"" + personal->getGender() + "\"}");
 }
 

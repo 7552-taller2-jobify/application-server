@@ -150,8 +150,12 @@ int DataBaseAdministrator::uploadSummary(std::string email, std::string token, S
 }
 
 std::string DataBaseAdministrator::getSummary(std::string email) {
-    std::string summary_parser = DataBase::getInstance().get("SUMMARY_" + email);
-    return summary_parser;
+    std::string summary_parse = DataBase::getInstance().get("SUMMARY_" + email);
+    bool isEmpty = strcmp(summary_parse.c_str(), "") == 0;
+    if (isEmpty) {
+        summary_parse = "{\"summary\":\"\"}";
+    }
+    return summary_parse;
 }
 
 // Returns 0 if success, 1 if credential invalid
@@ -166,7 +170,12 @@ int DataBaseAdministrator::uploadExpertise(std::string email, std::string token,
 }
 
 std::string DataBaseAdministrator::getExpertise(std::string email) {
-    return DataBase::getInstance().get("EXPERTISE_" + email);
+    std::string expertises_parse =  DataBase::getInstance().get("EXPERTISE_" + email);
+    bool isEmpty = strcmp(expertises_parse.c_str(), "") == 0;
+    if (isEmpty) {
+        expertises_parse = "{\"expertises\":[]}";
+    }
+    return expertises_parse;
 }
 
 // Returns 0 if success, 1 if credential invalid
@@ -181,7 +190,12 @@ int DataBaseAdministrator::uploadSkills(std::string email, std::string token, Sk
 }
 
 std::string DataBaseAdministrator::getSkills(std::string email) {
-    return DataBase::getInstance().get("SKILLS_" + email);
+    std::string skills_parse =  DataBase::getInstance().get("SKILLS_" + email);
+    bool isEmpty = strcmp(skills_parse.c_str(), "") == 0;
+    if (isEmpty) {
+        skills_parse = "{\"every_skill\":[]}";
+    }
+    return skills_parse;
 }
 
 // Returns 0 if success, 1 if credential invalid
@@ -196,7 +210,12 @@ int DataBaseAdministrator::uploadPicture(std::string email, std::string token, P
 }
 
 std::string DataBaseAdministrator::getPicture(std::string email) {
-    return DataBase::getInstance().get("PICTURE_" + email);
+    std::string picture_parse =  DataBase::getInstance().get("PICTURE_" + email);
+    bool isEmpty = strcmp(picture_parse.c_str(), "") == 0;
+    if (isEmpty) {
+        picture_parse = "{\"picture\":\"\"}";
+    }
+    return picture_parse;
 }
 
 // Returns 0 if success, 1 if credential invalid
@@ -218,7 +237,12 @@ int DataBaseAdministrator::addSolicitude(std::string email, std::string token, s
 }
 
 std::string DataBaseAdministrator::getSolicitudes(std::string email) {
-    return DataBase::getInstance().get("SOLICITUDES_" + email);
+    std::string solicitudes_parse = DataBase::getInstance().get("SOLICITUDES_" + email);
+    bool isEmpty = strcmp(solicitudes_parse.c_str(), "") == 0;
+    if (isEmpty) {
+        solicitudes_parse = "{\"solicitudes\":[]}";
+    }
+    return solicitudes_parse;
 }
 
 // Returns -1 if there is no solicitude, other if success

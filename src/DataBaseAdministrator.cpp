@@ -218,7 +218,12 @@ int DataBaseAdministrator::addSolicitude(std::string email, std::string token, s
 }
 
 std::string DataBaseAdministrator::getSolicitudes(std::string email) {
-    return DataBase::getInstance().get("SOLICITUDES_" + email);
+    std::string solicitudes_parse = DataBase::getInstance().get("SOLICITUDES_" + email);
+    bool isVacio = strcmp(solicitudes_parse.c_str(), "") == 0;
+    if (isVacio) {
+        solicitudes_parse = "{\"solicitudes\":[]}";
+    }
+    return solicitudes_parse;
 }
 
 // Returns -1 if there is no solicitude, other if success

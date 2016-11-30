@@ -440,6 +440,7 @@ Response* ProfileSummary::put(Message operation) {
 ProfileExpertise::ProfileExpertise() {
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
+    this->functions["POST"] = put;
 }
 
 ProfileExpertise::~ProfileExpertise() {}

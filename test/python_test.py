@@ -69,6 +69,8 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual("M", reply.json()["gender"])
         self.assertEqual("23/05/1960", reply.json()["birthday"])
         self.assertEqual("test@yahoo.com", reply.json()["email"])
+        self.assertEqual("-11.9302", reply.json()["address"]["lat"])
+        self.assertEqual("-77.0846", reply.json()["address"]["lon"])
 
     def test_09_GetPersonalDataUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}

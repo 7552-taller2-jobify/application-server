@@ -190,7 +190,12 @@ int DataBaseAdministrator::uploadSkills(std::string email, std::string token, Sk
 }
 
 std::string DataBaseAdministrator::getSkills(std::string email) {
-    return DataBase::getInstance().get("SKILLS_" + email);
+    std::string skills_parse =  DataBase::getInstance().get("SKILLS_" + email);
+    bool isEmpty = strcmp(skills_parse.c_str(), "") == 0;
+    if (isEmpty) {
+        skills_parse = "{\"every_skill\":[]}";
+    }
+    return skills_parse;
 }
 
 // Returns 0 if success, 1 if credential invalid
@@ -205,7 +210,12 @@ int DataBaseAdministrator::uploadPicture(std::string email, std::string token, P
 }
 
 std::string DataBaseAdministrator::getPicture(std::string email) {
-    return DataBase::getInstance().get("PICTURE_" + email);
+    std::string picture_parse =  DataBase::getInstance().get("PICTURE_" + email);
+    bool isEmpty = strcmp(picture_parse.c_str(), "") == 0;
+    if (isEmpty) {
+        picture_parse = "{\"picture\":\"\"}";
+    }
+    return picture_parse;
 }
 
 // Returns 0 if success, 1 if credential invalid

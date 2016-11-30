@@ -81,13 +81,13 @@ Response* Logout::erase(Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
     bool rightClient = dbAdministrator->rightClient(email, token);
-    if (rightClient) {
+    if (rightClient == 0) {
         std::cout << "right client" << std::endl;
         Authentication *auth = new Authentication();
         LoginInformation *loginInformation = new LoginInformation();
         Credentials *credentials = new Credentials();
         bool rightDecode = auth->decode(token, loginInformation, credentials);
-        if (rightDecode) {
+        if (rightDecode == 0) {
             std::cout << "right decode" << std::endl;
             credentials->increaseIncrementalNumber(1);
             std::string email = loginInformation->getEmail();
@@ -183,7 +183,8 @@ Response* RecoveryPass::get(Message operation) {
             delete auth;    
             response->setContent("{\"password\":\"" + password + "\"}");
             response->setStatus(200);
-            Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was register.");
+            Logger::getInstance().log(info, "The client " + loginInformation->getEmail() + 
+                                                                        " has regenerated his password.");
             return response;
         }
     }

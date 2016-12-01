@@ -5,9 +5,10 @@
 FirebaseService::FirebaseService() {
 }
 
-Response* FirebaseService::SendNotification(std::string toToken, std::string notification) {
+Response* FirebaseService::SendNotification(std::string toToken, std::string title, std::string body) {
     std::string url = "https://fcm.googleapis.com/fcm/send";
-    std::string body = "{\n\t\"to\": \""+ toToken + "\",\n\t\"notification\": " + notification + "\n}";
+    std::string body = "{\n\t\"to\" : \""+ toToken + "\",\n\t\"notification\" : {\n\t\t\"body\" : \""
+                + body + "\",\n\t\t\"title\" : \"" + title + "\",\n\t\t\"sound\" : \"mySound\"\n\t}\n}";
     std::cout<< body << std::endl;
     Request* request = new Request();
 
@@ -24,5 +25,4 @@ Response* FirebaseService::SendNotification(std::string toToken, std::string not
     return response;
 }
 
-FirebaseService::~FirebaseService() {
-}
+FirebaseService::~FirebaseService() {}

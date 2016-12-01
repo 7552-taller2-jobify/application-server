@@ -24,6 +24,7 @@ class DataBaseAdministrator {
     bool existsClient(std::string email);
     bool rightClient(std::string email, std::string token);
     bool rightClient(LoginInformation *li);
+    std::string getToken(std::string email);
     std::string getPersonalLogin(std::string email);
     std::string getPersonal(std::string email);
     std::string getProfilePersonal(std::string email);

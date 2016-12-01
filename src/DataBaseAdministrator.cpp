@@ -50,6 +50,17 @@ bool DataBaseAdministrator::rightClient(std::string email, std::string token) {
     return false;
 }
 
+std::string DataBaseAdministrator::getToken(std::string email) {
+    bool existsClient = this->existsClient(email);
+    if (existsClient) {
+        std::string credentials_parser = DataBase::getInstance().get(email);
+        Credentials *credentials = new Credentials();
+        credentials->loadJson(credentials_parser);
+        return credentials->getToken();
+    }
+    return "";
+}
+
 std::string DataBaseAdministrator::getPersonalLogin(std::string email) {
     std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
     std::string picture_parser =  DataBase::getInstance().get("PICTURE_" + email);

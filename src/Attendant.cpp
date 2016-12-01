@@ -226,6 +226,9 @@ Response* Contact::post(Message operation) {
     if (success == 0) {
         response->setContent("");
         response->setStatus(201);
+        FirebaseService *firebase = new FirebaseService();
+        firebase->SendNotification(token, "Solicitud de amistad", contact_email + "quiere contactarte");
+        delete firebase;
     } else if (success == 1) {
         response->setContent("{\"code\":" + std::string(COULD_NOT_POST) + ",\"message\":\"Could not post.\"}");
         response->setStatus(500);
@@ -287,10 +290,13 @@ Response* Accept::post(Message operation) {
     Response* response = new Response();
     if (rightCredential) {
         int success = dbAdministrator->addFriend(email, solicitude);
-        delete dbAdministrator;
         if (success >= 0) {
             response->setContent("");
             response->setStatus(201);
+            FirebaseService *firebase = new FirebaseService();
+            std::string contact_token = dbAdministrator->getToken(contact_email);
+            firebase->SendNotification(contact_token, "Aceptación de amistad", email + "te ha aceptado como amigo");
+            delete firebase;
         } else if (success == -1) {
             response->setContent("{\"code\":" + std::string(NO_SOLICITUDE_SENT) +
                                 ",\"message\":\"User did not send solicitude.\"}");
@@ -301,6 +307,7 @@ Response* Accept::post(Message operation) {
                             ",\"message\":\"Invalid credentials.\"}");
         response->setStatus(401);
     }
+    delete dbAdministrator;
     return response;
 }
 

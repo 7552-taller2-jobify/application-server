@@ -59,3 +59,13 @@ void DataBase::erase(std::string key) {
 leveldb::Iterator* DataBase::getIterator() {
     return this->db->NewIterator(leveldb::ReadOptions());
 }
+
+bool DataBase::exists(std::string key) {
+    bool exists = false;
+    std::string value = "";
+    this->status = this->db->Get(leveldb::ReadOptions(), key, &value);
+    if (this->status.ok()) {
+        exists = true;
+    }
+    return exists;
+}

@@ -54,6 +54,10 @@ class DataBaseAdministrator {
     std::string getMostPopularUsers();
     std::vector<std::string>* getAllIds();
     int resetPassword(std::string email);
+    void deleteExpertises(std::string email);
+    void deleteSkills(std::string email);
+    void deleteSummary(std::string email);
+    void deletePicture(std::string email);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

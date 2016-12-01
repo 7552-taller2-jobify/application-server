@@ -116,6 +116,7 @@ class ProfileSummary: public Attendant {
     ~ProfileSummary();
     static Response* get(Message operation);
     static Response* put(Message operation);
+    static Response* erase(Message operation);
 };
 
 class ProfileExpertise: public Attendant {
@@ -143,6 +144,7 @@ class ProfilePhoto: public Attendant {
     ~ProfilePhoto();
     static Response* get(Message operation);
     static Response* put(Message operation);
+    static Response* erase(Message operation);
 };
 
 class ProfileFriends: public Attendant {

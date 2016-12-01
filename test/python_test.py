@@ -568,6 +568,28 @@ class testApplicationServer(unittest.TestCase):
         reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/skills', params=params)
         self.assertEqual(204, reply_delete_skills.status_code)
 
+    def test_73_DeleteSummaryUnsuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_OZ"}
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/summary', params=params)
+        self.assertEqual(401, reply_delete_skills.status_code)
+        self.assertEqual("Invalid credentials.", reply_delete_skills.json()["message"])
+
+    def test_74_DeleteSummarySuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_Ok"}        
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/summary', params=params)
+        self.assertEqual(204, reply_delete_skills.status_code)
+
+    def test_75_DeletePictureUnsuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_OZ"}
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/picture', params=params)
+        self.assertEqual(401, reply_delete_skills.status_code)
+        self.assertEqual("Invalid credentials.", reply_delete_skills.json()["message"])
+
+    def test_76_DeletePictureSuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_Ok"}        
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/picture', params=params)
+        self.assertEqual(204, reply_delete_skills.status_code)
+
 suite = unittest.TestLoader().loadTestsFromTestCase(testApplicationServer)
 def StartServer():
    #bashCommand = "rm -rf db log.txt"

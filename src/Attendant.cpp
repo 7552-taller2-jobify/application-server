@@ -393,9 +393,32 @@ Response* ProfilePersonal::put(Message operation) {
 ProfileSummary::ProfileSummary() {
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
+    this->functions["ERASE"] = erase;
 }
 
 ProfileSummary::~ProfileSummary() {}
+
+Response* ProfileSummary::erase(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    std::cout << operation.params << std::endl<< std::endl<< std::endl;
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
+    if (rightCredentials) {
+        dbAdministrator->deleteSummary(email);
+        response->setContent("");
+        response->setStatus(204);
+    } else {
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+    }
+    delete dbAdministrator;
+    return response;
+}
 
 Response* ProfileSummary::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
@@ -614,9 +637,32 @@ Response* ProfileSkills::get(Message operation) {
 ProfilePhoto::ProfilePhoto() {
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
+    this->functions["ERASE"] = erase;
 }
 
 ProfilePhoto::~ProfilePhoto() {}
+
+Response* ProfilePhoto::erase(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    std::cout << operation.params << std::endl<< std::endl<< std::endl;
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
+    if (rightCredentials) {
+        dbAdministrator->deletePicture(email);
+        response->setContent("");
+        response->setStatus(204);
+    } else {
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+    }
+    delete dbAdministrator;
+    return response;
+}
 
 Response* ProfilePhoto::get(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    

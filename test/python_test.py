@@ -546,16 +546,27 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual("test@yahoo.com", reply.json()["profile"]["email"])
         self.assertEqual("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4", reply.json()["metadata"]["token"])
 
-    def test_69_DeleteExpertiseUnsuccessfully(self):
+    def test_69_DeleteEveryExpertisesUnsuccessfully(self):
         params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_OZ"}
         reply_delete_expertises = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/expertise', params=params)
         self.assertEqual(401, reply_delete_expertises.status_code)
         self.assertEqual("Invalid credentials.", reply_delete_expertises.json()["message"])
 
-    def test_70_DeleteExpertiseSuccessfully(self):
+    def test_70_DeleteEveryExpertiseSuccessfully(self):
         params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_Ok"}        
         reply = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/expertise', params=params)
         self.assertEqual(204, reply.status_code)
+
+    def test_71_DeleteEverySkillsUnsuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_OZ"}
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/skills', params=params)
+        self.assertEqual(401, reply_delete_skills.status_code)
+        self.assertEqual("Invalid credentials.", reply_delete_skills.json()["message"])
+
+    def test_72_DeleteEverySkillsSuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_Ok"}        
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/skills', params=params)
+        self.assertEqual(204, reply_delete_skills.status_code)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(testApplicationServer)
 def StartServer():

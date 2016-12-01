@@ -524,9 +524,32 @@ ProfileSkills::ProfileSkills() {
     this->functions["POST"] = post;
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
+    this->functions["ERASE"] = erase;
 }
 
 ProfileSkills::~ProfileSkills() {}
+
+Response* ProfileSkills::erase(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    std::cout << operation.params << std::endl<< std::endl<< std::endl;
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
+    if (rightCredentials) {
+        dbAdministrator->deleteSkills(email);
+        response->setContent("");
+        response->setStatus(204);
+    } else {
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+    }
+    delete dbAdministrator;
+    return response;
+}
 
 Response* ProfileSkills::post(Message operation) {
     RequestParse *rp = new RequestParse();

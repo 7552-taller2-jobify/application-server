@@ -438,3 +438,12 @@ void DataBaseAdministrator::deleteExpertises(std::string email) {
         DataBase::getInstance().put("EXPERTISE_" + email, expertises_parse);
     }
 }
+
+void DataBaseAdministrator::deleteSkills(std::string email) {
+    bool exists = DataBase::getInstance().exists("SKILLS_" + email);
+    if (exists) {
+        DataBase::getInstance().erase("SKILLS_" + email);
+        std::string skills_parse = "{\"every_skill\":[]}";
+        DataBase::getInstance().put("SKILLS_" + email, skills_parse);
+    }
+}

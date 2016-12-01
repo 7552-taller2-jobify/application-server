@@ -50,6 +50,7 @@ class DataBaseAdministrator {
     std::vector<std::string>* getAllIds();
     int resetPassword(std::string email);
     void deleteExpertises(std::string email);
+    void deleteSkills(std::string email);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

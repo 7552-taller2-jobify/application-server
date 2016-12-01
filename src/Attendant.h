@@ -134,6 +134,7 @@ class ProfileSkills: public Attendant {
     static Response* post(Message operation);
     static Response* put(Message operation);
     static Response* get(Message operation);
+    static Response* erase(Message operation);
 };
 
 class ProfilePhoto: public Attendant {

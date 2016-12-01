@@ -515,24 +515,68 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(4, reply.json()["paging"]["total"])
         self.assertEqual(2, reply.json()["paging"]["offset"])
 
-    def test_65_LogoutUnsuccessfully(self):
+    def test_65_DeleteEveryExpertisesUnsuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_OZ"}
+        reply_delete_expertises = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/expertise', params=params)
+        self.assertEqual(401, reply_delete_expertises.status_code)
+        self.assertEqual("Invalid credentials.", reply_delete_expertises.json()["message"])
+
+    def test_66_DeleteEveryExpertiseSuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_Ok"}        
+        reply = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/expertise', params=params)
+        self.assertEqual(204, reply.status_code)
+
+    def test_67_DeleteEverySkillsUnsuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_OZ"}
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/skills', params=params)
+        self.assertEqual(401, reply_delete_skills.status_code)
+        self.assertEqual("Invalid credentials.", reply_delete_skills.json()["message"])
+
+    def test_68_DeleteEverySkillsSuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_Ok"}        
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/skills', params=params)
+        self.assertEqual(204, reply_delete_skills.status_code)
+
+    def test_69_DeleteSummaryUnsuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_OZ"}
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/summary', params=params)
+        self.assertEqual(401, reply_delete_skills.status_code)
+        self.assertEqual("Invalid credentials.", reply_delete_skills.json()["message"])
+
+    def test_70_DeleteSummarySuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_Ok"}        
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/summary', params=params)
+        self.assertEqual(204, reply_delete_skills.status_code)
+
+    def test_71_DeletePictureUnsuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_OZ"}
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/picture', params=params)
+        self.assertEqual(401, reply_delete_skills.status_code)
+        self.assertEqual("Invalid credentials.", reply_delete_skills.json()["message"])
+
+    def test_72_DeletePictureSuccessfully(self):
+        params = {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0B5YWhvby5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ.SlwDCMaJfRHKF-WYUDgucr5reR6nemsgg7oYntyk_Ok"}        
+        reply_delete_skills = requests.delete('http://localhost:8000/users/pepito@yahoo.com/profile/picture', params=params)
+        self.assertEqual(204, reply_delete_skills.status_code)
+
+    def test_73_LogoutUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
         reply = requests.delete('http://localhost:8000/users/test@yahoo.com/logout', params=params)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
 
-    def test_66_LogoutSuccessfully(self):
+    def test_74_LogoutSuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.delete('http://localhost:8000/users/test@yahoo.com/logout', params=params)
         self.assertEqual(200, reply.status_code)
 
-    def test_67_RecoveryPassUnsuccessfully(self):
+    def test_75_RecoveryPassUnsuccessfully(self):
         reply_recovery_pass = requests.get('http://localhost:8000/users/noExist@yahoo.com/recovery_pass')
         self.assertEqual(500, reply_recovery_pass.status_code)
         self.assertEqual("Client not exists.", reply_recovery_pass.json()["message"])
         self.assertEqual(6, reply_recovery_pass.json()["code"])        
 
-    def test_68_RecoveryPassSuccessfully(self):
+    def test_76_RecoveryPassSuccessfully(self):
         reply_recovery_pass = requests.get('http://localhost:8000/users/test@yahoo.com/recovery_pass')
         self.assertEqual(200, reply_recovery_pass.status_code)
         self.assertEqual("admin", reply_recovery_pass.json()["password"])        
@@ -545,7 +589,6 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual("Trump", reply.json()["profile"]["last_name"])
         self.assertEqual("test@yahoo.com", reply.json()["profile"]["email"])
         self.assertEqual("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4", reply.json()["metadata"]["token"])
-
 
 suite = unittest.TestLoader().loadTestsFromTestCase(testApplicationServer)
 def StartServer():

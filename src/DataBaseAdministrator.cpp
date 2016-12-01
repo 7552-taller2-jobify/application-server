@@ -12,7 +12,7 @@ DataBaseAdministrator::~DataBaseAdministrator() {
 }
 
 bool DataBaseAdministrator::existsClient(std::string email) {
-    return (DataBase::getInstance().get(email) != "");
+    return DataBase::getInstance().exists(email);
 }
 
 bool DataBaseAdministrator::rightClient(LoginInformation *loginInformation) {
@@ -491,4 +491,40 @@ int DataBaseAdministrator::resetPassword(std::string email){
     delete loginInformation;
     delete auth;
     return result;   
+}
+
+void DataBaseAdministrator::deleteExpertises(std::string email) {
+    bool exists = DataBase::getInstance().exists("EXPERTISE_" + email);
+    if (exists) {
+        DataBase::getInstance().erase("EXPERTISE_" + email);
+        std::string parse = "{\"expertises\":[]}";
+        DataBase::getInstance().put("EXPERTISE_" + email, parse);
+    }
+}
+
+void DataBaseAdministrator::deleteSkills(std::string email) {
+    bool exists = DataBase::getInstance().exists("SKILLS_" + email);
+    if (exists) {
+        DataBase::getInstance().erase("SKILLS_" + email);
+        std::string parse = "{\"every_skill\":[]}";
+        DataBase::getInstance().put("SKILLS_" + email, parse);
+    }
+}
+
+void DataBaseAdministrator::deleteSummary(std::string email) {
+    bool exists = DataBase::getInstance().exists("SUMMARY_" + email);
+    if (exists) {
+        DataBase::getInstance().erase("SKILLS_" + email);
+        std::string parse = "{\"summary\":\"\"}";
+        DataBase::getInstance().put("SUMMARY_" + email, parse);
+    }
+}
+
+void DataBaseAdministrator::deletePicture(std::string email) {
+    bool exists = DataBase::getInstance().exists("PICTURE_" + email);
+    if (exists) {
+        DataBase::getInstance().erase("PICTURE_" + email);
+        std::string parse = "{\"picture\":\"\"}";
+        DataBase::getInstance().put("PICTURE_" + email, parse);
+    }
 }

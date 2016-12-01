@@ -28,16 +28,10 @@ class TestAttendant : public ::testing::Test {
 
     void SetUp() {
         reg = new Register();
-
         message.verb = "POST";
         message.body = "{\"email\":\"test@yahoo.com\",\"password\":\"admin\",\"device_id\":\"123\",\"first_name\":\"test\",\"last_name\":\"T\",\"gender\":\"M\",\"birthday\":\"01/01/2000\",\"address\":{\"lat\":\"123456789\",\"lon\":\"12345678\"}}";
         message.params="";
         response_register = reg->post(message);
-
-        /*message.verb = "POST";
-        message.body = "{\"email\":\"contact@gmail.com\",\"password\":\"admin\",\"device_id\":\"321\",\"first_name\":\"cont\",\"last_name\":\"act\",\"gender\":\"M\",\"birthday\":\"01/01/2000\",\"address\":{\"lat\":\"123456789\",\"lon\":\"12345678\"}}";
-        message.params="";
-        response_register = reg->post(message);*/
 
         login = new Login();
         logout = new Logout();
@@ -84,10 +78,6 @@ class TestAttendant : public ::testing::Test {
         return login->post(message);
     }
 
-        //params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        //reply = requests.delete('http://localhost:8000/users/test@yahoo.com/logout', params=params)
-        //self.assertEqual(200, reply.status_code)
-
     Response* logoutTest() {
         message.verb = "DELETE";
         message.uri = "/users/test@yahoo.com/logout";
@@ -98,6 +88,10 @@ class TestAttendant : public ::testing::Test {
 };
 
 /*  TEST_F(TestAttendant, testPostRegisterDoneCorrectly) {
+=======
+/*
+TEST_F(TestAttendant, testPostRegisterDoneCorrectly) {
+>>>>>>> 7fa22b3754e5510eb4d88a5439eb58d4f1aa8437
     ASSERT_EQ(response_register->getStatus(), 201);
     ASSERT_EQ(response_register->getContent(), "{\"registration\":\"OK\"}");
 }

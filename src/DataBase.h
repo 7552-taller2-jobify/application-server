@@ -30,6 +30,7 @@ class DataBase {
     void put(std::string key, std::string value);
     void erase(std::string key);
     leveldb::Iterator* getIterator();
+    bool exists(std::string key);
 };
 
 #endif  // DATABASE_H_

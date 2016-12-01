@@ -12,8 +12,6 @@
 ^/users/.*@.*/profile/picture$ ProfilePhoto
 ^/users/.*@.*/vote$ Vote
 ^/users/.*@.*/profile/contacts$ ProfileFriends
-^/users/.*@.*/profile/expertise/position$ ProfileExpertise
-^/users/.*@.*/profile/expertise/position.* ProfileExpertise
 ^/users/.*@.*/profile/skills/category.* ProfileSkills
 ^/users/.*@.*/own_recommendations$ ProfileOwnRecommendations
 ^/users/.*@.*/others_recommendations$ ProfileOthersRecommendations

@@ -33,10 +33,15 @@ class DataBaseAdministrator {
     std::string getPicture(std::string email);
     std::string getSolicitudes(std::string email);
     int addClient(Personal* personal, LoginInformation *loginInformation, struct Message operation);
+    int createPersonal(std::string email, std::string token, Personal *upload_personal);
     int uploadPersonal(std::string email, std::string token, Personal *personal);
+    int createSummary(std::string email, std::string token, Summary *summary);
     int uploadSummary(std::string email, std::string token, Summary *summary);
+    int createExpertise(std::string email, std::string token, Expertise *upload_expertise);
     int uploadExpertise(std::string email, std::string token, Expertise *expertise);
+    int createSkills(std::string email, std::string token, Skills *skills);
     int uploadSkills(std::string email, std::string token, Skills *skills);
+    int createPicture(std::string email, std::string token, Picture *picture);
     int uploadPicture(std::string email, std::string token, Picture *picture);
     int addSolicitude(std::string email, std::string token, struct Solicitude new_solicitude);
     int addFriend(std::string email, struct Solicitude solicitude_to_delete);

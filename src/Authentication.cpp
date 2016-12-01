@@ -25,7 +25,7 @@ bool Authentication::decode(std::string token, LoginInformation *loginInformatio
     jwt_new(&this->myJWT);
     int ret = jwt_decode(&this->myJWT, token.c_str(), (const unsigned char *)SECRET, SECRET_LEN);
     bool rightDecode = ret == 0;
-    if (rightDecode){
+    if (rightDecode) {
         std::string email = jwt_get_grant(this->myJWT, "email");
         loginInformation->setEmail(email);
         std::string password = jwt_get_grant(this->myJWT, "password");

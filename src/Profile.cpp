@@ -95,8 +95,8 @@ void Personal::getOwnInfo(const rapidjson::Document &document) {
     } else {
         this->email = "";
     }
-    this->gender = document["gender"].GetString();
     this->birthday = document["birthday"].GetString();
+    this->gender = document["gender"].GetString();
     this->address[0] = document["address"]["lat"].GetString();
     this->address[1] = document["address"]["lon"].GetString();
     if (document.HasMember("device_id") && document["device_id"].IsString()) {
@@ -547,7 +547,7 @@ std::string Solicitudes::createJsonFile() {
 
 
 
-void Conversation::getOwnInfo(const rapidjson::Document &document) {
+/*  void Conversation::getOwnInfo(const rapidjson::Document &document) {
     for (rapidjson::SizeType i = 0; i < document["conversation"].Size(); i++) {
         struct ChatMessage message;
         message.date = document["conversation"][i]["date"].GetString();
@@ -597,7 +597,7 @@ std::string Conversation::createJsonFile() {
         }
     }
     return result + "]}";
-}
+}  */
 
 void Credentials::getOwnInfo(const rapidjson::Document &document) {
     this->token = document["token"].GetString();

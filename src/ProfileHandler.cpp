@@ -14,7 +14,7 @@ ProfileHandler::ProfileHandler() {
     profiles["OWN_RECOMMENDATIONS_.*"] = new OwnRecommendations();
     profiles["OTHERS_RECOMMENDATIONS_.*"] = new OthersRecommendations();
     profiles["SOLICITUDES_.*"] = new Solicitudes();
-    profiles["CONVERSATION_.*"] = new Conversation();
+    //  profiles["CONVERSATION_.*"] = new Conversation();
     profiles[".*@.*"] = new LoginInformation();
     this->beginings.push_back("PERSONAL_");
     this->beginings.push_back("SUMMARY_");
@@ -25,7 +25,7 @@ ProfileHandler::ProfileHandler() {
     this->beginings.push_back("OWN_RECOMMENDATIONS_");
     this->beginings.push_back("OTHERS_RECOMMENDATIONS_");
     this->beginings.push_back("SOLICITUDES_");
-    this->beginings.push_back("CONVERSATION_");
+    //  this->beginings.push_back("CONVERSATION_");
 }
 
 ProfileHandler::~ProfileHandler() {}

@@ -223,7 +223,7 @@ class Solicitudes: public Profile {
     std::string createJsonFile();
 };
 
-struct ChatMessage {
+/*  struct ChatMessage {
     std::string date;
     std::string sender;
     std::string message;
@@ -244,7 +244,7 @@ class Conversation: public Profile {
     std::string getConversationMessageAt(int index);
     void addMessage(struct ChatMessage message_to_add);
     std::string createJsonFile();
-};
+};  */
 
 class Credentials: public Profile {
  private:

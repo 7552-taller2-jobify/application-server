@@ -105,6 +105,23 @@ int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *login
 }
 
 // Returns 0 if success, 1 if credential invalid
+int DataBaseAdministrator::createPersonal(std::string email, std::string token, Personal *upload_personal) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
+        Personal *actual_personal = new Personal();
+        //  actual_personal->loadJson(actual_personal_parser);
+        actual_personal->setFirstName(upload_personal->getFirstName());
+        actual_personal->setLastName(upload_personal->getLastName());
+        actual_personal->setGender(upload_personal->getGender());
+        actual_personal->setBirthday(upload_personal->getBirthday());
+        actual_personal->setAddress(upload_personal->getAddress()[0], upload_personal->getAddress()[1]);
+        DataBase::getInstance().put("PERSONAL_" + email, actual_personal->createJsonFile());
+        return 0;
+    }
+    return 1;
+}
+
+// Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadPersonal(std::string email, std::string token, Personal *upload_personal) {
     bool rightCredential = this->rightClient(email, token);
     if (rightCredential) {
@@ -139,6 +156,17 @@ std::string DataBaseAdministrator::getPersonal(std::string email) {
 }
 
 // Returns 0 if success, 1 if credential invalid
+int DataBaseAdministrator::createSummary(std::string email, std::string token, Summary *upload_summary) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
+        //  DataBase::getInstance().erase("SUMMARY_" + email);
+        DataBase::getInstance().put("SUMMARY_" + email, upload_summary->createJsonFile());
+        return 0;
+    }
+    return 1;
+}
+
+// Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadSummary(std::string email, std::string token, Summary *upload_summary) {
     bool rightCredential = this->rightClient(email, token);
     if (rightCredential) {
@@ -156,6 +184,16 @@ std::string DataBaseAdministrator::getSummary(std::string email) {
         summary_parse = "{\"summary\":\"\"}";
     }
     return summary_parse;
+}
+
+// Returns 0 if success, 1 if credential invalid
+int DataBaseAdministrator::createExpertise(std::string email, std::string token, Expertise *upload_expertise) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
+        DataBase::getInstance().put("EXPERTISE_" + email, upload_expertise->createJsonFile());
+        return 0;
+    }
+    return 1;
 }
 
 // Returns 0 if success, 1 if credential invalid
@@ -179,6 +217,17 @@ std::string DataBaseAdministrator::getExpertise(std::string email) {
 }
 
 // Returns 0 if success, 1 if credential invalid
+int DataBaseAdministrator::createSkills(std::string email, std::string token, Skills *upload_skills) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
+        //  DataBase::getInstance().erase("SKILLS_" + email);
+        DataBase::getInstance().put("SKILLS_" + email, upload_skills->createJsonFile());
+        return 0;
+    }
+    return 1;
+}
+
+// Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::uploadSkills(std::string email, std::string token, Skills *upload_skills) {
     bool rightCredential = this->rightClient(email, token);
     if (rightCredential) {
@@ -196,6 +245,17 @@ std::string DataBaseAdministrator::getSkills(std::string email) {
         skills_parse = "{\"every_skill\":[]}";
     }
     return skills_parse;
+}
+
+// Returns 0 if success, 1 if credential invalid
+int DataBaseAdministrator::createPicture(std::string email, std::string token, Picture *upload_picture) {
+    bool rightCredential = this->rightClient(email, token);
+    if (rightCredential) {
+        //  DataBase::getInstance().erase("PICTURE_" + email);
+        DataBase::getInstance().put("PICTURE_" + email, upload_picture->createJsonFile());
+        return 0;
+    }
+    return 1;
 }
 
 // Returns 0 if success, 1 if credential invalid
@@ -221,6 +281,7 @@ std::string DataBaseAdministrator::getPicture(std::string email) {
 // Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::addSolicitude(std::string email, std::string token, struct Solicitude new_solicitude) {
     bool rightCredential = this->rightClient(email, token);
+std::cout<<"rightCredential"<<rightCredential<<std::endl;
     if (rightCredential) {
         Solicitudes *solicitudes = new Solicitudes();
         if (DataBase::getInstance().get("SOLICITUDES_" + email) == "") {
@@ -231,8 +292,10 @@ int DataBaseAdministrator::addSolicitude(std::string email, std::string token, s
         solicitudes->addSolicitude(new_solicitude);
         DataBase::getInstance().put("SOLICITUDES_" + email, solicitudes->createJsonFile());
         delete solicitudes;
+std::cout<<"0"<<std::endl;
         return 0;
     }
+std::cout<<"1"<<std::endl;
     return 1;
 }
 

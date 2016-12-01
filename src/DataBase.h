@@ -16,8 +16,6 @@ const char PATH_DB[] = "./db";
 class DataBase {
  private:
     leveldb::DB* db;
-    leveldb::DB* main_db;
-    leveldb::DB* test_db;
     leveldb::Options options;
     leveldb::Status status;
     DataBase();

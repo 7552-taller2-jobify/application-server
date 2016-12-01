@@ -121,6 +121,25 @@ class testApplicationServer(unittest.TestCase):
         reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
         self.assertEqual(200, reply.status_code)
 
+    def test_16_OtherModifyExpertiseSuccessfully(self):
+        body = {"expertises":[{"company": "LalalaDOS","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "LololoDOS","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
+        self.assertEqual(200, reply.status_code)
+
+    def test_16_CreateExpertisesSuccessfully(self):
+        body = {"expertises":[{"company": "LalalaDOS","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "LololoDOS","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
+        self.assertEqual(200, reply.status_code)
+
+    def test_16_CreateExpertisesUnsuccessfully(self):
+        body = {"expertises":[{"company": "LalalaDOS","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "LololoDOS","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXz"}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
+        self.assertEqual(500, reply.status_code)
+        self.assertEqual("Could not upload.", reply.json()["message"])
+
     def test_17_ModifyExpertiseUnsuccsessfully(self):
         body = {"expertises":[{"company": "Lalala","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "Lololo","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}
@@ -134,13 +153,13 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(200, reply.status_code)
         self.assertEqual("software", reply.json()["expertises"][0]["category"])
         self.assertEqual("01/01/2010", reply.json()["expertises"][0]["from"])
-        self.assertEqual("Lalala", reply.json()["expertises"][0]["company"])
+        self.assertEqual("LalalaDOS", reply.json()["expertises"][0]["company"])
         self.assertEqual("26/09/2016", reply.json()["expertises"][0]["to"])
         self.assertEqual("aaer", reply.json()["expertises"][0]["expertise"])
         self.assertEqual("Lider tecnico", reply.json()["expertises"][0]["position"])
         self.assertEqual("hardware", reply.json()["expertises"][1]["category"])
         self.assertEqual("02/02/2012", reply.json()["expertises"][1]["from"])
-        self.assertEqual("Lololo", reply.json()["expertises"][1]["company"])
+        self.assertEqual("LololoDOS", reply.json()["expertises"][1]["company"])
         self.assertEqual("02/02/2016", reply.json()["expertises"][1]["to"])
         self.assertEqual("aaer", reply.json()["expertises"][1]["expertise"])
         self.assertEqual("Especialista tecnico", reply.json()["expertises"][1]["position"])

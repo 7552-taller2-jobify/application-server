@@ -81,13 +81,14 @@ Response* Logout::erase(Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
     bool rightClient = dbAdministrator->rightClient(email, token);
-    if (rightClient == 0) {
+    if (rightClient) {
         std::cout << "right client" << std::endl;
         Authentication *auth = new Authentication();
         LoginInformation *loginInformation = new LoginInformation();
         Credentials *credentials = new Credentials();
         bool rightDecode = auth->decode(token, loginInformation, credentials);
-        if (rightDecode == 0) {
+std::cout<<"Right decode: " << rightDecode<< std::endl;
+        if (rightDecode) {
             std::cout << "right decode" << std::endl;
             credentials->increaseIncrementalNumber(1);
             std::string email = loginInformation->getEmail();
@@ -100,7 +101,7 @@ Response* Logout::erase(Message operation) {
             DataBase::getInstance().put(email, new_credentials_parser);
             response->setContent("");
             response->setStatus(200);
-            return response;
+            //  return response;
             Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was logged out.");
         }
     } else {
@@ -346,6 +347,7 @@ Response* Reject::erase(Message operation) {
 
 
 ProfilePersonal::ProfilePersonal() {
+    this->functions["POST"] = post;
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
 }
@@ -370,28 +372,43 @@ Response* ProfilePersonal::get(Message operation) {
     return response;
 }
 
-Response* ProfilePersonal::put(Message operation) {
+Response* ProfilePersonal::putAndPost(Message operation, int status_ok, std::string error_code) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     Personal *personal = new Personal();
-    personal->loadJson(operation.body);
+    //  personal->loadJson(operation.body);
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
-    int success = dbAdministrator->uploadPersonal(email, token, personal);
+    int success;
+    if (operation.verb == "POST") {
+        success = dbAdministrator->createPersonal(email, token, personal);
+    } else {
+        personal->loadJson(operation.body);
+        success = dbAdministrator->uploadPersonal(email, token, personal);
+    }
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
-        response->setStatus(200);
+        response->setStatus(status_ok);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
+        response->setContent("{\"code\":" + error_code + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
 }
 
+Response* ProfilePersonal::put(Message operation) {
+    return putAndPost(operation, 200, std::string(COULD_NOT_PUT));
+}
+
+Response* ProfilePersonal::post(Message operation) {
+    return putAndPost(operation, 201, std::string(COULD_NOT_POST));
+}
+
 
 ProfileSummary::ProfileSummary() {
+    this->functions["POST"] = post;
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
 }
@@ -416,24 +433,41 @@ Response* ProfileSummary::get(Message operation) {
     return response;
 }
 
-Response* ProfileSummary::put(Message operation) {
+Response* ProfileSummary::putAndPost(Message operation, int status_ok, std::string error_code) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     Summary *summary = new Summary();
-    summary->loadJson(operation.body);
+    //  summary->loadJson(operation.body);
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
-    int success = dbAdministrator->uploadSummary(email, token, summary);
+
+    int success;
+    if (operation.verb == "POST") {
+        success = dbAdministrator->createSummary(email, token, summary);
+    } else {
+        summary->loadJson(operation.body);
+        success = dbAdministrator->uploadSummary(email, token, summary);
+    }
+
+    //  int success = dbAdministrator->uploadSummary(email, token, summary);
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
-        response->setStatus(200);
+        response->setStatus(status_ok);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
+        response->setContent("{\"code\":" + error_code + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
+}
+
+Response* ProfileSummary::put(Message operation) {
+    return putAndPost(operation, 200, std::string(COULD_NOT_PUT));
+}
+
+Response* ProfileSummary::post(Message operation) {
+    return putAndPost(operation, 201, std::string(COULD_NOT_POST));
 }
 
 
@@ -441,31 +475,46 @@ Response* ProfileSummary::put(Message operation) {
 ProfileExpertise::ProfileExpertise() {
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
-    this->functions["POST"] = put;
+    this->functions["POST"] = post;
 }
 
 ProfileExpertise::~ProfileExpertise() {}
 
-Response* ProfileExpertise::put(Message operation) {
+Response* ProfileExpertise::putAndPost(Message operation, int status_ok, std::string error_code) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
     Expertise *expertise = new Expertise();
-    expertise->loadJson(operation.body);
+    //  expertise->loadJson(operation.body);
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
-    int success = dbAdministrator->uploadExpertise(email, token, expertise);
+    int success;
+    if (operation.verb == "POST") {
+        success = dbAdministrator->createExpertise(email, token, expertise);
+    } else {
+        expertise->loadJson(operation.body);
+        success = dbAdministrator->uploadExpertise(email, token, expertise);
+    }
+    //  int success = dbAdministrator->uploadExpertise(email, token, expertise);
     delete dbAdministrator;
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
-        response->setStatus(200);
+        response->setStatus(status_ok);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
+        response->setContent("{\"code\":" + error_code + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
+}
+
+Response* ProfileExpertise::put(Message operation) {
+    return putAndPost(operation, 200, std::string(COULD_NOT_PUT));
+}
+
+Response* ProfileExpertise::post(Message operation) {
+    return putAndPost(operation, 201, std::string(COULD_NOT_POST));
 }
 
 Response* ProfileExpertise::get(Message operation) {
@@ -498,42 +547,45 @@ ProfileSkills::ProfileSkills() {
 
 ProfileSkills::~ProfileSkills() {}
 
-Response* ProfileSkills::post(Message operation) {
-    RequestParse *rp = new RequestParse();
-    std::string mail = rp->extractEmail(operation.uri);
-    delete rp;
-    Skills *skills = new Skills();
-    skills->loadJson(operation.body);
-    std::string category = skills->getCategory(0);
-    std::cout << category << std::endl;
-    delete skills;
-    Response *response = new Response();
-    response->setStatus(201);
-    response->setContent("");
-    return response;
-}
-
-Response* ProfileSkills::put(Message operation) {
+Response* ProfileSkills::putAndPost(Message operation, int status_ok, std::string error_code) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
     Skills *skills = new Skills();
-    skills->loadJson(operation.body);
+    //  skills->loadJson(operation.body);
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
-    int success = dbAdministrator->uploadSkills(email, token, skills);
+
+    int success;
+    if (operation.verb == "POST") {
+        success = dbAdministrator->createSkills(email, token, skills);
+    } else {
+        skills->loadJson(operation.body);
+        success = dbAdministrator->uploadSkills(email, token, skills);
+    }
+
+
+    //  int success = dbAdministrator->uploadSkills(email, token, skills);
     delete dbAdministrator;
     delete skills;
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
-        response->setStatus(200);
+        response->setStatus(status_ok);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
+        response->setContent("{\"code\":" + error_code + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
+}
+
+Response* ProfileSkills::post(Message operation) {
+    return putAndPost(operation, 201, std::string(COULD_NOT_POST));
+}
+
+Response* ProfileSkills::put(Message operation) {
+    return putAndPost(operation, 200, std::string(COULD_NOT_PUT));
 }
 
 Response* ProfileSkills::get(Message operation) {
@@ -559,6 +611,7 @@ Response* ProfileSkills::get(Message operation) {
 
 
 ProfilePhoto::ProfilePhoto() {
+    this->functions["POST"] = post;
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
 }
@@ -585,26 +638,44 @@ Response* ProfilePhoto::get(Message operation) {
     return response;
 }
 
-Response* ProfilePhoto::put(Message operation) {
+Response* ProfilePhoto::putAndPost(Message operation, int status_ok, std::string error_code) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
     Picture *picture = new Picture();
-    picture->loadJson(operation.body);
+    //  picture->loadJson(operation.body);
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
-    int success = dbAdministrator->uploadPicture(email, token, picture);
+
+
+    int success;
+    if (operation.verb == "POST") {
+        success = dbAdministrator->createPicture(email, token, picture);
+    } else {
+        picture->loadJson(operation.body);
+        success = dbAdministrator->uploadPicture(email, token, picture);
+    }
+
+    //  int success = dbAdministrator->uploadPicture(email, token, picture);
     delete dbAdministrator;
     Response* response = new Response();
     if (success == 0) {
         response->setContent("");
-        response->setStatus(200);
+        response->setStatus(status_ok);
     } else if (success == 1) {
-        response->setContent("{\"code\":" + std::string(COULD_NOT_PUT) + ",\"message\":\"Could not upload.\"}");
+        response->setContent("{\"code\":" + error_code + ",\"message\":\"Could not upload.\"}");
         response->setStatus(500);
     }
     return response;
+}
+
+Response* ProfilePhoto::put(Message operation) {
+    return putAndPost(operation, 200, std::string(COULD_NOT_PUT));
+}
+
+Response* ProfilePhoto::post(Message operation) {
+    return putAndPost(operation, 201, std::string(COULD_NOT_POST));
 }
 
 

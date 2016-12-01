@@ -115,6 +115,19 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(200, reply.status_code)
         self.assertEqual(0, len(reply.json()["expertises"]))
 
+    def test_16_CreateExpertisesUnsuccessfully(self):
+        body = {"expertises":[{"company": "LalalaDOS","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "LololoDOS","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXz"}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
+        self.assertEqual(500, reply.status_code)
+        self.assertEqual("Could not upload.", reply.json()["message"])
+
+    def test_16_CreateExpertisesSuccessfully(self):
+        body = {"expertises":[{"company": "LalalaDOS","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "LololoDOS","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
+        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
+        reply = requests.post('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
+        self.assertEqual(201, reply.status_code)
+
     def test_16_ModifyExpertiseSuccessfully(self):
         body = {"expertises":[{"company": "Lalala","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "Lololo","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
@@ -126,19 +139,6 @@ class testApplicationServer(unittest.TestCase):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
         reply = requests.put('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
         self.assertEqual(200, reply.status_code)
-
-    def test_16_CreateExpertisesSuccessfully(self):
-        body = {"expertises":[{"company": "LalalaDOS","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "LololoDOS","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
-        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
-        reply = requests.post('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
-        self.assertEqual(200, reply.status_code)
-
-    def test_16_CreateExpertisesUnsuccessfully(self):
-        body = {"expertises":[{"company": "LalalaDOS","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "LololoDOS","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}
-        params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXz"}
-        reply = requests.post('http://localhost:8000/users/test@yahoo.com/profile/expertise', params=params, json=body)
-        self.assertEqual(500, reply.status_code)
-        self.assertEqual("Could not upload.", reply.json()["message"])
 
     def test_17_ModifyExpertiseUnsuccsessfully(self):
         body = {"expertises":[{"company": "Lalala","position": "Lider tecnico","from": "01/01/2010","to": "26/09/2016","expertise": "aaer","category": "software"},{"company": "Lololo","position": "Especialista tecnico","from": "02/02/2012","to": "02/02/2016","expertise": "aaer","category": "hardware"}]}

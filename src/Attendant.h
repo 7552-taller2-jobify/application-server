@@ -103,30 +103,45 @@ class Reject: public Attendant {
 };
 
 class ProfilePersonal: public Attendant {
+ private:
+    static Response* putAndPost(Message operation, int status_ok, std::string error_code);
+
  public:
     ProfilePersonal();
     ~ProfilePersonal();
     static Response* get(Message operation);
     static Response* put(Message operation);
+    static Response* post(Message operation);
 };
 
 class ProfileSummary: public Attendant {
+ private:
+    static Response* putAndPost(Message operation, int status_ok, std::string error_code);
+
  public:
     ProfileSummary();
     ~ProfileSummary();
     static Response* get(Message operation);
     static Response* put(Message operation);
+    static Response* post(Message operation);
 };
 
 class ProfileExpertise: public Attendant {
+ private:
+    static Response* putAndPost(Message operation, int status_ok, std::string error_code);
+
  public:
     ProfileExpertise();
     ~ProfileExpertise();
+    static Response* post(Message operation);
     static Response* put(Message operation);
     static Response* get(Message operation);
 };
 
 class ProfileSkills: public Attendant {
+ private:
+    static Response* putAndPost(Message operation, int status_ok, std::string error_code);
+
  public:
     ProfileSkills();
     ~ProfileSkills();
@@ -136,11 +151,15 @@ class ProfileSkills: public Attendant {
 };
 
 class ProfilePhoto: public Attendant {
+ private:
+    static Response* putAndPost(Message operation, int status_ok, std::string error_code);
+
  public:
     ProfilePhoto();
     ~ProfilePhoto();
     static Response* get(Message operation);
     static Response* put(Message operation);
+    static Response* post(Message operation);
 };
 
 class ProfileFriends: public Attendant {

@@ -47,7 +47,7 @@ class TestAttendant : public ::testing::Test {
     }
 };
 
-TEST_F(TestAttendant, testPostRegisterDoneCorrectly) {
+/*TEST_F(TestAttendant, testPostRegisterDoneCorrectly) {
     ASSERT_EQ(response_register->getStatus(), 201);
     ASSERT_EQ(response_register->getContent(), "{\"registration\":\"OK\"}");
 }
@@ -94,17 +94,6 @@ TEST_F(TestAttendant, testGetRecoveryPasswordUnsuccessfully) {
     delete response;
 }
 
-/*TEST_F(TestAttendant, testPostLoginSuccessfully) {
-    message.verb = "POST";
-    message.uri = "/users/login";
-    message.body = "{\"email\":\"test@yahoo.com\",\"password\":\"admin\"}";
-    message.params="";
-    Response *response = login->post(message);
-    ASSERT_EQ(response->getStatus(), 200);
-    ASSERT_EQ(response->getContent(), "{\"password\":\"admin\"}");
-    delete response;
-}*/
-
 TEST_F(TestAttendant, testPostLoginUnsuccessfully) {
     message.verb = "POST";
     message.uri = "/users/login";
@@ -117,13 +106,31 @@ TEST_F(TestAttendant, testPostLoginUnsuccessfully) {
 }
 
 TEST_F(TestAttendant, testDeleteLogoutSuccessfully) {
-    /*Response *response = this->loginTest();
-    delete response;*/this->loginTest();
+//    Response *response = this->loginTest();
+//    delete response;
+    this->loginTest();
     Response *response = this->logoutTest();
     ASSERT_EQ(response->getStatus(), 200);
     ASSERT_EQ(response->getContent(), "");
     delete response;
-}
+}*/
+
+
+
+
+
+
+
+/*TEST_F(TestAttendant, testPostLoginSuccessfully) {
+    message.verb = "POST";
+    message.uri = "/users/login";
+    message.body = "{\"email\":\"test@yahoo.com\",\"password\":\"admin\"}";
+    message.params="";
+    Response *response = login->post(message);
+    ASSERT_EQ(response->getStatus(), 200);
+    ASSERT_EQ(response->getContent(), "{\"password\":\"admin\"}");
+    delete response;
+}*/
 
 /*TEST_F(TestAttendant, testPostFacebookRegisterDoneCorrectly) {
     message.verb = "POST";

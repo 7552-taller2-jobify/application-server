@@ -505,8 +505,6 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual("contact@gmail.com", reply.json()["results"][1]["email"])
         self.assertEqual("a@a.com", reply.json()["results"][2]["email"])
         self.assertEqual("fulano@yahoo.com", reply.json()["results"][3]["email"])
-        #self.assertEqual("pepito@yahoo.com", reply.json()["results"][4]["email"])
-        #self.assertEqual("mengano@yahoo.com", reply.json()["results"][5]["email"])
 
     def test_63_SearchWithOffset0AndLimit2(self):
         params = (('distance', ''),('lat', ''),('lon', ''),("position", ""),("skills", ""),("offset", "0"),("limit", "2"),('token','eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4'))
@@ -603,9 +601,6 @@ class testApplicationServer(unittest.TestCase):
 
 suite = unittest.TestLoader().loadTestsFromTestCase(testApplicationServer)
 def StartServer():
-   #bashCommand = "rm -rf db log.txt"
-   #process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-   #output, error = process.communicate()
    call(["./Server"])
 
 def KillServer():
@@ -624,4 +619,3 @@ t1.start()
 t2.start()
 t2.join()
 KillServer()
-#unittest.TextTestRunner(verbosity=2).run(suite)

@@ -7,7 +7,6 @@ FirebaseService::FirebaseService() {
 
 Response* FirebaseService::SendNotification(std::string toToken, std::string notification) {
     std::string url = "https://fcm.googleapis.com/fcm/send";
-    //  estructura de notificacion {\n\t\t\"body\": \"Hola!!\",\n\t\t\"title\": \"Jobify\"\n\t}
     std::string body = "{\n\t\"to\": \""+ toToken + "\",\n\t\"notification\": " + notification + "\n}";
     std::cout<< body << std::endl;
     Request* request = new Request();

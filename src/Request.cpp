@@ -17,7 +17,6 @@ void Request::SetContentJson() {
   slist1 = curl_slist_append(slist1, "Authorization:key=AIzaSyAkvyuxBXTzeLiz9wkE2WrAsfyk0ylkQOk");
   slist1 = curl_slist_append(slist1, "Accept: application/json");
   slist1 = curl_slist_append(slist1, "Content-Type: application/json");
-  // headers = curl_slist_append(headers, "charsets: utf-8");
 }
 
 void Request::SetAuthorization(std::string authorization) {
@@ -30,9 +29,8 @@ Response*  Request::Execute(const std::string url) {
 
     curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    /* example.com is redirected, so we tell libcurl to follow redirection */
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);  // Prevent "longjmp causes uninitialized stack frame" bug
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
     curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "deflate");
 
 
@@ -65,13 +63,11 @@ Response*  Request::Execute(const std::string url) {
     std::stringstream out;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
-    /* Perform the request, res will get the return code */
     CURLcode res = curl_easy_perform(curl);
 
     int http_code = 0;
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
 
-    /* Check for errors */
     if (res != CURLE_OK) {
         fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
     }
@@ -91,18 +87,17 @@ struct WriteThis {
 
 static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *userp) {
     struct WriteThis *pooh = (struct WriteThis *)userp;
-
     if (size*nmemb < 1) {
         return 0;
     }
     if (pooh->sizeleft) {
-        *reinterpret_cast<char *>(ptr) = pooh->readptr[0]; /* copy one single byte */
-        pooh->readptr++;                 /* advance pointer */
-        pooh->sizeleft--;                /* less data left */
-        return 1;                        /* we return 1 byte at a time! */
+        *reinterpret_cast<char *>(ptr) = pooh->readptr[0];
+        pooh->readptr++;
+        pooh->sizeleft--;
+        return 1;
     }
 
-    return 0;                          /* no more data left to deliver */
+    return 0;
 }
 
 Response* Request::ExecutePost(std::string url, std::string body) {
@@ -119,15 +114,10 @@ Response* Request::ExecutePost(std::string url, std::string body) {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
     curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
 
-  //  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-  //  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
     ret = curl_easy_perform(curl);
 
     int http_code = 0;
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
-
-  //  curl_slist_free_all(slist1);
-  //  slist1 = NULL;
 
     Response* response = new Response();
     response->setContent(out.str());

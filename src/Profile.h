@@ -223,29 +223,6 @@ class Solicitudes: public Profile {
     std::string createJsonFile();
 };
 
-/*  struct ChatMessage {
-    std::string date;
-    std::string sender;
-    std::string message;
-};
-
-class Conversation: public Profile {
- private:
-    std::vector<struct ChatMessage> messages;
-
-    void getOwnInfo(const rapidjson::Document &document);
-    std::string getDateAt(int index);
-    std::string getSenderAt(int index);
-    std::string getMessageAt(int index);
-
- public:
-    Conversation() : Profile() {}
-    ~Conversation() {}
-    std::string getConversationMessageAt(int index);
-    void addMessage(struct ChatMessage message_to_add);
-    std::string createJsonFile();
-};  */
-
 class Credentials: public Profile {
  private:
     std::string token;

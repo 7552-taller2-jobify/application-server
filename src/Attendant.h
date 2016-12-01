@@ -6,7 +6,7 @@
 #include <curl/curl.h>
 #include <map>
 #include <string>
-#include <iostream>  // TODO borrar
+#include <iostream>
 #include <vector>
 #include <cmath>
 #include <stdlib.h>  /* atof */

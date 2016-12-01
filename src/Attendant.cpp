@@ -82,13 +82,13 @@ Response* Logout::erase(Message operation) {
     Response* response = new Response();
     bool rightClient = dbAdministrator->rightClient(email, token);
     if (rightClient) {
-        std::cout << "right client" << std::endl;
+//        std::cout << "right client" << std::endl;
         Authentication *auth = new Authentication();
         LoginInformation *loginInformation = new LoginInformation();
         Credentials *credentials = new Credentials();
         bool rightDecode = auth->decode(token, loginInformation, credentials);
         if (rightDecode) {
-            std::cout << "right decode" << std::endl;
+//            std::cout << "right decode" << std::endl;
             credentials->increaseIncrementalNumber(1);
             std::string email = loginInformation->getEmail();
             std::string password = loginInformation->getPassword();
@@ -100,8 +100,8 @@ Response* Logout::erase(Message operation) {
             DataBase::getInstance().put(email, new_credentials_parser);
             response->setContent("");
             response->setStatus(200);
-            return response;
             Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was logged out.");
+            return response;
         }
     } else {
         response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
@@ -405,12 +405,17 @@ Response* ProfileSummary::get(Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
+//    std::cout << "EMAIL " << email <<std::endl;
+//    std::cout << "TOKEN " << token <<std::endl;
+//    std::cout << "RIGHT CRED " << rightCredentials <<std::endl;
     if (rightCredentials) {
         response->setContent(dbAdministrator->getSummary(email));
         response->setStatus(200);
+        Logger::getInstance().log(info, "Get summary of " + email + " is OK");
     } else {
         response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
         response->setStatus(401);
+        Logger::getInstance().log(warn, "Get summary of " + email + " is not OK for credentials");
     }
     return response;
 }
@@ -423,6 +428,8 @@ Response* ProfileSummary::put(Message operation) {
     summary->loadJson(operation.body);
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
+//    std::cout << "EMAIL " << email <<std::endl;
+//    std::cout << "TOKEN " << token <<std::endl;
     int success = dbAdministrator->uploadSummary(email, token, summary);
     Response* response = new Response();
     if (success == 0) {
@@ -441,9 +448,33 @@ ProfileExpertise::ProfileExpertise() {
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
     this->functions["POST"] = put;
+    this->functions["ERASE"] = erase;
+
 }
 
 ProfileExpertise::~ProfileExpertise() {}
+
+Response* ProfileExpertise::erase(Message operation) {
+    DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    
+    RequestParse *rp = new RequestParse();
+    std::string email = rp->extractEmail(operation.uri);
+    delete rp;
+    std::cout << operation.params << std::endl<< std::endl<< std::endl;
+    const int SIZE_NAME_PARAMETER = 6;
+    std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
+    Response* response = new Response();
+    bool rightCredentials = dbAdministrator->rightClient(email, token);
+    if (rightCredentials) {
+        dbAdministrator->deleteExpertises(email);
+        response->setContent("");
+        response->setStatus(204);
+    } else {
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
+    }
+    delete dbAdministrator;
+    return response;
+}
 
 Response* ProfileExpertise::put(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();    

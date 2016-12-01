@@ -124,6 +124,7 @@ class ProfileExpertise: public Attendant {
     ~ProfileExpertise();
     static Response* put(Message operation);
     static Response* get(Message operation);
+    static Response* erase(Message operation);
 };
 
 class ProfileSkills: public Attendant {

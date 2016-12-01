@@ -12,7 +12,7 @@ DataBaseAdministrator::~DataBaseAdministrator() {
 }
 
 bool DataBaseAdministrator::existsClient(std::string email) {
-    return (DataBase::getInstance().get(email) != "");
+    return DataBase::getInstance().exists(email);
 }
 
 bool DataBaseAdministrator::rightClient(LoginInformation *loginInformation) {
@@ -428,4 +428,13 @@ int DataBaseAdministrator::resetPassword(std::string email){
     delete loginInformation;
     delete auth;
     return result;   
+}
+
+void DataBaseAdministrator::deleteExpertises(std::string email) {
+    bool exists = DataBase::getInstance().exists("EXPERTISE_" + email);
+    if (exists) {
+        DataBase::getInstance().erase("EXPERTISE_" + email);
+        std::string expertises_parse = "{\"expertises\":[]}";
+        DataBase::getInstance().put("EXPERTISE_" + email, expertises_parse);
+    }
 }

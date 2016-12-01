@@ -281,6 +281,7 @@ std::string DataBaseAdministrator::getPicture(std::string email) {
 // Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::addSolicitude(std::string email, std::string token, struct Solicitude new_solicitude) {
     bool rightCredential = this->rightClient(email, token);
+std::cout<<"rightCredential"<<rightCredential<<std::endl;
     if (rightCredential) {
         Solicitudes *solicitudes = new Solicitudes();
         if (DataBase::getInstance().get("SOLICITUDES_" + email) == "") {
@@ -291,8 +292,10 @@ int DataBaseAdministrator::addSolicitude(std::string email, std::string token, s
         solicitudes->addSolicitude(new_solicitude);
         DataBase::getInstance().put("SOLICITUDES_" + email, solicitudes->createJsonFile());
         delete solicitudes;
+std::cout<<"0"<<std::endl;
         return 0;
     }
+std::cout<<"1"<<std::endl;
     return 1;
 }
 

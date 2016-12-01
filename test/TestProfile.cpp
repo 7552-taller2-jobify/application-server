@@ -13,7 +13,7 @@ const char friends_input[] = "files/example_profile_friends_input.json";
 const char own_recommendations_input[] = "files/example_profile_own_recommendations_input.json";
 const char others_recommendations_input[] = "files/example_profile_others_recommendations_input.json";
 const char solicitudes_input[] = "files/example_profile_solicitudes_input.json";
-const char conversation_input[] = "files/example_profile_conversation_input.json";
+//  const char conversation_input[] = "files/example_profile_conversation_input.json";
 
 const char personal_output[] = "files/example_profile_personal_output.json";
 const char summary_output[] = "files/example_profile_summary_output.json";
@@ -24,7 +24,7 @@ const char friends_output[] = "files/example_profile_friends_output.json";
 const char own_recommendations_output[] = "files/example_profile_own_recommendations_output.json";
 const char others_recommendations_output[] = "files/example_profile_others_recommendations_output.json";
 const char solicitudes_output[] = "files/example_profile_solicitudes_output.json";
-const char conversation_output[] = "files/example_profile_conversation_output.json";
+//  const char conversation_output[] = "files/example_profile_conversation_output.json";
 
 class TestProfile : public ::testing::Test {
  public:
@@ -37,7 +37,7 @@ class TestProfile : public ::testing::Test {
     OwnRecommendations *own_recommendations;
     OthersRecommendations *others_recommendations;
     Solicitudes *solicitudes;
-    Conversation *conversation;
+    //  Conversation *conversation;
 
     void SetUp() {
         personal = new Personal();
@@ -49,7 +49,7 @@ class TestProfile : public ::testing::Test {
         own_recommendations = new OwnRecommendations();
         others_recommendations = new OthersRecommendations();
         solicitudes = new Solicitudes();
-        conversation = new Conversation();
+        //  conversation = new Conversation();
 
         personal->getProfileInfo(personal_input);
         summary->getProfileInfo(summary_input);
@@ -60,7 +60,7 @@ class TestProfile : public ::testing::Test {
         own_recommendations->getProfileInfo(own_recommendations_input);
         others_recommendations->getProfileInfo(others_recommendations_input);
         solicitudes->getProfileInfo(solicitudes_input);
-        conversation->getProfileInfo(conversation_input);
+        //  conversation->getProfileInfo(conversation_input);
     }
 
     ~TestProfile() {
@@ -73,7 +73,7 @@ class TestProfile : public ::testing::Test {
         delete own_recommendations;
         delete others_recommendations;
         delete solicitudes;
-        delete conversation;
+        //  delete conversation;
     }
 };
 
@@ -404,7 +404,7 @@ TEST_F(TestProfile, testUpdateJsonSolicitudes) {
 
 
 
-TEST_F(TestProfile, testConversationWellCreated) {
+/*  TEST_F(TestProfile, testConversationWellCreated) {
     ASSERT_EQ(conversation->getConversationMessageAt(0),
                                     "20-03-2016T12:34:00.000Z,smpiano@gmail.com,Hola, cómo andás?");
     ASSERT_EQ(conversation->getConversationMessageAt(1),
@@ -440,4 +440,4 @@ TEST_F(TestProfile, testUpdateJsonConversation) {
                                     "20-03-2016T12:35:01.234Z,facundo.sanchez.galindo@gmail.com,Todo bien, vos?");
     ASSERT_EQ(conversation_modified->getConversationMessageAt(2),
                                     "20-03-2016T12:37:20.040Z,smpiano@gmail.com,Todo tranqui.");
-}
+}  */

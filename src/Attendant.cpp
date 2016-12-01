@@ -82,14 +82,11 @@ Response* Logout::erase(Message operation) {
     Response* response = new Response();
     bool rightClient = dbAdministrator->rightClient(email, token);
     if (rightClient) {
-        std::cout << "right client" << std::endl;
         Authentication *auth = new Authentication();
         LoginInformation *loginInformation = new LoginInformation();
         Credentials *credentials = new Credentials();
         bool rightDecode = auth->decode(token, loginInformation, credentials);
-std::cout<<"Right decode: " << rightDecode<< std::endl;
         if (rightDecode) {
-            std::cout << "right decode" << std::endl;
             credentials->increaseIncrementalNumber(1);
             std::string email = loginInformation->getEmail();
             std::string password = loginInformation->getPassword();
@@ -219,7 +216,7 @@ Response* Contact::post(Message operation) {
     int number[3];
     date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-     Solicitude solicitude;
+    Solicitude solicitude;
     solicitude.date = date;
     solicitude.email = contact_email;
     int success = dbAdministrator->addSolicitude(email, token, solicitude);
@@ -741,7 +738,6 @@ Vote::Vote() {
 Vote::~Vote() {}
 
 Response* Vote::post(Message operation) {
-std::cout<<"Vote POST\n\n\n\n";
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -768,7 +764,6 @@ std::cout<<"Vote POST\n\n\n\n";
 }
 
 Response* Vote::erase(Message operation) {
-std::cout<<"Vote DELETE\n\n\n\n";
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
@@ -866,16 +861,8 @@ Response* MostPopularUsers::get(Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-        response->setContent(dbAdministrator->getMostPopularUsers());
-        response->setStatus(200);
-    /* bool rightCredentials = dbAdministrator->rightClient(email, token);
-    if (rightCredentials) {
-        response->setContent(dbAdministrator->getMostPopularUsers());
-        response->setStatus(200);
-    } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
-    } */
+    response->setContent(dbAdministrator->getMostPopularUsers());
+    response->setStatus(200);
     delete dbAdministrator;
     return response;
 }
@@ -938,12 +925,6 @@ Firebase::Firebase() {
 Firebase::~Firebase() {}
 
 Response* Firebase::post(struct Message operation) {
-    // std::string toTokenMAti
-    // "eZrExMhfu-o:APA91bGJwLtfev7GkgvEEA-bS1aTFSvyupR7ieVGgMo2IqrUFgPlt-pPQtihviEp4n-aXMYNwvnNZEg6O_xX55fhi3MOwjpHOZbeSeQgCudSifFn37t-tn1bTq2c5F9oBm21m6v95Rsc";
-    // std::string toTokenFacu
-    // "ciEaT_zMcQ8:APA91bEJxZCLBTgk1DKQJl0TxVIy-2BLmWWoEpJ7fo00nxjq13f9MxuNnDnQZZa8hqjdmz733wFoz4Vgaa4eqHgz8JwJWnKrBYC3e1YrGKeL-gRmyoEkxn8qJNZh4W9fL7_w-pB31bdi";
-    // token2 mati
-    // f0KndaMXQko:APA91bHP6ezwP07EuL67MzlJXVf19rsr4lI2J2CmcGrDXiXkQqL0g00sjtjJyYEwvpwaix9-FduRZbQ2FHQ-l9kKSC62kKyOZ-dYfmKmmrizGN1pOOONBkauVjyOjGvTFmxIXgsu3FTP
     std::vector<std::string> urlVector = split(operation.uri, '/');
     std::string toToken = urlVector[urlVector.size() -1];
 
@@ -1062,7 +1043,7 @@ Response* Search::get(Message operation) {
     delete auth;
     delete credentials;
     if (!rightDecode) {
-       response->setContent("{\"message\":\"Invalid credentials.\"}");
+       response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
        response->setStatus(401);
        return response;
     }
@@ -1142,7 +1123,7 @@ Response* Search::get(Message operation) {
     return response;
 }
 
-std::string Search::generateMessage(std::vector<std::string>* ids_match, std::map<std::string, std::string> *ids_match_distance_map, int offset, int limit){
+std::string Search::generateMessage(std::vector<std::string>* ids_match, std::map<std::string, std::string> *ids_match_distance_map, int offset, int limit) {
     std::cout << "limit : " << limit << std::endl;
     std::cout << "offset : " << offset << std::endl;
 

@@ -280,8 +280,7 @@ std::string DataBaseAdministrator::getPicture(std::string email) {
 
 // Returns 0 if success, 1 if credential invalid
 int DataBaseAdministrator::addSolicitude(std::string email, std::string token, struct Solicitude new_solicitude) {
-    bool rightCredential = this->rightClient(email, token);
-std::cout<<"rightCredential"<<rightCredential<<std::endl;
+    bool rightCredential = this->rightClient(new_solicitude.email, token);
     if (rightCredential) {
         Solicitudes *solicitudes = new Solicitudes();
         if (DataBase::getInstance().get("SOLICITUDES_" + email) == "") {
@@ -292,10 +291,8 @@ std::cout<<"rightCredential"<<rightCredential<<std::endl;
         solicitudes->addSolicitude(new_solicitude);
         DataBase::getInstance().put("SOLICITUDES_" + email, solicitudes->createJsonFile());
         delete solicitudes;
-std::cout<<"0"<<std::endl;
         return 0;
     }
-std::cout<<"1"<<std::endl;
     return 1;
 }
 
@@ -329,6 +326,17 @@ int DataBaseAdministrator::addFriend(std::string email, struct Solicitude solici
         friends->addContact(solicitude_to_delete.email);
         DataBase::getInstance().put("FRIENDS_" + email, friends->createJsonFile());
         delete friends;
+
+        Friends *friends_other_user = new Friends();
+        std::string email_friend = solicitude_to_delete.email;
+        if (DataBase::getInstance().get("FRIENDS_" + email_friend) == "") {
+            DataBase::getInstance().put("FRIENDS_" + email_friend, "{\"friends\":[]}");
+        }
+        friends_other_user->loadJson(DataBase::getInstance().get("FRIENDS_" + email_friend));
+        DataBase::getInstance().erase("FRIENDS_" + email_friend);
+        friends_other_user->addContact(email);
+        DataBase::getInstance().put("FRIENDS_" + email_friend, friends_other_user->createJsonFile());
+        delete friends_other_user;
     }
     return return_code;
 }

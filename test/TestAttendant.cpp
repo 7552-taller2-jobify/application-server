@@ -97,6 +97,7 @@ class TestAttendant : public ::testing::Test {
     }
 };
 
+/*
 TEST_F(TestAttendant, testPostRegisterDoneCorrectly) {
     ASSERT_EQ(response_register->getStatus(), 201);
     ASSERT_EQ(response_register->getContent(), "{\"registration\":\"OK\"}");
@@ -642,7 +643,7 @@ TEST_F(TestAttendant, testDeleteLogoutSuccessfully) {
     delete response;
 }
 
-
+*/
 
 
 /*TEST_F(TestAttendant, testPostLoginSuccessfully) {

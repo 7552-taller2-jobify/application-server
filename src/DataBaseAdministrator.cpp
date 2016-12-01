@@ -61,6 +61,11 @@ std::string DataBaseAdministrator::getToken(std::string email) {
     return "";
 }
 
+std::string DataBaseAdministrator::getEmailFromToken(std::string token) {
+    Authentication *auth = new Authentication();
+    return auth->getEmailFromToken(token);
+}
+
 std::string DataBaseAdministrator::getPersonalLogin(std::string email) {
     std::string personal_parser =  DataBase::getInstance().get("PERSONAL_" + email);
     std::string picture_parser =  DataBase::getInstance().get("PICTURE_" + email);

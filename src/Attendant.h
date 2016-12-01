@@ -214,7 +214,7 @@ class Firebase: public Attendant {
     Firebase();
     ~Firebase();
     static Response* post(struct Message operation);
-};
+}; 
 class Category: public Attendant {
  public:
     Category();

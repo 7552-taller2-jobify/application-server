@@ -374,15 +374,21 @@ Response* ProfilePersonal::get(Message operation) {
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
-    bool rightCredentials = dbAdministrator->rightClient(email, token);
-    if (rightCredentials) {
+    if (dbAdministrator->getEmailFromToken(token) == email) {
+        bool rightCredentials = dbAdministrator->rightClient(email, token);
+        if (rightCredentials) {
+            response->setContent(dbAdministrator->getProfilePersonal(email));
+            response->setStatus(200);
+        } else {
+            response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+            response->setStatus(401);
+        }
+    } else {
         response->setContent(dbAdministrator->getProfilePersonal(email));
         response->setStatus(200);
-    } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
-                            ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
     }
+    delete dbAdministrator;
     return response;
 }
 
@@ -459,16 +465,22 @@ Response* ProfileSummary::get(Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
-    if (rightCredentials) {
+    if (dbAdministrator->getEmailFromToken(token) == email) {
+        if (rightCredentials) {
+            response->setContent(dbAdministrator->getSummary(email));
+            response->setStatus(200);
+            Logger::getInstance().log(info, "Get summary of " + email + " is OK");
+        } else {
+            response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+            response->setStatus(401);
+            Logger::getInstance().log(warn, "Get summary of " + email + " is not OK for credentials");
+        }
+    } else {
         response->setContent(dbAdministrator->getSummary(email));
         response->setStatus(200);
-        Logger::getInstance().log(info, "Get summary of " + email + " is OK");
-    } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
-                            ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
-        Logger::getInstance().log(warn, "Get summary of " + email + " is not OK for credentials");
     }
+    delete dbAdministrator;
     return response;
 }
 
@@ -584,13 +596,18 @@ Response* ProfileExpertise::get(Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
-    if (rightCredentials) {
+    if (dbAdministrator->getEmailFromToken(token) == email) {
+        if (rightCredentials) {
+            response->setContent(dbAdministrator->getExpertise(email));
+            response->setStatus(200);
+        } else {
+            response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+            response->setStatus(401);
+        }
+    } else {
         response->setContent(dbAdministrator->getExpertise(email));
         response->setStatus(200);
-    } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
-                            ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -676,13 +693,18 @@ Response* ProfileSkills::get(Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
-    if (rightCredentials) {
+    if (dbAdministrator->getEmailFromToken(token) == email) {
+        if (rightCredentials) {
+            response->setContent(dbAdministrator->getSkills(email));
+            response->setStatus(200);
+        } else {
+            response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+            response->setStatus(401);
+        }
+    } else {
         response->setContent(dbAdministrator->getSkills(email));
         response->setStatus(200);
-    } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
-                            ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -730,13 +752,18 @@ Response* ProfilePhoto::get(Message operation) {
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
-    if (rightCredentials) {
+    if (dbAdministrator->getEmailFromToken(token) == email) {
+        if (rightCredentials) {
+            response->setContent(dbAdministrator->getPicture(email));
+            response->setStatus(200);
+        } else {
+            response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+            response->setStatus(401);
+        }
+    } else {
         response->setContent(dbAdministrator->getPicture(email));
         response->setStatus(200);
-    } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
-                            ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -1036,7 +1063,7 @@ Firebase::Firebase() {
 Firebase::~Firebase() {}
 
 Response* Firebase::post(struct Message operation) {
-    std::vector<std::string> urlVector = split(operation.uri, '/');
+    /*  std::vector<std::string> urlVector = split(operation.uri, '/');
     std::string toToken = urlVector[urlVector.size() -1];
 
     FirebaseService* firebaseService = new FirebaseService();
@@ -1046,7 +1073,8 @@ Response* Firebase::post(struct Message operation) {
     response->setContent(firebaseResponse->getContent());
     response->setStatus(200);
 
-    return response;
+    return response;  */
+    return NULL;
 }
 
 //  Para probar el enlace con el shared

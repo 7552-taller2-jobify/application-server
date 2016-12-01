@@ -9,7 +9,7 @@ class FirebaseService{
  private:
  public:
     FirebaseService();
-    Response* SendNotification(std::string toToken, std::string body);
+    Response* SendNotification(std::string toToken, std::string title, std::string body);
     ~FirebaseService();
 };
 #endif  // FIREBASESERVICE_H_

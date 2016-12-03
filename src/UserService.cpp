@@ -22,10 +22,3 @@ std::string UserService::getPersonal(Personal *personal) {
             "\"address\":{\"lat\":\"" + personal->getLat() + "\", \"lon\":\"" + personal->getLon() + "\"}," +
             "\"gender\":\"" + personal->getGender() + "\"}");
 }
-
-/*std::string UserService::loginInformation(Personal *personal, Picture *picture, str::string token) {
-    return ("{\"first_name\": \"" + personal->getFirstName() + "\"," +
-            "\"last_name\": \"" + personal->getLastName() + "\"," +
-            "\"email\": \"" + personal->getEmail() + "\"," +
-            "\"picture\": \"" + picture->getPicture() + "\"}");
-}*/

@@ -16,6 +16,7 @@ class Authentication {
     std::string encode(std::string email, std::string password, int numeroIncremental);
     bool decode(std::string token, LoginInformation *loginInformation, Credentials *credentials);
     virtual ~Authentication();
+    std::string getEmailFromToken(std::string token);
 };
 
 #endif  /* AUTHENTICATION_H_ */

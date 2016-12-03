@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <vector>
 
 Profile::Profile() {}
 
@@ -24,7 +25,7 @@ void Profile::updateJson(const std::string json_file) {
 }
 
 void Profile::loadJson(const std::string json) {
-    if (json != ""){
+    if (json != "") {
         rapidjson::Document document;
         rapidjson::ParseResult parseRes = document.Parse(json.c_str());
         this->getOwnInfo(document);
@@ -218,7 +219,7 @@ std::string Summary::createJsonFile() {
 }
 
 
-Expertise::Expertise(){
+Expertise::Expertise() {
     this->number_of_expertises = 0;
 }
 
@@ -264,7 +265,7 @@ std::string Expertise::getCategory(int index) {
     return this->getItemByIndex(this->category, index);
 }
 
-int Expertise::getNumberOfExpertises(){
+int Expertise::getNumberOfExpertises() {
     return this->number_of_expertises;
 }
 
@@ -322,7 +323,7 @@ std::string Expertise::createJsonFile() {
 }
 
 
-Skills::Skills(){
+Skills::Skills() {
     this->number_of_skills = 0;
 }
 
@@ -371,7 +372,7 @@ void Skills::setCategory(std::string new_category, int index) {
     this->setItem(this->category, index, new_category);
 }
 
-int Skills::getNumberOfSkills(){
+int Skills::getNumberOfSkills() {
     return this->number_of_skills;
 }
 
@@ -545,60 +546,6 @@ std::string Solicitudes::createJsonFile() {
     return result + "]}";
 }
 
-
-
-/*  void Conversation::getOwnInfo(const rapidjson::Document &document) {
-    for (rapidjson::SizeType i = 0; i < document["conversation"].Size(); i++) {
-        struct ChatMessage message;
-        message.date = document["conversation"][i]["date"].GetString();
-        message.sender = document["conversation"][i]["sender"].GetString();
-        message.message = document["conversation"][i]["message"].GetString();
-        this->addMessage(message);
-    }
-}
-
-std::string Conversation::getDateAt(int index) {
-    if (this->messages.size() > index) {
-        return this->messages.at(index).date;
-    }
-    return "";
-}
-
-std::string Conversation::getSenderAt(int index) {
-    if (this->messages.size() > index) {
-        return this->messages.at(index).sender;
-    }
-    return "";
-}
-
-std::string Conversation::getMessageAt(int index) {
-    if (this->messages.size() > index) {
-        return this->messages.at(index).message;
-    }
-    return "";
-}
-
-std::string Conversation::getConversationMessageAt(int index) {
-    return (this->getDateAt(index) + "," + this->getSenderAt(index) + "," + this->getMessageAt(index));
-}
-
-void Conversation::addMessage(struct ChatMessage message_to_add) {
-    this->messages.push_back(message_to_add);
-}
-
-std::string Conversation::createJsonFile() {
-    std::string result = "{\"conversation\":[";
-    for (int i = 0; i < this->messages.size(); i++) {
-        result += "{\"date\":\"" + this->messages.at(i).date + "\"," +
-                    "\"sender\":\"" + this->messages.at(i).sender + "\"," +
-                    "\"message\":\"" + this->messages.at(i).message + "\"}";
-        if (i != (this->messages.size() - 1)) {
-            result += ",";
-        }
-    }
-    return result + "]}";
-}  */
-
 void Credentials::getOwnInfo(const rapidjson::Document &document) {
     this->token = document["token"].GetString();
     this->incremental_number = document["incremental_number"].GetInt();
@@ -632,25 +579,24 @@ std::string Credentials::createJsonFile() {
             "\"incremental_number\":" + incremental_number_parsed + "}";
 }
 
-IdsDataBase::IdsDataBase(){
-    this->ids = new std::vector<std::string>();    
+IdsDataBase::IdsDataBase() {
+    this->ids = new std::vector<std::string>();
 }
- 
-IdsDataBase::~IdsDataBase(){}
+
+IdsDataBase::~IdsDataBase() {}
 
 void IdsDataBase::getOwnInfo(const rapidjson::Document &document) {
     for (rapidjson::SizeType i = 0; i < document["ids"].Size(); i++) {
         std::string id = document["ids"][i].GetString();
         this->addId(id);
-        //  std::cout<< id << std::endl;
     }
 }
 
-std::vector<std::string>* IdsDataBase::getIds(){
+std::vector<std::string>* IdsDataBase::getIds() {
     return this->ids;
 }
 
-void IdsDataBase::addId(std::string id){
+void IdsDataBase::addId(std::string id) {
     this->ids->push_back(id);
 }
 

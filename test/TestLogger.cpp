@@ -17,7 +17,6 @@ class TestLogger : public ::testing::Test {
     }
 };
 
-
 /*TEST_F(TestLogger, testLoggerWellCreated) {
     ASSERT_TRUE(std::ifstream(LOG_FILE_PATH));
     std::string line;

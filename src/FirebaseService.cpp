@@ -5,11 +5,10 @@
 FirebaseService::FirebaseService() {
 }
 
-Response* FirebaseService::SendNotification(std::string toToken, std::string notification) {
+Response* FirebaseService::SendNotification(std::string toToken, std::string title, std::string message) {
     std::string url = "https://fcm.googleapis.com/fcm/send";
-    //  estructura de notificacion {\n\t\t\"body\": \"Hola!!\",\n\t\t\"title\": \"Jobify\"\n\t}
-    std::string body = "{\n\t\"to\": \""+ toToken + "\",\n\t\"notification\": " + notification + "\n}";
-    std::cout<< body << std::endl;
+    std::string body = "{\n\t\"to\" : \""+ toToken + "\",\n\t\"notification\" : {\n\t\t\"body\" : \""
+                + message + "\",\n\t\t\"title\" : \"" + title + "\",\n\t\t\"sound\" : \"mySound\"\n\t}\n}";
     Request* request = new Request();
 
     //  Firebase->mensajeria en la nube -> Clave del servidor
@@ -25,5 +24,4 @@ Response* FirebaseService::SendNotification(std::string toToken, std::string not
     return response;
 }
 
-FirebaseService::~FirebaseService() {
-}
+FirebaseService::~FirebaseService() {}

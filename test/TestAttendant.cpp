@@ -283,17 +283,6 @@ TEST_F(TestAttendant, testDeleteRejectNonExistentContactSuccessfully) {
     delete response;
 }
 
-TEST_F(TestAttendant, testGetProfilePersonalUnsuccessfully) {
-    message.verb = "GET";
-    message.uri = "/users/test@yahoo.com/profile/personal";
-    message.body = "";
-    message.params = "token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ";
-    Response *response = personal->get(message);
-    ASSERT_EQ(response->getStatus(), 401);
-    ASSERT_EQ(response->getContent(), "{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
-    delete response;
-}
-
 TEST_F(TestAttendant, testGetProfilePersonalSuccessfully) {
     message.verb = "GET";
     message.uri = "/users/test@yahoo.com/profile/personal";
@@ -324,17 +313,6 @@ TEST_F(TestAttendant, testPutProfilePersonalSuccessfully) {
     Response *response = personal->put(message);
     ASSERT_EQ(response->getStatus(), 200);
     ASSERT_EQ(response->getContent(), "");
-    delete response;
-}
-
-TEST_F(TestAttendant, testGetProfileSummaryUnsuccessfully) {
-    message.verb = "GET";
-    message.uri = "/users/test@yahoo.com/profile/summary";
-    message.body = "";
-    message.params = "token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ";
-    Response *response = summary->get(message);
-    ASSERT_EQ(response->getStatus(), 401);
-    ASSERT_EQ(response->getContent(), "{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
     delete response;
 }
 
@@ -371,17 +349,6 @@ TEST_F(TestAttendant, testPutProfileSummarySuccessfully) {
     delete response;
 }
 
-TEST_F(TestAttendant, testGetProfileExpertiseUnsuccessfully) {
-    message.verb = "GET";
-    message.uri = "/users/test@yahoo.com/profile/expertise";
-    message.body = "";
-    message.params = "token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ";
-    Response *response = expertise->get(message);
-    ASSERT_EQ(response->getStatus(), 401);
-    ASSERT_EQ(response->getContent(), "{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
-    delete response;
-}
-
 TEST_F(TestAttendant, testGetProfileExpertiseSuccessfully) {
     message.verb = "GET";
     message.uri = "/users/test@yahoo.com/profile/expertise";
@@ -415,17 +382,6 @@ TEST_F(TestAttendant, testPutProfileExpertiseSuccessfully) {
     delete response;
 }
 
-TEST_F(TestAttendant, testGetProfileSkillsUnsuccessfully) {
-    message.verb = "GET";
-    message.uri = "/users/test@yahoo.com/profile/skills";
-    message.body = "";
-    message.params = "token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ";
-    Response *response = skills->get(message);
-    ASSERT_EQ(response->getStatus(), 401);
-    ASSERT_EQ(response->getContent(), "{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
-    delete response;
-}
-
 TEST_F(TestAttendant, testGetProfileSkillsSuccessfully) {
     message.verb = "GET";
     message.uri = "/users/test@yahoo.com/profile/skills";
@@ -456,17 +412,6 @@ TEST_F(TestAttendant, testPutProfileSkillsSuccessfully) {
     Response *response = skills->put(message);
     ASSERT_EQ(response->getStatus(), 200);
     ASSERT_EQ(response->getContent(), "");
-    delete response;
-}
-
-TEST_F(TestAttendant, testGetProfilePictureUnsuccessfully) {
-    message.verb = "GET";
-    message.uri = "/users/test@yahoo.com/profile/picture";
-    message.body = "";
-    message.params = "token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ";
-    Response *response = picture->get(message);
-    ASSERT_EQ(response->getStatus(), 401);
-    ASSERT_EQ(response->getContent(), "{\"code\":" + std::string(INVALID_CREDENTIALS) + ",\"message\":\"Invalid credentials.\"}");
     delete response;
 }
 

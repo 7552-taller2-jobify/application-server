@@ -11,7 +11,7 @@ Authentication::Authentication() {}
 
 std::string Authentication::encode(std::string email, std::string password, int numeroIncremental) {
     jwt_new(&this->myJWT);
-    // SHA 256 es seguro, no  tiene colisiones
+    //  SHA 256 es seguro, no  tiene colisiones
     jwt_set_alg(this->myJWT, JWT_ALG_HS256, (const unsigned char *) SECRET, SECRET_LEN);
     jwt_add_grant(this->myJWT, "email", email.c_str());
     jwt_add_grant(this->myJWT, "password", password.c_str());
@@ -38,5 +38,10 @@ bool Authentication::decode(std::string token, LoginInformation *loginInformatio
     return rightDecode;
 }
 
+std::string Authentication::getEmailFromToken(std::string token) {
+    jwt_new(&this->myJWT);
+    int ret = jwt_decode(&this->myJWT, token.c_str(), (const unsigned char *)SECRET, SECRET_LEN);
+    return jwt_get_grant(this->myJWT, "email");
+}
 
 Authentication::~Authentication() {}

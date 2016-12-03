@@ -6,7 +6,7 @@
 #include <curl/curl.h>
 #include <map>
 #include <string>
-#include <iostream>  // TODO borrar
+#include <iostream>
 #include <vector>
 #include <cmath>
 #include <stdlib.h>  /* atof */
@@ -214,7 +214,7 @@ class Firebase: public Attendant {
     Firebase();
     ~Firebase();
     static Response* post(struct Message operation);
-};
+}; 
 class Category: public Attendant {
  public:
     Category();

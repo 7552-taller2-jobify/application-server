@@ -2,6 +2,9 @@
 
 #include "DataBaseAdministrator.h"
 #include <string>
+#include <algorithm>
+#include <vector>
+#include <functional>
 
 DataBaseAdministrator::DataBaseAdministrator() {
     this->auth = new Authentication();
@@ -35,7 +38,6 @@ bool DataBaseAdministrator::rightClient(LoginInformation *loginInformation) {
 bool DataBaseAdministrator::rightClient(std::string email, std::string token) {
     bool existsClient = this->existsClient(email);
     if (existsClient) {
-        //  std::cout << "exists client" << std::endl;
         std::string credentials_parser = DataBase::getInstance().get(email);
         Credentials *credentials = new Credentials();
         credentials->loadJson(credentials_parser);
@@ -45,8 +47,23 @@ bool DataBaseAdministrator::rightClient(std::string email, std::string token) {
             return true;
         }
     }
-    //  std::cout << "not exists client" << std::endl;
     return false;
+}
+
+std::string DataBaseAdministrator::getToken(std::string email) {
+    bool existsClient = this->existsClient(email);
+    if (existsClient) {
+        std::string credentials_parser = DataBase::getInstance().get(email);
+        Credentials *credentials = new Credentials();
+        credentials->loadJson(credentials_parser);
+        return credentials->getToken();
+    }
+    return "";
+}
+
+std::string DataBaseAdministrator::getEmailFromToken(std::string token) {
+    Authentication *auth = new Authentication();
+    return auth->getEmailFromToken(token);
 }
 
 std::string DataBaseAdministrator::getPersonalLogin(std::string email) {
@@ -109,7 +126,6 @@ int DataBaseAdministrator::createPersonal(std::string email, std::string token, 
     bool rightCredential = this->rightClient(email, token);
     if (rightCredential) {
         Personal *actual_personal = new Personal();
-        //  actual_personal->loadJson(actual_personal_parser);
         actual_personal->setFirstName(upload_personal->getFirstName());
         actual_personal->setLastName(upload_personal->getLastName());
         actual_personal->setGender(upload_personal->getGender());
@@ -159,7 +175,6 @@ std::string DataBaseAdministrator::getPersonal(std::string email) {
 int DataBaseAdministrator::createSummary(std::string email, std::string token, Summary *upload_summary) {
     bool rightCredential = this->rightClient(email, token);
     if (rightCredential) {
-        //  DataBase::getInstance().erase("SUMMARY_" + email);
         DataBase::getInstance().put("SUMMARY_" + email, upload_summary->createJsonFile());
         return 0;
     }
@@ -220,7 +235,6 @@ std::string DataBaseAdministrator::getExpertise(std::string email) {
 int DataBaseAdministrator::createSkills(std::string email, std::string token, Skills *upload_skills) {
     bool rightCredential = this->rightClient(email, token);
     if (rightCredential) {
-        //  DataBase::getInstance().erase("SKILLS_" + email);
         DataBase::getInstance().put("SKILLS_" + email, upload_skills->createJsonFile());
         return 0;
     }
@@ -251,7 +265,6 @@ std::string DataBaseAdministrator::getSkills(std::string email) {
 int DataBaseAdministrator::createPicture(std::string email, std::string token, Picture *upload_picture) {
     bool rightCredential = this->rightClient(email, token);
     if (rightCredential) {
-        //  DataBase::getInstance().erase("PICTURE_" + email);
         DataBase::getInstance().put("PICTURE_" + email, upload_picture->createJsonFile());
         return 0;
     }
@@ -393,7 +406,6 @@ void DataBaseAdministrator::vote(std::string email, std::string email_to_vote) {
     std::string others_recommendation_email = ("OTHERS_RECOMMENDATIONS_" + email_to_vote);
     DataBase::getInstance().erase(others_recommendation_email);
     DataBase::getInstance().put(others_recommendation_email, others_recommendations->createJsonFile());
-    //  std::cout<<"VOTE OTHERS:\n\n\n"<<others_recommendations->createJsonFile();
     delete others_recommendations;
 }
 
@@ -412,7 +424,6 @@ void DataBaseAdministrator::unvote(std::string email, std::string email_to_unvot
     std::string others_recommendation_email = ("OTHERS_RECOMMENDATIONS_" + email_to_unvote);
     DataBase::getInstance().erase(others_recommendation_email);
     DataBase::getInstance().put(others_recommendation_email, others_recommendations->createJsonFile());
-    //  std::cout<<"UNVOTE OTHERS:\n\n\n"<<others_recommendations->createJsonFile();
     delete others_recommendations;
 }
 
@@ -422,7 +433,7 @@ std::vector<struct PopularUser> DataBaseAdministrator::searchRange(const std::st
     const leveldb::Slice& end_slice = leveldb::Slice(end);
     leveldb::Iterator *db_iterator = DataBase::getInstance().getIterator();
     for (db_iterator->Seek(start_slice); (db_iterator->Valid() &&
-                            (strcmp(db_iterator->key().ToString().c_str(), end.c_str()) <= 0)); db_iterator->Next()) {     
+                            (strcmp(db_iterator->key().ToString().c_str(), end.c_str()) <= 0)); db_iterator->Next()) {
         if (!db_iterator->value().empty()) {
             struct PopularUser user;
             const std::string LABEL = "OTHERS_RECOMMENDATIONS_";
@@ -430,7 +441,6 @@ std::vector<struct PopularUser> DataBaseAdministrator::searchRange(const std::st
             OthersRecommendations *others_recommendations = new OthersRecommendations();
             others_recommendations->loadJson(db_iterator->value().ToString());
             user.votes = others_recommendations->getNumberOfContacts();
-            //  std::cout<<"CANTIDAD:"<<user.votes<<" -JSON-["<<user.email<<"] "<<db_iterator->value().ToString()<<"\n\n\n";
             delete others_recommendations;
             if (users.size() < MAX_POPULAR_USERS) {
                 users.push_back(user);
@@ -466,7 +476,7 @@ std::string DataBaseAdministrator::getMostPopularUsers() {
     return result;
 }
 
-std::vector<std::string>* DataBaseAdministrator::getAllIds(){
+std::vector<std::string>* DataBaseAdministrator::getAllIds() {
     std::string ids_parser = DataBase::getInstance().get("IDS");
     IdsDataBase *idsDB = new IdsDataBase();
     idsDB->loadJson(ids_parser);
@@ -475,8 +485,8 @@ std::vector<std::string>* DataBaseAdministrator::getAllIds(){
     return ids;
 }
 
-// return 0 if successfully, and 1 in others case
-int DataBaseAdministrator::resetPassword(std::string email){
+// Returns 0 if successfully, and 1 in others case
+int DataBaseAdministrator::resetPassword(std::string email) {
     int result = 1;
     std::string credentials_parser = DataBase::getInstance().get(email);
     Credentials *credentials = new Credentials();
@@ -484,7 +494,7 @@ int DataBaseAdministrator::resetPassword(std::string email){
     std::string token = credentials->getToken();
     Authentication *auth = new Authentication();
     LoginInformation *loginInformation = new LoginInformation();
-    bool rightDecode = auth->decode(token, loginInformation, credentials);   
+    bool rightDecode = auth->decode(token, loginInformation, credentials);
     if (rightDecode) {
         loginInformation->setPassword(PASSWORD_DEFAULT);
         int incremental_number = 0;
@@ -498,7 +508,7 @@ int DataBaseAdministrator::resetPassword(std::string email){
     delete credentials;
     delete loginInformation;
     delete auth;
-    return result;   
+    return result;
 }
 
 void DataBaseAdministrator::deleteExpertises(std::string email) {

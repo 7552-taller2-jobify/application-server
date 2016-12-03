@@ -19,31 +19,10 @@ void ev_handler(struct mg_connection *c, int ev, void *p) {
 }
 
 void Server::start() {
-    /*
-    Request* request = new Request();
-// Poner IP de LAN de su compu
-//https://jobify-7552-taller2.herokuapp.com
-	std::cout<< "----------------------TEST CURL SHARED--------------------------" << std::endl;
-    //Response* responsePost = request->ExecutePost("http://192.168.182.136:5000/categories","{ \"name\": \"sport2\",\"description\": \"Categoría 2 relacionada con los deportes\"}");
-    Response* responsePost = request->ExecutePost("https://jobify-7552-taller2.herokuapp.com/categories","{ \"name\": \"sport2\",\"description\": \"Categoría 2 relacionada con los deportes\"}");
-    std::cout<< "Http code: " << responsePost->getStatus() << " - content: "<< responsePost->getContent() << std::endl;
-    std::cout<< "----------------------fin post--------------------------" << std::endl;
-    //string responseTest = request->Execute("http://192.168.182.136:5000/job_positions/test");
-    Response*  responseTest = request->Execute("https://jobify-7552-taller2.herokuapp.com/job_positions/test");
-	std::cout<< "Http code: " << responseTest->getStatus() << " - content: "<< responseTest->getContent() << std::endl;
-	std::cout<< "----------------------fin test--------------------------" << std::endl;
-	//string responseGet = request->Execute("http://192.168.182.136:5000/categories");
-	Response* responseGet = request->Execute("https://jobify-7552-taller2.herokuapp.com/categories");
-	std::cout<< "Http code: " << responseGet->getStatus() << " - content: "<< responseGet->getContent() << std::endl;
-	std::cout<< "----------------------fin get--------------------------" << std::endl;
-	std::cout<< "----------------------FIN TEST CURL SHARED--------------------------" << std::endl;
-   */
-
     this->IsOnLine = true;
-    struct mg_mgr mgr;  // Mongoose event manager
-    struct mg_connection *nc;  // Callback function (event handler) prototype
-    mg_mgr_init(&mgr, this);  // Initialize Mongoose manager
-    // Create listening connection
+    struct mg_mgr mgr;
+    struct mg_connection *nc;
+    mg_mgr_init(&mgr, this);
     nc = mg_bind(&mgr, s_http_port, ev_handler);
     if (nc == NULL) {
         this->IsOnLine = false;
@@ -65,9 +44,4 @@ Server::~Server() {
 
 void Server::resolveRequest(std::string request) {
     std::string class_id = this->url_mapper->find(request);
-    /*Attendant *attendant = this->attendants_handler->find(class_id);
-    attendant->attend(request);
-    /*TODO en lugar de string request, podría pasarse un struct con todos
-    los datos necesarios.
-    Habría que ver bien cómo resolver el llamado a la función*/
 }

@@ -221,8 +221,8 @@ Response* Contact::post(Message operation) {
     contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
     Solicitude solicitude;
     solicitude.date = date;
-    solicitude.email = contact_email;
-    int success = dbAdministrator->addSolicitude(email, token, solicitude);
+    solicitude.email = email;
+    int success = dbAdministrator->addSolicitude(contact_email, token, solicitude);
     delete dbAdministrator;
     Response* response = new Response();
     if (success == 0) {
@@ -230,6 +230,9 @@ Response* Contact::post(Message operation) {
         response->setStatus(201);
     } else if (success == 1) {
         response->setContent("{\"code\":" + std::string(COULD_NOT_POST) + ",\"message\":\"Could not post.\"}");
+        response->setStatus(500);
+    } else if (success == 2) {
+        response->setContent("{\"code\":" + std::string(COULD_NOT_POST) + ",\"message\":\"User does not exists.\"}");
         response->setStatus(500);
     }
     return response;
@@ -505,7 +508,7 @@ Response* ProfileSummary::post(Message operation) {
 ProfileExpertise::ProfileExpertise() {
     this->functions["PUT"] = put;
     this->functions["GET"] = get;
-    this->functions["POST"] = put;
+    this->functions["POST"] = post;
     this->functions["ERASE"] = erase;
 }
 
@@ -1123,19 +1126,6 @@ Response* Search::get(Message operation) {
     std::string offset_str = "";
     std::vector<std::string> *skills = new std::vector<std::string>();    
     loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position, &limit_str, &offset_str, skills);
-/*    std::cout << "token : " << token << std::endl;
-    std::cout << "position : " << position << std::endl;
-    std::cout << "lat : " << lat_str << std::endl;
-    std::cout << "lon : " << lon_str << std::endl;
-    std::cout << "distance : " << distance_str << std::endl;
-    std::cout << "limit : " << limit_str << std::endl;
-    std::cout << "offset : " << offset_str << std::endl;
-    if (skills != NULL) {
-        for (int i = 0; i < skills->size(); i++){
-            std::cout << "skill " << i << " : " << (*skills)[i] << std::endl;
-        }
-    }
-*/
     std::vector<std::string> *ids = dbAdministrator->getAllIds();   
     Response* response = new Response();    
     Authentication *auth = new Authentication();

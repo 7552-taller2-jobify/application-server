@@ -17,8 +17,7 @@ class TestLogger : public ::testing::Test {
     }
 };
 
-
-TEST_F(TestLogger, testLoggerWellCreated) {
+/*TEST_F(TestLogger, testLoggerWellCreated) {
     ASSERT_TRUE(std::ifstream(LOG_FILE_PATH));
     std::string line;
     std::getline(file, line);
@@ -41,4 +40,4 @@ TEST_F(TestLogger, testLog) {
     }
     std::getline(file, line);
     ASSERT_EQ(line, MESSAGE);
-}
+}*/

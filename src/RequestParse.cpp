@@ -54,3 +54,38 @@ std::vector<std::string> RequestParse::split(std::string uri, std::string separa
     } while (pos < uri.length() && prev < uri.length());
     return tokens;
 }
+
+std::map<std::string, std::string>* RequestParse::parserParameters(std::string params) {
+    std::map<std::string, std::string>* parameters = new std::map<std::string, std::string>();
+    std::vector<std::string> parameters_vector = split(params, "&");
+    for (int i = 0; i < parameters_vector.size(); i++) {
+        std::string a_parameter = parameters_vector[i];
+        std::vector<std::string> key_value = split(a_parameter, "=");
+        bool isValue = key_value.size() > 1;
+        std::string value = "";
+        std::cout<< "key: "<< key_value[0] << " - " << key_value[1];     
+        if (isValue) {
+            value =  URLDecode(key_value[1]);
+            std::cout<< " value: "<< value <<std::endl;     
+        }
+        parameters->insert(std::pair<std::string, std::string>(key_value[0], value));
+    } 
+    return parameters;
+}
+
+std::string RequestParse::URLDecode(std::string text) {
+    text = curl_unescape(text.c_str(), 0);
+    RequestParse * rp = new RequestParse();
+    std::vector<std::string> words = rp->split(text, "+");
+    delete rp;
+    std::string text_decoding = "";
+
+    for (int i=0; i< words.size(); i++) {
+        if (i == 0) {
+            text_decoding = words[i];
+        } else {
+            text_decoding = text_decoding + " " + words[i];
+        }
+    }
+    return text_decoding;
+}

@@ -404,7 +404,11 @@ Skills::~Skills() {
 }
 
 void Picture::getOwnInfo(const rapidjson::Document &document) {
-    this->picture = document["picture"].GetString();
+    if (document.HasMember("picture")) {
+        this->picture = document["picture"].GetString();
+    } else {
+        this->picture = "";
+    }
 }
 
 std::string Picture::getPicture() {

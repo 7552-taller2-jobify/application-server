@@ -242,6 +242,7 @@ class testApplicationServer(unittest.TestCase):
         params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
         reply = requests.post('http://localhost:8000/users/test@yahoo.com/contact', params=params)
         self.assertEqual(201, reply.status_code)
+        self.assertEqual("La solicitud de amistad ha sido enviada a contact@gmail.com con exito", reply.json()["message"])
 
     def test_34_PostContactUnsuccsessfully(self):
         params = {("token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"),("date","03-01-2010T12:34:00.000Z"),("email", "contact@gmail.com")}
@@ -295,6 +296,7 @@ class testApplicationServer(unittest.TestCase):
         params = "date=03-01-2010T12:34:00.000Z&email=test@yahoo.com&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFAYS5jb20iLCJpbmNyZW1lbnRhbF9udW1iZXIiOjAsInBhc3N3b3JkIjoiYWRtaW4ifQ._q7591YbCv2c-Rm_6qQfEbHwCMD_qlAWNhqRWwPvxRM"
         reply = requests.delete('http://localhost:8000/users/a@a.com/reject', params=params)
         self.assertEqual(204, reply.status_code)
+        self.assertEqual("La solicitud de amistad ha sido rechazada a test@yahoo.com con exito", reply.json()["message"])
 
     def test_41_DeleteRejectContactWithoutSolicitude(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
@@ -604,8 +606,8 @@ class testApplicationServer(unittest.TestCase):
                 "address": { "lat": "123456789", "lon": "12345678" }}
         params = {"app":"facebook"}
         reply = requests.post('http://localhost:8000/users/register', json=body, params=params)
-        self.assertEqual(500, reply.status_code)
-        self.assertEqual("Client already exists.", json.loads(reply.content)["message"])
+        self.assertEqual(201, reply.status_code)
+        self.assertEqual("OK", json.loads(reply.content)["registration"])
 
     def test_81_LoginFacebookSuccess(self):
         body = {"email": "facebook@yahoo.com", "password": ""}

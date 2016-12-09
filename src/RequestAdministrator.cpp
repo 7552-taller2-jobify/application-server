@@ -24,7 +24,7 @@ void RequestAdministrator::handle() {
     Response* response = NULL;
     if (this->ev == MG_EV_HTTP_REQUEST) {
         msg = this->rp->parseRequest(this->hm);
-        std::cout << "uri: " << msg->uri << "\nbody: " << msg->body << "\nverb: " << msg->verb  << std::endl;
+        std::cout << "uri: " << msg->uri << "\nbody: " << msg->body << "\nverb: " << msg->verb  << "\n params: " << msg->params << std::endl;
 
         Attendant* attendant = this->attendantHandler->find(msg->uri);
         if (attendant != NULL) {

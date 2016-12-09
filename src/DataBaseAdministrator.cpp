@@ -88,7 +88,8 @@ std::string DataBaseAdministrator::getPersonalLogin(std::string email) {
 }
 
 // Returns 0 if success, 1 if email exists, 2 if there are empty fields
-int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *loginInformation, struct Message operation) {
+int DataBaseAdministrator::addClient(Personal *personal, Picture *picture, LoginInformation *loginInformation,
+                                                                                        struct Message operation) {
     std::string email = loginInformation->getEmail();
     std::string password = loginInformation->getPassword();
 
@@ -112,6 +113,7 @@ int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *login
         std::string credentials_parser = credentials->createJsonFile();
         DataBase::getInstance().put(email, credentials_parser);
         DataBase::getInstance().put("PERSONAL_" + email, personal->createJsonFile());
+        DataBase::getInstance().put("PICTURE_" + email, picture->createJsonFile());
     //}
     IdsDataBase *idsDB = new IdsDataBase();
     std::string ids_parse = DataBase::getInstance().get("IDS");

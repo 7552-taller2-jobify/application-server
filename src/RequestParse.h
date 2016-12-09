@@ -8,7 +8,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <sstream>
+#include <curl/curl.h>
 
 class RequestParse {
  private:
@@ -25,6 +27,8 @@ class RequestParse {
     std::string extractEmail(std::string uri);
 
     std::vector<std::string> split(std::string uri, std::string separator);
+    std::string URLDecode(std::string text);
+    std::map<std::string, std::string>* parserParameters(std::string params);
 };
 
 #endif  // REQUESTPARSE_H_

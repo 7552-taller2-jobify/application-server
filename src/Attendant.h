@@ -34,6 +34,7 @@ const char COULD_NOT_POST[] = "3";
 const char NO_SOLICITUDE_SENT[] = "4";
 const char COULD_NOT_PUT[] = "5";
 const char CLIENT_NOT_EXISTS[] = "6";
+const char CLIENT_WITH_FACEBOOK[] = "7";
 typedef Response* (*function) (Message operation);
 
 class Attendant {

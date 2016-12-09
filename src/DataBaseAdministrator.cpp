@@ -95,13 +95,15 @@ int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *login
     if (this->existsClient(email)) {
         return 1;
     }
-    if (personal->emptyFields()) {
-        return 2;
-    }
     bool hasLoginFacebook = strcmp(operation.params.c_str(), "app=facebook") == 0;
-    if (hasLoginFacebook) {
+    if (!hasLoginFacebook) {
+        if (personal->emptyFields()) {
+            return 2;
+        }
+    }
+    /*if (hasLoginFacebook) {
         DataBase::getInstance().put("PERSONAL_" + email, personal->createJsonFile());
-    } else {
+    } else {*/
         int incremental_number = 0;
         std::string token = this->auth->encode(email, password, incremental_number);
         Credentials *credentials = new Credentials();
@@ -110,7 +112,7 @@ int DataBaseAdministrator::addClient(Personal *personal, LoginInformation *login
         std::string credentials_parser = credentials->createJsonFile();
         DataBase::getInstance().put(email, credentials_parser);
         DataBase::getInstance().put("PERSONAL_" + email, personal->createJsonFile());
-    }
+    //}
     IdsDataBase *idsDB = new IdsDataBase();
     std::string ids_parse = DataBase::getInstance().get("IDS");
     idsDB->loadJson(ids_parse);
@@ -545,4 +547,20 @@ void DataBaseAdministrator::deletePicture(std::string email) {
         std::string parse = "{\"picture\":\"\"}";
         DataBase::getInstance().put("PICTURE_" + email, parse);
     }
+}
+
+bool DataBaseAdministrator::checkPasswordIsNull(std::string email) {
+    std::string credentials_parser = DataBase::getInstance().get(email);
+    Credentials *credentials = new Credentials();
+    credentials->loadJson(credentials_parser);
+    std::string token = credentials->getToken();
+    Authentication *auth = new Authentication();
+    LoginInformation *login_information = new LoginInformation();
+    bool rightDecode = auth->decode(token, login_information, credentials);
+    if (rightDecode) {
+        bool result = (login_information->getPassword() == "");
+        delete login_information;
+        return result;
+    } 
+    return false;
 }

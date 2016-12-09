@@ -41,7 +41,11 @@ bool Authentication::decode(std::string token, LoginInformation *loginInformatio
 std::string Authentication::getEmailFromToken(std::string token) {
     jwt_new(&this->myJWT);
     int ret = jwt_decode(&this->myJWT, token.c_str(), (const unsigned char *)SECRET, SECRET_LEN);
-    return jwt_get_grant(this->myJWT, "email");
+    bool rightDecode = ret == 0;
+    if (rightDecode) {
+        return jwt_get_grant(this->myJWT, "email");
+    }
+    return "";
 }
 
 Authentication::~Authentication() {}

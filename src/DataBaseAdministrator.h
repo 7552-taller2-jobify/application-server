@@ -60,6 +60,7 @@ class DataBaseAdministrator {
     void deleteSkills(std::string email);
     void deleteSummary(std::string email);
     void deletePicture(std::string email);
+    bool checkPasswordIsNull(std::string email);
 };
 
 #endif  // DATABASEADMINISTRATOR_H_

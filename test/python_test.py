@@ -31,7 +31,7 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(500, reply.status_code)
         self.assertEqual("Client already exists.", reply.json()["message"])
 
-    def test_04_LoginSucces(self):
+    def test_04_LoginSuccess(self):
         body = {"email": "test@yahoo.com", "password": "admin"}
         reply = requests.post('http://localhost:8000/users/login', json=body)
         self.assertEqual(200, reply.status_code)
@@ -46,7 +46,7 @@ class testApplicationServer(unittest.TestCase):
         reply = requests.post('http://localhost:8000/users/login', json=body)
         self.assertEqual(401, reply.status_code)
         self.assertEqual("Invalid credentials.", reply.json()["message"])
-    
+   
     def test_06_ModifyPersonalDataSuccessfully(self):
         body = {"first_name": "Donnal", "last_name": "Trump", "birthday": "23/05/1960", "gender": "M", "address": {"lat": "-11.9302", "lon": "-77.0846"}}
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4"}
@@ -590,6 +590,40 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual("Trump", reply.json()["profile"]["last_name"])
         self.assertEqual("test@yahoo.com", reply.json()["profile"]["email"])
         self.assertEqual("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BX4", reply.json()["metadata"]["token"])
+
+    def test_79_RegisterFacebookSuccessfully(self):
+        body = {"email": "facebook@yahoo.com", "password": "", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "",	"birthday": "01/01/2000",
+                "address": { "lat": "123456789", "lon": "12345678" }}
+        params = {"app":"facebook"}
+        reply = requests.post('http://localhost:8000/users/register', json=body, params=params)
+        self.assertEqual(201, reply.status_code)
+        self.assertEqual("OK", json.loads(reply.content)["registration"])
+
+    def test_80_RegisterFacebookAlreadyRegistered(self):
+        body = {"email": "facebook@yahoo.com", "password": "", "device_id": "123", "first_name": "test", "last_name": "T", "gender": "",	"birthday": "01/01/2000",
+                "address": { "lat": "123456789", "lon": "12345678" }}
+        params = {"app":"facebook"}
+        reply = requests.post('http://localhost:8000/users/register', json=body, params=params)
+        self.assertEqual(500, reply.status_code)
+        self.assertEqual("Client already exists.", json.loads(reply.content)["message"])
+
+    def test_81_LoginFacebookSuccess(self):
+        body = {"email": "facebook@yahoo.com", "password": ""}
+        params = {"app":"facebook"}
+        reply = requests.post('http://localhost:8000/users/login', json=body, params=params)
+        self.assertEqual(200, reply.status_code)
+        self.assertEqual("", reply.json()["profile"]["picture"])
+        self.assertEqual("test", reply.json()["profile"]["first_name"])
+        self.assertEqual("T", reply.json()["profile"]["last_name"])
+        self.assertEqual("facebook@yahoo.com", reply.json()["profile"]["email"])
+        self.assertEqual("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImZhY2Vib29rQHlhaG9vLmNvbSIsImluY3JlbWVudGFsX251bWJlciI6MCwicGFzc3dvcmQiOiIifQ.Yw39CN31RFTTTmzbEgL5avJKpOAL6pGD5Zs8kV5z1XI", reply.json()["metadata"]["token"])
+
+
+    def test_82_LoginFacebookUnsuccess(self):
+        body = {"email": "facebook@yahoo.com", "password": "admin"}
+        reply = requests.post('http://localhost:8000/users/login', json=body,)
+        self.assertEqual(400, reply.status_code)
+        self.assertEqual("Client has Facebook login.", json.loads(reply.content)["message"])
 
 suite = unittest.TestLoader().loadTestsFromTestCase(testApplicationServer)
 def StartServer():

@@ -59,9 +59,15 @@ void Profile::setItem(std::string *items, int index, std::string new_item) {
     }
 }
 
+
+
 void LoginInformation::getOwnInfo(const rapidjson::Document &document) {
     this->email = document["email"].GetString();
-    this->password = document["password"].GetString();
+    if (document.HasMember("password")) {
+        this->password = document["password"].GetString();
+    } else {
+        this->password = "";
+    }
 }
 
 std::string LoginInformation::getEmail() {

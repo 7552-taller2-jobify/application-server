@@ -45,13 +45,13 @@ Login::~Login() {}
 Response* Login::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     LoginInformation *loginInformation = new LoginInformation();
-    bool hasLoginFacebook = strcmp(operation.params.c_str(), "app=facebook") == 0;
-    if (hasLoginFacebook) {
+    //bool hasLoginFacebook = strcmp(operation.params.c_str(), "app=facebook") == 0;
+    /*if (hasLoginFacebook) {
         loginInformation->setEmail("");
         loginInformation->setPassword("");
-    } else {
+    } else {*/
         loginInformation->loadJson(operation.body.c_str());
-    }
+    //}
     Response* response = new Response();
     std::string email = loginInformation->getEmail();
     bool rightCredential = dbAdministrator->rightClient(loginInformation);
@@ -60,10 +60,17 @@ Response* Login::post(Message operation) {
         response->setStatus(200);
         Logger::getInstance().log(info, "The client " + email +" was logged.");
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
-                                            ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
-        Logger::getInstance().log(warn, "The client " + email +" was not logged.");
+        if (dbAdministrator->checkPasswordIsNull(email)) {
+            response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                                ",\"message\":\"Client has Facebook login.\"}");
+            response->setStatus(400);
+            Logger::getInstance().log(warn, "The client " + email + " was not logged.");
+        } else {
+            response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                                ",\"message\":\"Invalid credentials.\"}");
+            response->setStatus(401);
+            Logger::getInstance().log(warn, "The client " + email + " was not logged.");
+        }
     }
     return response;
 }
@@ -122,17 +129,17 @@ Response* Register::post(Message operation) {
     Personal *personal = new Personal();
     LoginInformation *loginInformation = new LoginInformation();
     bool hasLoginFacebook = strcmp(operation.params.c_str(), "app=facebook") == 0;
-    if (hasLoginFacebook) {
+    /*if (hasLoginFacebook) {
         personal->setFirstName("");
         personal->setLastName("");
         personal->setGender("");
         personal->setBirthday("");
         personal->setPassword("");
         personal->setAddress("", "");
-    } else {
+    } else {*/
          personal->loadJson(operation.body.c_str());
          loginInformation->loadJson(operation.body.c_str());
-    }
+    //}
     int success = dbAdministrator->addClient(personal, loginInformation, operation);
     Response* response = new Response();
     if (success == 0) {
@@ -167,28 +174,35 @@ Response* RecoveryPass::get(Message operation) {
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
     if (dbAdministrator->existsClient(email)){
-        int result = dbAdministrator->resetPassword(email);
-        if (result == 0) {
-            std::string credentials_parser = DataBase::getInstance().get(email);
-            Credentials *credentials = new Credentials();
-            credentials->loadJson(credentials_parser);
-            std::string token = credentials->getToken();
-            Authentication *auth = new Authentication();
-            LoginInformation *loginInformation = new LoginInformation();
-            bool rightDecode = auth->decode(token, loginInformation, credentials);   
-            std::string password = loginInformation->getPassword();
-            delete loginInformation;
-            delete credentials;
-            delete auth;    
-            response->setContent("{\"password\":\"" + password + "\"}");
-            response->setStatus(200);
-            Logger::getInstance().log(info, "The client " + loginInformation->getEmail() + 
-                                                                        " has regenerated his password.");
-            return response;
+        if (!dbAdministrator->checkPasswordIsNull(email)) {
+            int result = dbAdministrator->resetPassword(email);
+            if (result == 0) {
+                std::string credentials_parser = DataBase::getInstance().get(email);
+                Credentials *credentials = new Credentials();
+                credentials->loadJson(credentials_parser);
+                std::string token = credentials->getToken();
+                Authentication *auth = new Authentication();
+                LoginInformation *loginInformation = new LoginInformation();
+                bool rightDecode = auth->decode(token, loginInformation, credentials);   
+                std::string password = loginInformation->getPassword();
+                delete loginInformation;
+                delete credentials;
+                delete auth;    
+                response->setContent("{\"password\":\"" + password + "\"}");
+                response->setStatus(200);
+                Logger::getInstance().log(info, "The client " + loginInformation->getEmail() + 
+                                                                            " has regenerated his password.");
+                //return response;
+            }
+        } else {
+            response->setContent("{\"code\":" + std::string(CLIENT_WITH_FACEBOOK) + ",\"message\":\"Client has Facebook login.\"}");
+            response->setStatus(500);
+            //return response;
         }
+    } else {
+        response->setContent("{\"code\":" + std::string(CLIENT_NOT_EXISTS) + ",\"message\":\"Client not exists.\"}");
+        response->setStatus(500);
     }
-    response->setContent("{\"code\":" + std::string(CLIENT_NOT_EXISTS) + ",\"message\":\"Client not exists.\"}");
-    response->setStatus(500);
     delete dbAdministrator;
     return response;
 }
@@ -385,8 +399,9 @@ Response* ProfilePersonal::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent(dbAdministrator->getProfilePersonal(email));
-        response->setStatus(200);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -477,8 +492,9 @@ Response* ProfileSummary::get(Message operation) {
             Logger::getInstance().log(warn, "Get summary of " + email + " is not OK for credentials");
         }
     } else {
-        response->setContent(dbAdministrator->getSummary(email));
-        response->setStatus(200);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -606,8 +622,9 @@ Response* ProfileExpertise::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent(dbAdministrator->getExpertise(email));
-        response->setStatus(200);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -703,8 +720,9 @@ Response* ProfileSkills::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent(dbAdministrator->getSkills(email));
-        response->setStatus(200);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;
@@ -762,8 +780,9 @@ Response* ProfilePhoto::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent(dbAdministrator->getPicture(email));
-        response->setStatus(200);
+        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+                                ",\"message\":\"Invalid credentials.\"}");
+        response->setStatus(401);
     }
     delete dbAdministrator;
     return response;

@@ -939,23 +939,36 @@ Response* ProfileFriends::get(Message operation) {
         friends->loadJson(friends_parse);
         std::string message = "{\"friends\":[";
         for (int i = 0; i < friends->getNumberOfContacts(); i++) {
-            std::string email = friends->getContactAt(i);
-            std::string personal_str = dbAdministrator->getPersonal(email);
+            std::string friend_email = friends->getContactAt(i);
+            std::string personal_str = dbAdministrator->getPersonal(friend_email);
             Personal *personal = new Personal();
             personal->loadJson(personal_str);
-            std::string picture_str = dbAdministrator->getPicture(email);
+            std::string picture_str = dbAdministrator->getPicture(friend_email);
             Picture *picture = new Picture();
             picture->loadJson(picture_str);
             OthersRecommendations *others_recommendations = new OthersRecommendations();
-            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(email);
+            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(friend_email);
             others_recommendations->loadJson(others_recomendations_parse);
             int vote = others_recommendations->getNumberOfContacts();
             delete others_recommendations;
             std::ostringstream vote_str;
             vote_str << vote;
+
+            //TODO
+            OwnRecommendations *own_recommendations = new OwnRecommendations();
+            std::string own_recommendations_parse = dbAdministrator->getOwnRecommendations(email);
+            own_recommendations->loadJson(own_recommendations_parse);
+            std::string voted_by_me;
+            if (own_recommendations->search(friend_email) != -1) {
+                voted_by_me = "true";
+            } else {
+                voted_by_me = "false";
+            }
+
             message += "{\"email\":\"" + email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
                         "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"votes\":" +
-                        vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+                        vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() +
+                        "\",\"voted_by_me\":" + voted_by_me + "}";
             if (i != (friends->getNumberOfContacts() - 1)) {
                 message += ",";
             }
@@ -1315,10 +1328,18 @@ Response* Search::get(Message operation) {
     std::vector<std::string> *skills = new std::vector<std::string>();
     loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position,
                    &limit_str, &offset_str, skills);
-    std::vector<std::string> *ids = dbAdministrator->getAllIds();
+
+
+    //TODO
+    LoginInformation *loginInformation = new LoginInformation();
+    loginInformation->loadJson(operation.body.c_str());
+    std::string email = loginInformation->getEmail();
+    std::vector<std::string> *ids = dbAdministrator->getAllIds(email);
+
+
     Response* response = new Response();
     Authentication *auth = new Authentication();
-    LoginInformation *loginInformation = new LoginInformation();
+    //LoginInformation *loginInformation = new LoginInformation();
     Credentials *credentials = new Credentials();
     bool rightDecode = auth->decode(token, loginInformation, credentials);
     delete auth;

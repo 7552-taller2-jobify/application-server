@@ -480,11 +480,17 @@ std::string DataBaseAdministrator::getMostPopularUsers() {
     return result;
 }
 
-std::vector<std::string>* DataBaseAdministrator::getAllIds() {
+std::vector<std::string>* DataBaseAdministrator::getAllIds(std::string own_id) {
     std::string ids_parser = DataBase::getInstance().get("IDS");
     IdsDataBase *idsDB = new IdsDataBase();
     idsDB->loadJson(ids_parser);
     std::vector<std::string>* ids = idsDB->getIds();
+    for (int i = 0; i < ids->size(); i++) {
+        if (ids->at(i) == own_id) {
+            ids->erase(ids->begin() + i);
+            break;
+        }
+    }
     delete idsDB;
     return ids;
 }

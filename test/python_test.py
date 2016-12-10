@@ -648,6 +648,15 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(400, reply.status_code)
         self.assertEqual("Client has Facebook login.", json.loads(reply.content)["message"])
 
+    def test_83_RequestIsNotSupport(self):
+        reply = requests.get('http://localhost:8000/BLA')
+        self.assertEqual(404, reply.status_code)
+
+    def test_84_RequestIsNotSupport(self):
+        reply = requests.delete('http://localhost:8000/users/BLA')
+        self.assertEqual(404, reply.status_code)
+
+
 suite = unittest.TestLoader().loadTestsFromTestCase(testApplicationServer)
 def StartServer():
    call(["./Server"])

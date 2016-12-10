@@ -163,7 +163,6 @@ class Contacts: public Profile {
  protected:
     std::string contacts_name;
     std::vector<std::string> contacts;
-    int search(std::string contact);
     void getOwnInfo(const rapidjson::Document &document);
 
  public:
@@ -171,6 +170,7 @@ class Contacts: public Profile {
     virtual ~Contacts();
     std::string getContactAt(int index);
     std::string createJsonFile();
+    int search(std::string contact);
     int addContact(std::string contact_to_add);
     int removeContact(std::string contact_to_remove);
     int getNumberOfContacts();
@@ -210,17 +210,20 @@ class Solicitudes: public Profile {
     std::vector<struct Solicitude> solicitudes;
 
     void getOwnInfo(const rapidjson::Document &document);
-    std::string getDateAt(int index);
-    std::string getEmailAt(int index);
     int search(struct Solicitude solicitude);
 
  public:
     Solicitudes() : Profile() {}
     ~Solicitudes() {}
+
+    std::string getDateAt(int index);
+    std::string getEmailAt(int index);
+
     std::string getSolicitudeAt(int index);
     void addSolicitude(struct Solicitude solicitude_to_add);
     int removeSolicitude(struct Solicitude solicitude_to_remove);
     std::string createJsonFile();
+    int getNumberOfSolicitudes();
 };
 
 class Credentials: public Profile {

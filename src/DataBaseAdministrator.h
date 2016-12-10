@@ -34,7 +34,7 @@ class DataBaseAdministrator {
     std::string getSkills(std::string email);
     std::string getPicture(std::string email);
     std::string getSolicitudes(std::string email);
-    int addClient(Personal* personal, LoginInformation *loginInformation, struct Message operation);
+    int addClient(Personal* personal, Picture *picture, LoginInformation *loginInformation, struct Message operation);
     int createPersonal(std::string email, std::string token, Personal *upload_personal);
     int uploadPersonal(std::string email, std::string token, Personal *personal);
     int createSummary(std::string email, std::string token, Summary *summary);
@@ -54,7 +54,7 @@ class DataBaseAdministrator {
     void vote(std::string email, std::string email_to_vote);
     void unvote(std::string email, std::string email_to_unvote);
     std::string getMostPopularUsers();
-    std::vector<std::string>* getAllIds();
+    std::vector<std::string>* getAllIds(std::string own_id);
     int resetPassword(std::string email);
     void deleteExpertises(std::string email);
     void deleteSkills(std::string email);

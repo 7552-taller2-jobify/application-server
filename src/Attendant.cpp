@@ -137,10 +137,14 @@ Response* Register::post(Message operation) {
         personal->setPassword("");
         personal->setAddress("", "");
     } else {*/
-         personal->loadJson(operation.body.c_str());
-         loginInformation->loadJson(operation.body.c_str());
+        personal->loadJson(operation.body.c_str());
+        loginInformation->loadJson(operation.body.c_str());
     //}
-    int success = dbAdministrator->addClient(personal, loginInformation, operation);
+        Picture *picture = new Picture();
+        picture->loadJson(operation.body.c_str());
+
+
+    int success = dbAdministrator->addClient(personal, picture, loginInformation, operation);
     Response* response = new Response();
     if (success == 0) {
         response->setContent("{\"registration\":\"OK\"}");
@@ -148,8 +152,14 @@ Response* Register::post(Message operation) {
         Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was register.");
     } else {
         if (success == 1) {
-            response->setContent("{\"code\":" + std::string(CLIENT_ALREADY_EXISTS) + ",\"message\":\"Client already exists.\"}");
-            response->setStatus(500);
+            if (hasLoginFacebook) { 
+                response->setContent("{\"registration\":\"OK\"}");
+                response->setStatus(201);
+                Logger::getInstance().log(info, "The client " + loginInformation->getEmail() +" was register.");
+            } else {
+                response->setContent("{\"code\":" + std::string(CLIENT_ALREADY_EXISTS) + ",\"message\":\"Client already exists.\"}");
+                response->setStatus(500);
+            }
         } else {
             response->setContent("{\"code\":" + std::string(EMPTY_FIELDS) + ",\"message\":\"There are empty fields.\"}");
             response->setStatus(500);
@@ -220,17 +230,21 @@ Response* Contact::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
+    std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);
+    std::string date, contact_email, token;
+    bool existDate = parameters->find("date") != parameters->end();
+    if (existDate) {
+        date = (*parameters)["date"];
+    }
+    bool exist_email = parameters->find("email") != parameters->end();
+    if (exist_email) {
+        contact_email = (*parameters)["email"];
+    }
+    bool existToken = parameters->find("token") != parameters->end();
+    if (existToken) {
+        token = (*parameters)["token"];
+    }
     delete rp;
-    int pos_date = operation.params.find("date=");
-    int pos_email = operation.params.find("&email=");
-    int pos_token = operation.params.find("&token=");
-    std::string date = operation.params.substr(pos_date + 5, pos_email - 5);
-    std::string contact_email = operation.params.substr(pos_email + 7, pos_token - 12 - date.length());
-    std::string token = operation.params.substr(pos_token + 7);
-    CURL *curl = curl_easy_init();
-    int number[3];
-    date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
-    contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
     Solicitude solicitude;
     solicitude.date = date;
     solicitude.email = email;
@@ -238,7 +252,7 @@ Response* Contact::post(Message operation) {
     delete dbAdministrator;
     Response* response = new Response();
     if (success == 0) {
-        response->setContent("");
+        response->setContent("{\"message\":\"La solicitud de amistad ha sido enviada a " + contact_email + " con exito\"}" );
         response->setStatus(201);
         FirebaseService *firebase = new FirebaseService();
         firebase->SendNotification(token, "Solicitud de amistad", contact_email + "quiere contactarte");
@@ -263,7 +277,37 @@ Response* Contact::get(Message operation) {
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
-        response->setContent(dbAdministrator->getSolicitudes(email));
+        std::string solicitudes_parse = dbAdministrator->getSolicitudes(email);
+        Solicitudes *solicitudes = new Solicitudes();
+        solicitudes->loadJson(solicitudes_parse);
+        std::string message = "{\"solicitudes\":[";
+        for (int i = 0; i < solicitudes->getNumberOfSolicitudes(); i++) {
+            std::string solicitude_email = solicitudes->getEmailAt(i);
+            std::string solicitude_date = solicitudes->getDateAt(i);
+            std::string personal_str = dbAdministrator->getPersonal(solicitude_email);
+            Personal *personal = new Personal();
+            personal->loadJson(personal_str);
+            std::string picture_str = dbAdministrator->getPicture(solicitude_email);
+            Picture *picture = new Picture();
+            picture->loadJson(picture_str);
+            OthersRecommendations *others_recommendations = new OthersRecommendations();
+            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(solicitude_email);
+            others_recommendations->loadJson(others_recomendations_parse);
+            int vote = others_recommendations->getNumberOfContacts();
+            delete others_recommendations;
+            std::ostringstream vote_str;
+            vote_str << vote;
+
+            message += "{\"email\":\"" + solicitude_email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
+                        "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"votes\":" +
+                        vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() +
+                        "\",\"date\":\"" + solicitude_date + "\"}";
+            if (i != (solicitudes->getNumberOfSolicitudes() - 1)) {
+                message += ",";
+            }
+        }
+        message += "]}";
+        response->setContent(message);
         response->setStatus(200);
     } else {
         response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
@@ -285,18 +329,23 @@ Accept::~Accept() {}
 Response* Accept::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
+
     std::string email = rp->extractEmail(operation.uri);
+    std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);
+    std::string contact_email, date, token;
+    bool exist_date = parameters->find("date") != parameters->end();
+    if (exist_date) {
+        date = (*parameters)["date"];
+    }
+    bool exist_email = parameters->find("email") != parameters->end();
+    if (exist_email) {
+        contact_email = (*parameters)["email"];
+    }
+    bool existToken = parameters->find("token") != parameters->end();
+    if (existToken) {
+        token = (*parameters)["token"];
+    }
     delete rp;
-    int pos_date = operation.params.find("date=");
-    int pos_email = operation.params.find("&email=");
-    int pos_token = operation.params.find("&token=");
-    std::string date = operation.params.substr(pos_date + 5, pos_email - 5);
-    std::string contact_email = operation.params.substr(pos_email + 7, pos_token - 12 - date.length());
-    std::string token = operation.params.substr(pos_token + 7);
-    CURL *curl = curl_easy_init();
-    int number[3];
-    date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
-    contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
     Solicitude solicitude;
     solicitude.date = date;
     solicitude.email = contact_email;
@@ -305,7 +354,7 @@ Response* Accept::post(Message operation) {
     if (rightCredential) {
         int success = dbAdministrator->addFriend(email, solicitude);
         if (success >= 0) {
-            response->setContent("");
+            response->setContent("{\"message\":\"La solicitud de amistad de " + contact_email + " ha sido aceptada con exito\"}" );
             response->setStatus(201);
             FirebaseService *firebase = new FirebaseService();
             std::string contact_token = dbAdministrator->getToken(contact_email);
@@ -337,18 +386,22 @@ Response* Reject::erase(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
+    std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);
+    std::string contact_email, date, token;
+    bool exist_date = parameters->find("date") != parameters->end();
+    if (exist_date) {
+        date = (*parameters)["date"];
+    }
+    bool exist_email = parameters->find("email") != parameters->end();
+    if (exist_email) {
+        contact_email = (*parameters)["email"];
+    }
+    bool existToken = parameters->find("token") != parameters->end();
+    if (existToken) {
+        token = (*parameters)["token"];
+    }
     delete rp;
-    int pos_date = operation.params.find("date=");
-    int pos_email = operation.params.find("&email=");
-    int pos_token = operation.params.find("&token=");
-    std::string date = operation.params.substr(pos_date + 5, pos_email - 5);
-    std::string contact_email = operation.params.substr(pos_email + 7, pos_token - 12 - date.length());
-    std::string token = operation.params.substr(pos_token + 7);
-    CURL *curl = curl_easy_init();
-    int number[3];
-    date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
-    contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-     Solicitude solicitude;
+    Solicitude solicitude;
     solicitude.date = date;
     solicitude.email = contact_email;
     bool rightCredential = dbAdministrator->rightClient(email, token);
@@ -357,7 +410,7 @@ Response* Reject::erase(Message operation) {
         int success = dbAdministrator->removeSolicitude(email, solicitude);
         delete dbAdministrator;
         if (success >= 0) {
-            response->setContent("");
+            response->setContent("{\"message\":\"La solicitud de amistad de " + contact_email + " ha sido rechazada con exito\"}" );
             response->setStatus(204);
         } else if (success == -1) {
             response->setContent("{\"code\":" + std::string(NO_SOLICITUDE_SENT) +
@@ -399,9 +452,11 @@ Response* ProfilePersonal::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getProfilePersonal(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -492,9 +547,11 @@ Response* ProfileSummary::get(Message operation) {
             Logger::getInstance().log(warn, "Get summary of " + email + " is not OK for credentials");
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getSummary(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -622,9 +679,11 @@ Response* ProfileExpertise::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getExpertise(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -720,9 +779,11 @@ Response* ProfileSkills::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getSkills(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -780,9 +841,11 @@ Response* ProfilePhoto::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getPicture(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -848,23 +911,36 @@ Response* ProfileFriends::get(Message operation) {
         friends->loadJson(friends_parse);
         std::string message = "{\"friends\":[";
         for (int i = 0; i < friends->getNumberOfContacts(); i++) {
-            std::string email = friends->getContactAt(i);
-            std::string personal_str = dbAdministrator->getPersonal(email);
+            std::string friend_email = friends->getContactAt(i);
+            std::string personal_str = dbAdministrator->getPersonal(friend_email);
             Personal *personal = new Personal();
             personal->loadJson(personal_str);
-            std::string picture_str = dbAdministrator->getPicture(email);
+            std::string picture_str = dbAdministrator->getPicture(friend_email);
             Picture *picture = new Picture();
             picture->loadJson(picture_str);
             OthersRecommendations *others_recommendations = new OthersRecommendations();
-            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(email);
+            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(friend_email);
             others_recommendations->loadJson(others_recomendations_parse);
             int vote = others_recommendations->getNumberOfContacts();
             delete others_recommendations;
             std::ostringstream vote_str;
             vote_str << vote;
-            message += "{\"email\":\"" + email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
+
+            //TODO
+            OwnRecommendations *own_recommendations = new OwnRecommendations();
+            std::string own_recommendations_parse = dbAdministrator->getOwnRecommendations(email);
+            own_recommendations->loadJson(own_recommendations_parse);
+            std::string voted_by_me;
+            if (own_recommendations->search(friend_email) != -1) {
+                voted_by_me = "true";
+            } else {
+                voted_by_me = "false";
+            }
+
+            message += "{\"email\":\"" + friend_email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
                         "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"votes\":" +
-                        vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+                        vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() +
+                        "\",\"voted_by_me\":" + voted_by_me + "}";
             if (i != (friends->getNumberOfContacts() - 1)) {
                 message += ",";
             }
@@ -893,6 +969,24 @@ Vote::~Vote() {}
 Response* Vote::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
+    
+    std::string email = rp->extractEmail(operation.uri);   
+    std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);   
+    std::string email_to_vote, token;
+    std::cout << "EMAIL: " << (*parameters)["email"] << std::endl;
+    std::cout << "TOKEN: " << (*parameters)["token"] << std::endl;
+
+    bool exist_email = parameters->find("email") != parameters->end();
+    if (exist_email) {
+        email_to_vote = (*parameters)["email"];
+    }
+    bool existToken = parameters->find("token") != parameters->end();
+    if (existToken) {
+        token = (*parameters)["token"];
+    }
+    delete rp;
+
+/*
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
     int pos_email = operation.params.find("email=");
@@ -902,6 +996,9 @@ Response* Vote::post(Message operation) {
     CURL *curl = curl_easy_init();
     int number[3];
     email_to_vote = curl_easy_unescape(curl, email_to_vote.c_str(), email_to_vote.length(), number);
+
+*/
+
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
@@ -920,6 +1017,24 @@ Response* Vote::post(Message operation) {
 Response* Vote::erase(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
+
+    std::string email = rp->extractEmail(operation.uri);
+    std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);
+    std::string email_to_unvote, token;
+    std::cout << "EMAIL: " << (*parameters)["email"] << std::endl;
+    std::cout << "TOKEN: " << (*parameters)["token"] << std::endl;
+
+    bool exist_email = parameters->find("email") != parameters->end();
+    if (exist_email) {
+        email_to_unvote = (*parameters)["email"];
+    }
+    bool existToken = parameters->find("token") != parameters->end();
+    if (existToken) {
+        token = (*parameters)["token"];
+    }
+    delete rp;
+
+/*
     std::string email = rp->extractEmail(operation.uri);
     delete rp;
     int pos_email = operation.params.find("email=");
@@ -929,6 +1044,7 @@ Response* Vote::erase(Message operation) {
     CURL *curl = curl_easy_init();
     int number[3];
     email_to_unvote = curl_easy_unescape(curl, email_to_unvote.c_str(), email_to_unvote.length(), number);
+*/
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
@@ -1180,10 +1296,26 @@ Response* Search::get(Message operation) {
     std::vector<std::string> *skills = new std::vector<std::string>();
     loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position,
                    &limit_str, &offset_str, skills);
-    std::vector<std::string> *ids = dbAdministrator->getAllIds();
+    
+    //TODO
+    LoginInformation *loginInformation = new LoginInformation();
+    loginInformation->loadJson(operation.body.c_str());
+    //std::string email = loginInformation->getEmail();
+    //std::vector<std::string> *ids = dbAdministrator->getAllIds(email);
+//std::cout<<"SEARCH\n\n\n"<<email<<std::endl;
+//std::cout<<"operation: "<<operation.params<<"Body: "<<operation.uri<<std::endl;
+
+
+
     Response* response = new Response();
     Authentication *auth = new Authentication();
-    LoginInformation *loginInformation = new LoginInformation();
+
+
+std::string email = auth->getEmailFromToken(token);
+std::vector<std::string> *ids = dbAdministrator->getAllIds(email);
+//std::cout<<"Email: "<<email2<<std::endl;
+
+    //LoginInformation *loginInformation = new LoginInformation();
     Credentials *credentials = new Credentials();
     bool rightDecode = auth->decode(token, loginInformation, credentials);
     delete auth;
@@ -1420,8 +1552,15 @@ std::map<std::string, std::string>* Search::searchByDistance(std::vector<std::st
 void Search::loadParameters(std::string params, std::string *token, std::string *lat_str, std::string *lon_str,
                 std::string *distance_str, std::string *position, std::string *limit_str, std::string *offset_str,
                                                                                 std::vector<std::string> *skills) {
-    std::map<std::string, std::string>* parameters = new std::map<std::string, std::string>();
+    //std::map<std::string, std::string>* parameters = new std::map<std::string, std::string>();
     RequestParse * rp = new RequestParse();
+
+
+
+    std::map<std::string, std::string>* parameters = rp->parserParameters(params);
+
+
+    /*
     std::vector<std::string> parameters_vector = rp->split(params, "&");
     for (int i = 0; i < parameters_vector.size(); i++) {
         std::string a_parameter = parameters_vector[i];
@@ -1433,6 +1572,7 @@ void Search::loadParameters(std::string params, std::string *token, std::string 
         }
         parameters->insert(std::pair<std::string, std::string>(key_value[0], value));
     }
+    */
     bool existSkills = parameters->find("skills") != parameters->end();
     if (existSkills) {
         *skills = rp->split((*parameters)["skills"], ",");

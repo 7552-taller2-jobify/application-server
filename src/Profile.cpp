@@ -404,7 +404,11 @@ Skills::~Skills() {
 }
 
 void Picture::getOwnInfo(const rapidjson::Document &document) {
-    this->picture = document["picture"].GetString();
+    if (document.HasMember("picture")) {
+        this->picture = document["picture"].GetString();
+    } else {
+        this->picture = "";
+    }
 }
 
 std::string Picture::getPicture() {
@@ -485,6 +489,7 @@ int Contacts::getNumberOfContacts() {
 }
 
 
+
 void Solicitudes::getOwnInfo(const rapidjson::Document &document) {
     for (rapidjson::SizeType i = 0; i < document["solicitudes"].Size(); i++) {
         struct Solicitude solicitude;
@@ -551,6 +556,12 @@ std::string Solicitudes::createJsonFile() {
     }
     return result + "]}";
 }
+
+int Solicitudes::getNumberOfSolicitudes() {
+    return this->solicitudes.size();
+}
+
+
 
 void Credentials::getOwnInfo(const rapidjson::Document &document) {
     this->token = document["token"].GetString();

@@ -230,16 +230,8 @@ Response* Contact::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
- std::cout << "ANTES PARAMETER" << std::endl;    
     std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);
- std::cout << "DESPUES PARAMETER" << std::endl;    
     std::string date, contact_email, token;
-    std::cout << "DATE: " << (*parameters)["date"] << std::endl;
-    std::cout << "EMAIL: " << (*parameters)["email"] << std::endl;
-    std::cout << "TOKEN: " << (*parameters)["token"] << std::endl;
-
-
-
     bool existDate = parameters->find("date") != parameters->end();
     if (existDate) {
         date = (*parameters)["date"];
@@ -253,23 +245,6 @@ Response* Contact::post(Message operation) {
         token = (*parameters)["token"];
     }
     delete rp;
-
-    std::cout << "DATE: " << date << std::endl;
-    std::cout << "EMAIL: " << contact_email << std::endl;
-    std::cout << "TOKEN: " << token << std::endl;
-/*
-    int pos_date = operation.params.find("date=");
-    int pos_email = operation.params.find("&email=");
-    int pos_token = operation.params.find("&token=");
-    std::string date = operation.params.substr(pos_date + 5, pos_email - 5);
-    std::string contact_email = operation.params.substr(pos_email + 7, pos_token - 12 - date.length());
-    std::string token = operation.params.substr(pos_token + 7);
-    CURL *curl = curl_easy_init();
-    int number[3];
-    date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
-    contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-    */
-
     Solicitude solicitude;
     solicitude.date = date;
     solicitude.email = email;
@@ -326,13 +301,8 @@ Response* Accept::post(Message operation) {
     RequestParse *rp = new RequestParse();
 
     std::string email = rp->extractEmail(operation.uri);
- std::cout << "ANTES PARAMETER" << std::endl;    
     std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);
- std::cout << "DESPUES PARAMETER" << std::endl;    
     std::string contact_email, date, token;
-    std::cout << "EMAIL: " << (*parameters)["email"] << std::endl;
-    std::cout << "TOKEN: " << (*parameters)["token"] << std::endl;
-
     bool exist_date = parameters->find("date") != parameters->end();
     if (exist_date) {
         date = (*parameters)["date"];
@@ -346,22 +316,6 @@ Response* Accept::post(Message operation) {
         token = (*parameters)["token"];
     }
     delete rp;
-
-
-/*
-    std::string email = rp->extractEmail(operation.uri);
-    delete rp;
-    int pos_date = operation.params.find("date=");
-    int pos_email = operation.params.find("&email=");
-    int pos_token = operation.params.find("&token=");
-    std::string date = operation.params.substr(pos_date + 5, pos_email - 5);
-    std::string contact_email = operation.params.substr(pos_email + 7, pos_token - 12 - date.length());
-    std::string token = operation.params.substr(pos_token + 7);
-    CURL *curl = curl_easy_init();
-    int number[3];
-    date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
-    contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-*/
     Solicitude solicitude;
     solicitude.date = date;
     solicitude.email = contact_email;
@@ -401,15 +355,9 @@ Reject::~Reject() {}
 Response* Reject::erase(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
-
-  std::string email = rp->extractEmail(operation.uri);
- std::cout << "ANTES PARAMETER" << std::endl;    
+    std::string email = rp->extractEmail(operation.uri);
     std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);
- std::cout << "DESPUES PARAMETER" << std::endl;    
     std::string contact_email, date, token;
-    std::cout << "EMAIL: " << (*parameters)["email"] << std::endl;
-    std::cout << "TOKEN: " << (*parameters)["token"] << std::endl;
-
     bool exist_date = parameters->find("date") != parameters->end();
     if (exist_date) {
         date = (*parameters)["date"];
@@ -423,23 +371,7 @@ Response* Reject::erase(Message operation) {
         token = (*parameters)["token"];
     }
     delete rp;
-
-
-/*
-    std::string email = rp->extractEmail(operation.uri);
-    delete rp;
-    int pos_date = operation.params.find("date=");
-    int pos_email = operation.params.find("&email=");
-    int pos_token = operation.params.find("&token=");
-    std::string date = operation.params.substr(pos_date + 5, pos_email - 5);
-    std::string contact_email = operation.params.substr(pos_email + 7, pos_token - 12 - date.length());
-    std::string token = operation.params.substr(pos_token + 7);
-    CURL *curl = curl_easy_init();
-    int number[3];
-    date = curl_easy_unescape(curl, date.c_str(), date.length(), number);
-    contact_email = curl_easy_unescape(curl, contact_email.c_str(), contact_email.length(), number);
-*/
-     Solicitude solicitude;
+    Solicitude solicitude;
     solicitude.date = date;
     solicitude.email = contact_email;
     bool rightCredential = dbAdministrator->rightClient(email, token);
@@ -1328,8 +1260,6 @@ Response* Search::get(Message operation) {
     std::vector<std::string> *skills = new std::vector<std::string>();
     loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position,
                    &limit_str, &offset_str, skills);
-
-
     //TODO
     LoginInformation *loginInformation = new LoginInformation();
     loginInformation->loadJson(operation.body.c_str());

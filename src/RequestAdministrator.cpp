@@ -31,7 +31,7 @@ void RequestAdministrator::handle() {
             response = attendant->attend(*msg);
 
             if (response != NULL) {
-                std::cout << "body out : " << response->getContent() << std::endl;
+                std::cout << "\nbody out : " << response->getContent() << std::endl;
                 std::cout << "status out : " << response->getStatus() << std::endl;
 
                 mg_printf(c, "HTTP/1.0 %i\r\n"

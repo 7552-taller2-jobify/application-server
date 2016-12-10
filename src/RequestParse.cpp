@@ -63,10 +63,8 @@ std::map<std::string, std::string>* RequestParse::parserParameters(std::string p
         std::vector<std::string> key_value = split(a_parameter, "=");
         bool isValue = key_value.size() > 1;
         std::string value = "";
-        std::cout<< "key: "<< key_value[0] << " - " << key_value[1];     
         if (isValue) {
             value =  URLDecode(key_value[1]);
-            std::cout<< " value: "<< value <<std::endl;     
         }
         parameters->insert(std::pair<std::string, std::string>(key_value[0], value));
     } 

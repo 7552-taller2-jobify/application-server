@@ -468,10 +468,25 @@ std::string DataBaseAdministrator::getMostPopularUsers() {
     const std::string end = "OTHERS_RECOMMENDATIONT_";
     std::vector<struct PopularUser> users = this->searchRange(begin, end);
     for (int i = 0; i < users.size(); i++) {
+
+
+        std::string pop_email = users.at(i).email;
+        std::string personal_str = this->getPersonal(pop_email);
+        Personal *personal = new Personal();
+        personal->loadJson(personal_str);
+        std::string picture_str = this->getPicture(pop_email);
+        Picture *picture = new Picture();
+        picture->loadJson(picture_str);
+
+
+
+
         std::ostringstream s;
         s << users.at(i).votes;
         std::string votes_parsed = s.str();
-        result += ("{\"email\":\"" + users.at(i).email + "\",\"votes\":" + votes_parsed + "},");
+        result += ("{\"email\":\"" + users.at(i).email + "\",\"first_name\":\"" + personal->getFirstName() +
+                   "\",\"last_name\":\"" + personal->getLastName() + "\",\"thumbnail\":\"" +
+                    picture->getPicture() + "\",\"votes\":" + votes_parsed + "},");
     }
     if (users.size() > 0) {
         result = result.substr(0, result.length() - 1);

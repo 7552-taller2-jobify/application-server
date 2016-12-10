@@ -277,7 +277,35 @@ Response* Contact::get(Message operation) {
     Response* response = new Response();
     bool rightCredentials = dbAdministrator->rightClient(email, token);
     if (rightCredentials) {
-        response->setContent(dbAdministrator->getSolicitudes(email));
+        std::string solicitudes_parse = dbAdministrator->getSolicitudes(email);
+        Solicitudes *solicitudes = new Solicitudes();
+        solicitudes->loadJson(solicitudes_parse);
+        std::string message = "{\"solicitudes\":[";
+        for (int i = 0; i < solicitudes->getNumberOfContacts(); i++) {
+            std::string solicitude_email = solicitudes->getContactAt(i);
+            std::string personal_str = dbAdministrator->getPersonal(solicitude_email);
+            Personal *personal = new Personal();
+            personal->loadJson(personal_str);
+            std::string picture_str = dbAdministrator->getPicture(solicitude_email);
+            Picture *picture = new Picture();
+            picture->loadJson(picture_str);
+            OthersRecommendations *others_recommendations = new OthersRecommendations();
+            std::string others_recomendations_parse = dbAdministrator->getOthersRecommendations(solicitude_email);
+            others_recommendations->loadJson(others_recomendations_parse);
+            int vote = others_recommendations->getNumberOfContacts();
+            delete others_recommendations;
+            std::ostringstream vote_str;
+            vote_str << vote;
+
+            message += "{\"email\":\"" + email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
+                        "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"votes\":" +
+                        vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
+            if (i != (solicitudes->getNumberOfContacts() - 1)) {
+                message += ",";
+            }
+        }
+        message += "]}";
+        response->setContent(message);
         response->setStatus(200);
     } else {
         response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +

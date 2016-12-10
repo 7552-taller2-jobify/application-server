@@ -281,8 +281,11 @@ Response* Contact::get(Message operation) {
         Solicitudes *solicitudes = new Solicitudes();
         solicitudes->loadJson(solicitudes_parse);
         std::string message = "{\"solicitudes\":[";
-        for (int i = 0; i < solicitudes->getNumberOfContacts(); i++) {
-            std::string solicitude_email = solicitudes->getContactAt(i);
+std::cout<<solicitudes->getNumberOfSolicitudes()<<std::endl;
+//std::cout<<solicitudes->()<<std::endl;
+        for (int i = 0; i < solicitudes->getNumberOfSolicitudes(); i++) {
+            std::string solicitude_email = solicitudes->getEmailAt(i);
+            std::string solicitude_date = solicitudes->getDateAt(i);
             std::string personal_str = dbAdministrator->getPersonal(solicitude_email);
             Personal *personal = new Personal();
             personal->loadJson(personal_str);
@@ -299,8 +302,9 @@ Response* Contact::get(Message operation) {
 
             message += "{\"email\":\"" + email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
                         "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"votes\":" +
-                        vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() + "\"}";
-            if (i != (solicitudes->getNumberOfContacts() - 1)) {
+                        vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() +
+                        "\",\"date\":\"" + solicitude_date + "\"}";
+            if (i != (solicitudes->getNumberOfSolicitudes() - 1)) {
                 message += ",";
             }
         }

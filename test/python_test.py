@@ -262,7 +262,11 @@ class testApplicationServer(unittest.TestCase):
         self.assertEqual(200, reply.status_code)
         self.assertEqual(1, len(reply.json()["solicitudes"]))
         self.assertEqual("03-01-2010T12:34:00.000Z", reply.json()["solicitudes"][0]["date"])
-        self.assertEqual("test@yahoo.com", reply.json()["solicitudes"][0]["email"])
+        self.assertEqual("contact@gmail.com", reply.json()["solicitudes"][0]["email"])
+        self.assertEqual("Donnal", reply.json()["solicitudes"][0]["first_name"])
+        self.assertEqual("Trump", reply.json()["solicitudes"][0]["last_name"])
+        self.assertEqual(0, reply.json()["solicitudes"][0]["votes"])
+        self.assertEqual("asdf1234asdf", reply.json()["solicitudes"][0]["thumbnail"])
 
     def test_36_GetContactUnsuccessfully(self):
         params = {"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAeWFob28uY29tIiwiaW5jcmVtZW50YWxfbnVtYmVyIjowLCJwYXNzd29yZCI6ImFkbWluIn0.dNn-xtRfvbN27cD1X7sE_m-RGLgPQ5p9ilHYyjL0BXZ"}

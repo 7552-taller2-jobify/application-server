@@ -25,21 +25,24 @@ void RequestAdministrator::handle() {
     if (this->ev == MG_EV_HTTP_REQUEST) {
         msg = this->rp->parseRequest(this->hm);
         std::cout << "uri: " << msg->uri << "\nbody: " << msg->body << "\nverb: " << msg->verb  << "\n params: " << msg->params << std::endl;
-
         Attendant* attendant = this->attendantHandler->find(msg->uri);
         if (attendant != NULL) {
             response = attendant->attend(*msg);
+        } else {
+std::cout<<"METODO NO SOPORTADO"<<std::endl;
+            Logger::getInstance().log(error, "Does not exist the request " + msg->verb + ".");
+            response = new Response();
+            response->setStatus(404);
 
-            if (response != NULL) {
-                std::cout << "\nbody out : " << response->getContent() << std::endl;
-                std::cout << "status out : " << response->getStatus() << std::endl;
-
-                mg_printf(c, "HTTP/1.0 %i\r\n"
-                             "Content-Length: %d\r\n"
-                             "Content-Type: application/json\r\n\r\n%s",
-                             response->getStatus(), static_cast<int> (response->getContent().size()),
-                                                        response->getContent().c_str());
-            }
+        }
+        if (response != NULL) {
+            std::cout << "\nbody out : " << response->getContent() << std::endl;
+            std::cout << "status out : " << response->getStatus() << std::endl;
+            mg_printf(c, "HTTP/1.0 %i\r\n"
+                         "Content-Length: %d\r\n"
+                         "Content-Type: application/json\r\n\r\n%s",
+                         response->getStatus(), static_cast<int> (response->getContent().size()),
+                                                    response->getContent().c_str());
         }
     }
 }

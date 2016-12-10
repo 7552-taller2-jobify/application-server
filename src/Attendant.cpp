@@ -13,13 +13,20 @@ Attendant::~Attendant() {}
 
 Response* Attendant::attend(Message operation) {
     Response* response = NULL;
-    if (strcmp(operation.verb.c_str(), "DELETE") == 0) {
-        response = this->functions["ERASE"](operation);
+    bool isDeleteVerb = strcmp(operation.verb.c_str(), "DELETE") == 0;
+    if (isDeleteVerb) {
+        if (this->isMethodSupported("ERASE")) {
+            response = this->functions["ERASE"](operation);
+        }
     } else {
         if (this->isMethodSupported(operation.verb)) {
+std::cout<<"METODO SOPORTADO"<<std::endl;
             response = this->functions[operation.verb](operation);
         } else {
+std::cout<<"METODO NO SOPORTADO"<<std::endl;
             Logger::getInstance().log(error, "Does not exist the request " + operation.verb + ".");
+            response = new Response();
+            response->setStatus(404); 
         }
     }
     return response;

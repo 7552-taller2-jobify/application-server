@@ -281,8 +281,6 @@ Response* Contact::get(Message operation) {
         Solicitudes *solicitudes = new Solicitudes();
         solicitudes->loadJson(solicitudes_parse);
         std::string message = "{\"solicitudes\":[";
-std::cout<<solicitudes->getNumberOfSolicitudes()<<std::endl;
-//std::cout<<solicitudes->()<<std::endl;
         for (int i = 0; i < solicitudes->getNumberOfSolicitudes(); i++) {
             std::string solicitude_email = solicitudes->getEmailAt(i);
             std::string solicitude_date = solicitudes->getDateAt(i);
@@ -300,7 +298,7 @@ std::cout<<solicitudes->getNumberOfSolicitudes()<<std::endl;
             std::ostringstream vote_str;
             vote_str << vote;
 
-            message += "{\"email\":\"" + email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
+            message += "{\"email\":\"" + solicitude_email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
                         "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"votes\":" +
                         vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() +
                         "\",\"date\":\"" + solicitude_date + "\"}";
@@ -454,9 +452,11 @@ Response* ProfilePersonal::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getProfilePersonal(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -547,9 +547,11 @@ Response* ProfileSummary::get(Message operation) {
             Logger::getInstance().log(warn, "Get summary of " + email + " is not OK for credentials");
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getSummary(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -677,9 +679,11 @@ Response* ProfileExpertise::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getExpertise(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -775,9 +779,11 @@ Response* ProfileSkills::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getSkills(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -835,9 +841,11 @@ Response* ProfilePhoto::get(Message operation) {
             response->setStatus(401);
         }
     } else {
-        response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
+        response->setContent(dbAdministrator->getPicture(email));
+        response->setStatus(200);
+        /*response->setContent("{\"code\":" + std::string(INVALID_CREDENTIALS) +
                                 ",\"message\":\"Invalid credentials.\"}");
-        response->setStatus(401);
+        response->setStatus(401);*/
     }
     delete dbAdministrator;
     return response;
@@ -962,10 +970,8 @@ Response* Vote::post(Message operation) {
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     
-    std::string email = rp->extractEmail(operation.uri);
- std::cout << "ANTES PARAMETER" << std::endl;    
-    std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);
- std::cout << "DESPUES PARAMETER" << std::endl;    
+    std::string email = rp->extractEmail(operation.uri);   
+    std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);   
     std::string email_to_vote, token;
     std::cout << "EMAIL: " << (*parameters)["email"] << std::endl;
     std::cout << "TOKEN: " << (*parameters)["token"] << std::endl;
@@ -1013,9 +1019,7 @@ Response* Vote::erase(Message operation) {
     RequestParse *rp = new RequestParse();
 
     std::string email = rp->extractEmail(operation.uri);
- std::cout << "ANTES PARAMETER" << std::endl;    
     std::map<std::string, std::string>* parameters = rp->parserParameters(operation.params);
- std::cout << "DESPUES PARAMETER" << std::endl;    
     std::string email_to_unvote, token;
     std::cout << "EMAIL: " << (*parameters)["email"] << std::endl;
     std::cout << "TOKEN: " << (*parameters)["token"] << std::endl;
@@ -1292,15 +1296,25 @@ Response* Search::get(Message operation) {
     std::vector<std::string> *skills = new std::vector<std::string>();
     loadParameters(operation.params, &token, &lat_str, &lon_str, &distance_str, &position,
                    &limit_str, &offset_str, skills);
+    
     //TODO
     LoginInformation *loginInformation = new LoginInformation();
     loginInformation->loadJson(operation.body.c_str());
-    std::string email = loginInformation->getEmail();
-    std::vector<std::string> *ids = dbAdministrator->getAllIds(email);
+    //std::string email = loginInformation->getEmail();
+    //std::vector<std::string> *ids = dbAdministrator->getAllIds(email);
+//std::cout<<"SEARCH\n\n\n"<<email<<std::endl;
+//std::cout<<"operation: "<<operation.params<<"Body: "<<operation.uri<<std::endl;
+
 
 
     Response* response = new Response();
     Authentication *auth = new Authentication();
+
+
+std::string email = auth->getEmailFromToken(token);
+std::vector<std::string> *ids = dbAdministrator->getAllIds(email);
+//std::cout<<"Email: "<<email2<<std::endl;
+
     //LoginInformation *loginInformation = new LoginInformation();
     Credentials *credentials = new Credentials();
     bool rightDecode = auth->decode(token, loginInformation, credentials);

@@ -636,15 +636,23 @@ Response* ProfileExpertise::putAndPost(Message operation, int status_ok, std::st
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
-    delete rp;
     Expertise *expertise = new Expertise();
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
     int success;
+    expertise->loadJson(operation.body);
+    SharedService* shared = new SharedService();
+    for (int i = 0; i < expertise->getNumberOfExpertises(); i++) {
+        std::string a_category = expertise->getCategory(i);
+        std::string a_position = expertise->getPosition(i);
+        shared->createCategory(a_category, "");
+        shared->createJobPosition(a_position, "", a_category);        
+    }
+    delete rp;
+    delete shared;
     if (operation.verb == "POST") {
         success = dbAdministrator->createExpertise(email, token, expertise);
     } else {
-        expertise->loadJson(operation.body);
         success = dbAdministrator->uploadExpertise(email, token, expertise);
     }
     delete dbAdministrator;
@@ -733,16 +741,26 @@ Response* ProfileSkills::putAndPost(Message operation, int status_ok, std::strin
     DataBaseAdministrator *dbAdministrator = new DataBaseAdministrator();
     RequestParse *rp = new RequestParse();
     std::string email = rp->extractEmail(operation.uri);
-    delete rp;
     Skills *skills = new Skills();
     const int SIZE_NAME_PARAMETER = 6;
     std::string token = operation.params.substr(SIZE_NAME_PARAMETER);
 
     int success;
+    skills->loadJson(operation.body);
+    SharedService* shared = new SharedService();
+    for (int i=0; i<skills->getNumberOfSkills(); i++) {
+        std::string a_category = skills->getCategory(i);
+        shared->createCategory(a_category, "");
+        std::vector<std::string> skills_parser = rp->split(skills->getSkills(i), ",");
+        for (int j=0; j<skills_parser.size(); j++) {
+           shared->createSkill(skills_parser.at(j),"", a_category);
+        }    
+    }
+    delete rp;
+    delete shared;
     if (operation.verb == "POST") {
         success = dbAdministrator->createSkills(email, token, skills);
     } else {
-        skills->loadJson(operation.body);
         success = dbAdministrator->uploadSkills(email, token, skills);
     }
 
@@ -1225,6 +1243,9 @@ Category::Category() {
     this->functions["GET"] = get;
 }
 
+
+
+
 Category::~Category() {}
 
 Response* Category::post(struct Message operation) {
@@ -1239,6 +1260,10 @@ Response* Category::get(struct Message operation) {
     SharedService* shared = new SharedService();
     return shared->listCategories();
 }
+
+
+
+
 
 Skill::Skill() {
     this->functions["POST"] = post;

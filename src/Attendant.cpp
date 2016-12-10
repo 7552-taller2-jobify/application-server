@@ -937,7 +937,7 @@ Response* ProfileFriends::get(Message operation) {
                 voted_by_me = "false";
             }
 
-            message += "{\"email\":\"" + email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
+            message += "{\"email\":\"" + friend_email + "\"" + ",\"first_name\":" + "\"" + personal->getFirstName() +
                         "\"" + ",\"last_name\":" + "\"" + personal->getLastName() + "\"" + ",\"votes\":" +
                         vote_str.str() + ",\"thumbnail\":" + "\"" + picture->getPicture() +
                         "\",\"voted_by_me\":" + voted_by_me + "}";
